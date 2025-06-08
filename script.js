@@ -19,6 +19,21 @@ class GitChat {
             typingIndicators: true
         };
         
+        // Bot conversation context
+        this.conversationContext = {
+            lastUserMessage: '',
+            userMood: 'neutral',
+            conversationHistory: [],
+            botPersonalities: [
+                { name: "Alex", mood: "friendly", interests: ["tech", "coding", "games"] },
+                { name: "Jordan", mood: "helpful", interests: ["design", "art", "music"] },
+                { name: "Sam", mood: "enthusiastic", interests: ["sports", "fitness", "travel"] },
+                { name: "Riley", mood: "thoughtful", interests: ["books", "philosophy", "science"] },
+                { name: "Casey", mood: "funny", interests: ["memes", "comedy", "movies"] },
+                { name: "Morgan", mood: "supportive", interests: ["mental health", "cooking", "nature"] }
+            ]
+        };
+        
         // Initialize the app
         this.initializeElements();
         this.setupEventListeners();
@@ -244,6 +259,19 @@ class GitChat {
         this.messages.push(message);
         this.renderMessage(message);
         
+        // Store conversation context
+        this.conversationContext.lastUserMessage = content;
+        this.conversationContext.conversationHistory.push({
+            author: this.currentUser.name,
+            content: content,
+            timestamp: Date.now()
+        });
+        
+        // Keep only last 10 messages in history
+        if (this.conversationContext.conversationHistory.length > 10) {
+            this.conversationContext.conversationHistory = this.conversationContext.conversationHistory.slice(-10);
+        }
+        
         if (this.messageInput) {
             this.messageInput.value = '';
         }
@@ -256,41 +284,17 @@ class GitChat {
         this.scrollToBottom();
         this.playSound('message');
 
-        // Simulate responses
-        setTimeout(() => this.simulateResponse(content), 1000 + Math.random() * 2000);
+        // Simulate responses with intelligent context
+        setTimeout(() => this.simulateIntelligentResponse(content), 1000 + Math.random() * 2000);
     }
 
-    simulateResponse(originalMessage) {
-        const responses = [
-            "That's interesting! Tell me more about that.",
-            "I completely agree with your point.",
-            "Thanks for sharing that insight!",
-            "Great question! I've been thinking about that too.",
-            "Nice! Have you tried exploring that further?",
-            "I had a similar experience recently.",
-            "That's a really good point to consider.",
-            "Thanks for bringing that up in the discussion.",
-            "Wow, that's fascinating! 🤔",
-            "I never thought about it that way before.",
-            "Could you elaborate on that?",
-            "That reminds me of something I read recently.",
-        ];
-
-        const botUsers = [
-            { name: "Alex", avatar: "A", color: "#10b981" },
-            { name: "Jordan", avatar: "J", color: "#8b5cf6" },
-            { name: "Sam", avatar: "S", color: "#f59e0b" },
-            { name: "Riley", avatar: "R", color: "#ef4444" },
-            { name: "Casey", avatar: "C", color: "#06b6d4" },
-            { name: "Morgan", avatar: "M", color: "#f97316" },
-        ];
-
-        const randomBot = botUsers[Math.floor(Math.random() * botUsers.length)];
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+    simulateIntelligentResponse(userMessage) {
+        const response = this.generateContextualResponse(userMessage);
+        const selectedBot = this.selectAppropriateBot(userMessage);
 
         // Show typing indicator
         if (this.settings.typingIndicators) {
-            this.showTypingIndicator(randomBot.name);
+            this.showTypingIndicator(selectedBot.name);
         }
 
         setTimeout(() => {
@@ -298,27 +302,317 @@ class GitChat {
             
             const message = {
                 id: this.generateId(),
-                content: randomResponse,
-                author: randomBot.name,
+                content: response,
+                author: selectedBot.name,
                 authorId: this.generateId(),
                 timestamp: Date.now(),
                 isOwn: false,
                 room: this.currentRoom,
-                avatar: randomBot.avatar,
-                color: randomBot.color,
+                avatar: selectedBot.avatar,
+                color: selectedBot.color,
                 reactions: {}
             };
 
             this.messages.push(message);
+            
+            // Add to conversation context
+            this.conversationContext.conversationHistory.push({
+                author: selectedBot.name,
+                content: response,
+                timestamp: Date.now()
+            });
+
             this.renderMessage(message);
             this.saveToStorage();
             this.scrollToBottom();
             this.playSound('notification');
             
             if (this.settings.desktopNotifications) {
-                this.showDesktopNotification(`${randomBot.name} replied`, randomResponse);
+                this.showDesktopNotification(`${selectedBot.name} replied`, response);
             }
         }, 1500 + Math.random() * 1000);
+    }
+
+    generateContextualResponse(userMessage) {
+        const message = userMessage.toLowerCase().trim();
+        const userName = this.currentUser?.name || 'there';
+        
+        // Greeting patterns
+        if (this.matchesPattern(message, ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening'])) {
+            const greetings = [
+                `Hello ${userName}! 👋 How are you doing today?`,
+                `Hey there ${userName}! Great to see you here! 😊`,
+                `Hi ${userName}! Welcome to the chat! How's your day going?`,
+                `Greetings ${userName}! Hope you're having a wonderful day! ✨`,
+                `Hello ${userName}! Nice to meet you! What brings you here today?`
+            ];
+            return this.getRandomItem(greetings);
+        }
+
+        // How are you patterns
+        if (this.matchesPattern(message, ['how are you', 'how do you do', 'how are things', 'what\'s up', 'how\'s it going'])) {
+            const responses = [
+                "I'm doing great, thank you for asking! 😊 How about you? How has your day been?",
+                "I'm fantastic! Thanks for checking in! 🌟 What about you - how are you feeling today?",
+                "I'm doing well, thanks! 😄 It's always nice when someone asks. How are things with you?",
+                "Pretty good, thank you! 🙂 I'm enjoying our conversation. How about yourself?",
+                "I'm doing wonderful! Thanks for asking! 💫 What about you - how's your mood today?"
+            ];
+            return this.getRandomItem(responses);
+        }
+
+        // User expressing they're fine/good
+        if (this.matchesPattern(message, ['i\'m fine', 'i\'m good', 'i\'m great', 'i\'m okay', 'i\'m well', 'doing well', 'doing good', 'not bad'])) {
+            const responses = [
+                "That's wonderful to hear! 😊 I'm glad you're doing well. What's been the highlight of your day?",
+                "Great! I'm happy you're feeling good! ✨ Anything exciting happening in your life lately?",
+                "Awesome! It's always nice to hear when someone is doing well! 🌟 What's keeping you busy these days?",
+                "That's fantastic! 😄 Good vibes are contagious! What's been making you feel good?",
+                "Nice! I love hearing positive updates! 🎉 Care to share what's going well for you?"
+            ];
+            return this.getRandomItem(responses);
+        }
+
+        // User expressing negative feelings
+        if (this.matchesPattern(message, ['i\'m not good', 'i\'m sad', 'i\'m tired', 'i\'m stressed', 'having a bad day', 'not great', 'could be better'])) {
+            const responses = [
+                "I'm sorry to hear you're going through a tough time. 🤗 Sometimes it helps to talk about it. Want to share what's on your mind?",
+                "That sounds challenging. 💙 Remember that it's okay to have difficult days. Is there anything that usually helps you feel better?",
+                "I hear you, and I'm here to listen. 🌸 Bad days can be really hard. Would you like to talk about what's bothering you?",
+                "I'm sorry you're feeling this way. 🤎 It's completely normal to have ups and downs. What do you usually do for self-care?",
+                "Sending you some virtual support! 💕 Tough times don't last, but resilient people like you do. Want to chat about it?"
+            ];
+            return this.getRandomItem(responses);
+        }
+
+        // Gratitude expressions
+        if (this.matchesPattern(message, ['thank you', 'thanks', 'appreciate', 'grateful'])) {
+            const responses = [
+                "You're very welcome! 😊 It's my pleasure to help and chat with you!",
+                "No problem at all! 🌟 I'm happy I could be helpful. Anytime!",
+                "You're so welcome! 💫 I really enjoy our conversations!",
+                "My pleasure! 😄 Thanks for being so kind and thoughtful!",
+                "Aww, you're too sweet! 🥰 I'm just glad I could help!"
+            ];
+            return this.getRandomItem(responses);
+        }
+
+        // Weather-related
+        if (this.matchesPattern(message, ['weather', 'sunny', 'rainy', 'cold', 'hot', 'temperature'])) {
+            const responses = [
+                "Weather can definitely affect our mood! ☀️ Are you enjoying the current weather where you are?",
+                "I love talking about weather! 🌤️ It's amazing how it can change our whole day, right?",
+                "Weather is such an interesting topic! ⛅ Do you prefer sunny days or do you like variety?",
+                "The weather can be so unpredictable! 🌦️ How do you usually spend your time when the weather is like this?",
+                "Weather definitely plays a big role in our daily lives! 🌈 What's your favorite type of weather?"
+            ];
+            return this.getRandomItem(responses);
+        }
+
+        // Technology/coding related
+        if (this.matchesPattern(message, ['code', 'programming', 'javascript', 'python', 'development', 'tech', 'computer', 'software'])) {
+            const responses = [
+                "Oh, a fellow tech enthusiast! 💻 What programming languages do you work with? I find technology fascinating!",
+                "Technology is amazing, isn't it? 🚀 Are you working on any interesting projects lately?",
+                "I love talking about tech! ⚡ The world of programming is constantly evolving. What's your favorite aspect of coding?",
+                "Tech talk! 🔧 Are you a developer or just interested in technology? Either way, it's such an exciting field!",
+                "Programming is like digital art! 🎨 What got you interested in technology?"
+            ];
+            return this.getRandomItem(responses);
+        }
+
+        // Time-related queries
+        if (this.matchesPattern(message, ['what time', 'current time', 'time is it', 'date today', 'what day'])) {
+            const now = new Date();
+            const timeString = now.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZoneName: 'short'
+            });
+            return `It's currently ${timeString}! ⏰ Time flies when you're having good conversations, doesn't it?`;
+        }
+
+        // Work/job related
+        if (this.matchesPattern(message, ['work', 'job', 'career', 'office', 'business', 'meeting'])) {
+            const responses = [
+                "Work life can be quite the journey! 💼 How are things going in your professional life?",
+                "Ah, work talk! 📊 Do you enjoy what you do? I find it's so important to find meaning in our work.",
+                "Career conversations are always interesting! 🎯 What field do you work in, if you don't mind me asking?",
+                "Work-life balance is so important! ⚖️ How do you manage to keep things balanced?",
+                "Professional life can be both challenging and rewarding! 🌟 What's been keeping you busy at work lately?"
+            ];
+            return this.getRandomItem(responses);
+        }
+
+        // Questions about the bot/AI
+        if (this.matchesPattern(message, ['who are you', 'what are you', 'are you real', 'are you ai', 'are you human', 'bot'])) {
+            const responses = [
+                "I'm one of the friendly chatbots here in GitChat! 🤖 I love meeting new people and having conversations. Think of me as your digital friend!",
+                "Great question! I'm an AI assistant designed to make conversations more engaging here! 💫 I may be digital, but my enthusiasm for chatting is totally real!",
+                "I'm a conversational AI that lives in this chat! 🌟 While I'm not human, I do my best to be a good conversation partner. What would you like to chat about?",
+                "I'm one of the AI personalities in this chat room! 🎭 I'm here to make conversations more interesting and engaging. Nice to meet you!",
+                "Think of me as your AI chat buddy! 🤝 I'm designed to have natural conversations and learn from our interactions. What brings you to the chat today?"
+            ];
+            return this.getRandomItem(responses);
+        }
+
+        // Hobby/interest related
+        if (this.matchesPattern(message, ['hobby', 'hobbies', 'interests', 'free time', 'fun', 'enjoy doing'])) {
+            const responses = [
+                "I love hearing about people's hobbies! 🎨 What do you enjoy doing in your free time? I find people's passions so fascinating!",
+                "Hobbies are the best! 🌟 They really show what makes someone tick. What activities bring you joy?",
+                "Free time activities are so important for well-being! 🌸 What helps you relax and recharge?",
+                "I'm curious about what you're passionate about! 💫 Hobbies can tell you so much about a person. What are yours?",
+                "Fun activities make life so much richer! 🎉 What do you love to do when you're not working?"
+            ];
+            return this.getRandomItem(responses);
+        }
+
+        // Food related
+        if (this.matchesPattern(message, ['food', 'eat', 'hungry', 'cooking', 'recipe', 'meal', 'lunch', 'dinner', 'breakfast'])) {
+            const responses = [
+                "Food talk! 🍽️ I love hearing about people's culinary adventures. Do you enjoy cooking or do you prefer trying new restaurants?",
+                "Mmm, food is such a universal language! 😋 What's your favorite type of cuisine? I find food brings people together!",
+                "Food conversations always make me think about comfort and culture! 🥘 What's a dish that always makes you feel good?",
+                "Nothing brings people together quite like food! 👨‍🍳 Are you someone who loves to cook or do you prefer being cooked for?",
+                "Food is such an important part of life! 🌮 Do you have any signature dishes you love to make?"
+            ];
+            return this.getRandomItem(responses);
+        }
+
+        // Default contextual responses based on conversation history
+        const recentMessages = this.conversationContext.conversationHistory.slice(-3);
+        if (recentMessages.length > 0) {
+            const contextualResponses = [
+                `That's really interesting! Building on what we were just discussing, ${this.generateFollowUp(userMessage)}`,
+                `I've been thinking about our conversation, and ${this.generateThoughtfulResponse(userMessage)}`,
+                `You know, that reminds me of something ${this.generateConnection(userMessage)}`,
+                `That's a great point! ${this.generateAgreement(userMessage)}`,
+                `I appreciate you sharing that with me! ${this.generateEncouragement(userMessage)}`
+            ];
+            return this.getRandomItem(contextualResponses);
+        }
+
+        // Generic but engaging fallback responses
+        const fallbackResponses = [
+            "That's really interesting! Tell me more about that - I'd love to hear your thoughts! 🤔",
+            "I find that fascinating! There's always so much to learn from different perspectives. What made you think of that?",
+            "You've got me curious now! Can you elaborate on that? I enjoy learning new things from our conversations! 🌟",
+            "That's a great point! I love how conversations can take unexpected turns. What's your take on it?",
+            "Interesting perspective! I appreciate you sharing that with me. What else is on your mind today? 💭",
+            "That sounds thoughtful! I enjoy when people share their ideas. What brought that to your attention?",
+            "I love the direction this conversation is taking! Your insights are really valuable. What do you think about...?",
+            "That's something worth discussing! I find these kinds of conversations really enriching. Care to dive deeper?"
+        ];
+
+        return this.getRandomItem(fallbackResponses);
+    }
+
+    matchesPattern(message, patterns) {
+        return patterns.some(pattern => message.includes(pattern));
+    }
+
+    generateFollowUp(message) {
+        const followUps = [
+            "what aspects of that interest you most?",
+            "I'd love to understand your perspective better!",
+            "have you experienced something similar before?",
+            "what got you thinking about that?",
+            "that opens up so many interesting questions!"
+        ];
+        return this.getRandomItem(followUps);
+    }
+
+    generateThoughtfulResponse(message) {
+        const responses = [
+            "it really shows how complex and nuanced these topics can be.",
+            "I'm learning so much from your perspective on this!",
+            "there are so many layers to consider, aren't there?",
+            "it's amazing how different experiences shape our views.",
+            "you've given me a lot to think about!"
+        ];
+        return this.getRandomItem(responses);
+    }
+
+    generateConnection(message) {
+        const connections = [
+            "we talked about earlier - there might be a connection there!",
+            "I read recently that relates to this topic.",
+            "similar that happened to me in a conversation yesterday.",
+            "you might find interesting given what you just shared.",
+            "that connects to what you were saying before!"
+        ];
+        return this.getRandomItem(connections);
+    }
+
+    generateAgreement(message) {
+        const agreements = [
+            "I completely see where you're coming from on this!",
+            "You've articulated that really well - I hadn't thought of it that way!",
+            "That's such a thoughtful way to look at it!",
+            "I think you're onto something important there!",
+            "That resonates with me too - great insight!"
+        ];
+        return this.getRandomItem(agreements);
+    }
+
+    generateEncouragement(message) {
+        const encouragements = [
+            "Your thoughts on this are really valuable!",
+            "I appreciate how openly you're sharing your experiences!",
+            "It's refreshing to have such genuine conversations!",
+            "Thank you for being so thoughtful in your responses!",
+            "I'm enjoying getting to know your perspective!"
+        ];
+        return this.getRandomItem(encouragements);
+    }
+
+    selectAppropriateBot(userMessage) {
+        const message = userMessage.toLowerCase();
+        
+        // Select bot based on message content and their personalities
+        let selectedBot = this.conversationContext.botPersonalities[0]; // default
+        
+        if (this.matchesPattern(message, ['sad', 'stressed', 'tired', 'difficult', 'hard', 'support'])) {
+            selectedBot = this.conversationContext.botPersonalities.find(bot => bot.mood === 'supportive') || selectedBot;
+        } else if (this.matchesPattern(message, ['code', 'tech', 'programming', 'computer'])) {
+            selectedBot = this.conversationContext.botPersonalities.find(bot => bot.interests.includes('tech')) || selectedBot;
+        } else if (this.matchesPattern(message, ['design', 'art', 'creative'])) {
+            selectedBot = this.conversationContext.botPersonalities.find(bot => bot.interests.includes('art')) || selectedBot;
+        } else if (this.matchesPattern(message, ['funny', 'joke', 'laugh', 'haha'])) {
+            selectedBot = this.conversationContext.botPersonalities.find(bot => bot.mood === 'funny') || selectedBot;
+        } else if (this.matchesPattern(message, ['help', 'question', 'how to'])) {
+            selectedBot = this.conversationContext.botPersonalities.find(bot => bot.mood === 'helpful') || selectedBot;
+        } else {
+            // Random selection for variety
+            selectedBot = this.getRandomItem(this.conversationContext.botPersonalities);
+        }
+
+        return {
+            name: selectedBot.name,
+            avatar: selectedBot.name.charAt(0),
+            color: this.getBotColor(selectedBot.name)
+        };
+    }
+
+    getBotColor(name) {
+        const colors = {
+            "Alex": "#10b981",
+            "Jordan": "#8b5cf6", 
+            "Sam": "#f59e0b",
+            "Riley": "#ef4444",
+            "Casey": "#06b6d4",
+            "Morgan": "#f97316"
+        };
+        return colors[name] || "#6366f1";
+    }
+
+    getRandomItem(array) {
+        return array[Math.floor(Math.random() * array.length)];
     }
 
     renderMessage(message) {
@@ -698,7 +992,8 @@ class GitChat {
                 messages: this.messages.slice(-100), // Keep last 100 messages
                 users: Array.from(this.users.entries()),
                 settings: this.settings,
-                currentRoom: this.currentRoom
+                currentRoom: this.currentRoom,
+                conversationContext: this.conversationContext
             };
             localStorage.setItem('gitchat-data', JSON.stringify(data));
         } catch (error) {
@@ -731,6 +1026,10 @@ class GitChat {
 
             if (data.settings) {
                 this.settings = { ...this.settings, ...data.settings };
+            }
+
+            if (data.conversationContext) {
+                this.conversationContext = { ...this.conversationContext, ...data.conversationContext };
             }
 
             if (data.currentRoom) {
