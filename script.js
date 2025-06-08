@@ -1,7 +1,7 @@
 class NexaShopSupport {
     constructor() {
-        // Current time as provided: 2025-06-08 11:33:17 UTC
-        this.currentDateTime = new Date('2025-06-08T11:33:17Z');
+        // Current time as provided: 2025-06-08 11:39:29 UTC
+        this.currentDateTime = new Date('2025-06-08T11:39:29Z');
         
         this.currentUser = {
             id: 'user-asarekings',
@@ -31,55 +31,41 @@ class NexaShopSupport {
             autoScroll: true,
             voiceEnabled: false,
             desktopNotifications: false,
-            aiMode: 'intelligent', // intelligent, basic, expert
-            aiPersonality: 'helpful' // helpful, professional, casual, expert
+            aiMode: 'intelligent',
+            aiPersonality: 'helpful'
         };
         
         this.ticketNumber = 'NEX-2025-0608-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
         
         console.log('🤖 Initializing NexaShop AI Support System...');
-        console.log('📅 Current Time: 2025-06-08 11:33:17 UTC');
+        console.log('📅 Current Time: 2025-06-08 11:39:29 UTC');
         console.log('👤 User: asarekings logged in');
         console.log('🧠 AI Features: Advanced conversation analysis activated');
         
         this.initializeAIFeatures();
-        this.initializeAdvancedFeatures();
+        this.initializeBasicFeatures();
         this.init();
     }
 
-    // === ADVANCED AI CONVERSATION FEATURES ===
+    // === AI FEATURES ===
     initializeAIFeatures() {
         this.aiEngine = {
-            // Natural Language Processing
             nlp: {
                 sentimentAnalysis: (text) => this.analyzeSentiment(text),
                 intentRecognition: (text) => this.recognizeIntent(text),
-                entityExtraction: (text) => this.extractEntities(text),
-                contextUnderstanding: (text) => this.understandContext(text)
+                entityExtraction: (text) => this.extractEntities(text)
             },
-            
-            // Conversation Management
             conversation: {
-                memory: new Map(), // Long-term conversation memory
-                shortTermContext: [], // Last 5 interactions
+                memory: new Map(),
+                shortTermContext: [],
                 userProfile: this.buildUserProfile(),
-                conversationState: 'greeting' // greeting, inquiry, problem_solving, resolution
+                conversationState: 'greeting'
             },
-            
-            // Smart Response Generation
             responseGeneration: {
                 templates: this.loadResponseTemplates(),
                 dynamicContent: true,
                 personalization: true,
-                multiStep: true // Multi-step problem solving
-            },
-            
-            // Learning and Adaptation
-            learning: {
-                userPreferences: new Map(),
-                successfulSolutions: [],
-                commonIssues: new Map(),
-                improvementSuggestions: []
+                multiStep: true
             }
         };
         
@@ -101,7 +87,6 @@ class NexaShopSupport {
             if (urgentWords.includes(word)) sentiment.urgent++;
         });
         
-        // Calculate overall sentiment
         const total = sentiment.positive + sentiment.negative;
         if (total > 0) {
             sentiment.confidence = Math.min(1, total / words.length * 10);
@@ -112,7 +97,6 @@ class NexaShopSupport {
         }
         
         sentiment.isUrgent = sentiment.urgent > 0;
-        
         return sentiment;
     }
 
@@ -121,38 +105,27 @@ class NexaShopSupport {
         const intents = {
             order_inquiry: {
                 patterns: ['order', 'tracking', 'shipment', 'delivery', 'when will', 'where is', 'status'],
-                confidence: 0,
-                examples: ['check my order', 'track my package', 'order status', 'delivery update']
+                confidence: 0
             },
             product_info: {
                 patterns: ['product', 'item', 'specification', 'feature', 'compare', 'recommend', 'suggest'],
-                confidence: 0,
-                examples: ['product details', 'phone specs', 'laptop features', 'what do you recommend']
+                confidence: 0
             },
             technical_support: {
                 patterns: ['not working', 'broken', 'error', 'bug', 'issue', 'problem', 'fix', 'help'],
-                confidence: 0,
-                examples: ['device not working', 'error message', 'technical issue', 'need help fixing']
+                confidence: 0
             },
             billing_payment: {
                 patterns: ['payment', 'billing', 'charge', 'refund', 'money', 'card', 'invoice'],
-                confidence: 0,
-                examples: ['payment issue', 'billing question', 'refund request', 'charge dispute']
+                confidence: 0
             },
             return_exchange: {
                 patterns: ['return', 'exchange', 'replace', 'send back', 'defective', 'wrong item'],
-                confidence: 0,
-                examples: ['return item', 'exchange product', 'wrong size', 'defective device']
-            },
-            complaint_feedback: {
-                patterns: ['complain', 'feedback', 'disappointed', 'unsatisfied', 'review', 'terrible'],
-                confidence: 0,
-                examples: ['complaint about service', 'negative feedback', 'dissatisfied customer']
+                confidence: 0
             },
             general_inquiry: {
                 patterns: ['hello', 'hi', 'help', 'question', 'info', 'about'],
-                confidence: 0,
-                examples: ['general question', 'need information', 'hello there']
+                confidence: 0
             }
         };
         
@@ -180,8 +153,7 @@ class NexaShopSupport {
         return {
             intent: bestIntent,
             confidence: maxConfidence,
-            allIntents: intents,
-            entities: this.extractEntities(text)
+            allIntents: intents
         };
     }
 
@@ -190,13 +162,10 @@ class NexaShopSupport {
         const entities = {
             orderNumbers: [],
             productNames: [],
-            amounts: [],
-            dates: [],
-            emails: [],
-            phoneNumbers: []
+            amounts: []
         };
         
-        // Extract order numbers (NEX-YYYY-XXXXXX format)
+        // Extract order numbers
         const orderRegex = /NEX-\d{4}-\d{6}/gi;
         entities.orderNumbers = text.match(orderRegex) || [];
         
@@ -208,465 +177,307 @@ class NexaShopSupport {
             }
         });
         
-        // Extract amounts ($XXX.XX format)
+        // Extract amounts
         const amountRegex = /\$\d+\.?\d*/gi;
         entities.amounts = text.match(amountRegex) || [];
-        
-        // Extract dates
-        const dateRegex = /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/gi;
-        entities.dates = text.match(dateRegex) || [];
-        
-        // Extract emails
-        const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/gi;
-        entities.emails = text.match(emailRegex) || [];
         
         return entities;
     }
 
-    // === CONTEXT UNDERSTANDING ===
-    understandContext(text) {
+    // === AI RESPONSE GENERATION ===
+    generateAIResponse(userMessage) {
+        const sentiment = this.analyzeSentiment(userMessage);
+        const intent = this.recognizeIntent(userMessage);
+        const entities = this.extractEntities(userMessage);
+        
         const analysis = {
-            sentiment: this.analyzeSentiment(text),
-            intent: this.recognizeIntent(text),
-            entities: this.extractEntities(text),
-            conversationFlow: this.analyzeConversationFlow(),
-            urgencyLevel: this.assessUrgency(text),
-            complexity: this.assessComplexity(text)
+            sentiment: sentiment,
+            intent: intent,
+            entities: entities,
+            urgencyLevel: sentiment.isUrgent ? 'high' : 'low',
+            complexity: entities.orderNumbers.length + entities.productNames.length > 2 ? 'high' : 'medium'
         };
         
-        // Store in conversation context
-        this.conversationContext.push({
-            timestamp: Date.now(),
-            text: text,
-            analysis: analysis,
-            userMessage: true
-        });
+        console.log('🤖 AI Analysis:', analysis);
         
-        // Keep only last 10 interactions for context
-        if (this.conversationContext.length > 10) {
-            this.conversationContext.shift();
-        }
-        
-        return analysis;
-    }
-
-    analyzeConversationFlow() {
-        if (this.conversationContext.length === 0) return 'initial';
-        
-        const lastInteractions = this.conversationContext.slice(-3);
-        const intents = lastInteractions.map(ctx => ctx.analysis?.intent?.intent).filter(Boolean);
-        
-        if (intents.every(intent => intent === intents[0])) {
-            return 'focused'; // User staying on same topic
-        } else if (intents.includes('technical_support') && intents.includes('order_inquiry')) {
-            return 'multi_issue'; // Multiple related issues
-        } else {
-            return 'exploratory'; // User exploring different topics
-        }
-    }
-
-    assessUrgency(text) {
-        const urgentIndicators = ['urgent', 'emergency', 'immediately', 'asap', 'critical', 'broken', 'not working'];
-        const urgentCount = urgentIndicators.filter(indicator => 
-            text.toLowerCase().includes(indicator)
-        ).length;
-        
-        if (urgentCount >= 2) return 'high';
-        if (urgentCount === 1) return 'medium';
-        return 'low';
-    }
-
-    assessComplexity(text) {
-        const entities = this.extractEntities(text);
-        const totalEntities = Object.values(entities).flat().length;
-        const wordCount = text.split(/\s+/).length;
-        
-        if (totalEntities >= 3 || wordCount > 50) return 'high';
-        if (totalEntities >= 1 || wordCount > 20) return 'medium';
-        return 'low';
-    }
-
-    // === AI-POWERED RESPONSE GENERATION ===
-    generateAIResponse(userMessage, context) {
-        const analysis = this.understandContext(userMessage);
-        
-        // Choose response strategy based on analysis
-        let responseStrategy = this.selectResponseStrategy(analysis);
         let response = '';
+        let agentName = this.selectBestAgent(analysis);
         
-        switch (responseStrategy) {
-            case 'problem_solving':
-                response = this.generateProblemSolvingResponse(analysis);
+        // Generate response based on intent
+        switch (intent.intent) {
+            case 'order_inquiry':
+                response = this.generateOrderResponse(analysis);
                 break;
-            case 'information_providing':
-                response = this.generateInformationResponse(analysis);
+            case 'product_info':
+                response = this.generateProductResponse(analysis);
                 break;
-            case 'empathetic_support':
-                response = this.generateEmpatheticResponse(analysis);
+            case 'technical_support':
+                response = this.generateTechnicalResponse(analysis);
                 break;
-            case 'step_by_step':
-                response = this.generateStepByStepResponse(analysis);
+            case 'billing_payment':
+                response = this.generateBillingResponse(analysis);
                 break;
-            case 'proactive_assistance':
-                response = this.generateProactiveResponse(analysis);
+            case 'return_exchange':
+                response = this.generateReturnResponse(analysis);
+                break;
+            case 'general_inquiry':
+                if (userMessage.toLowerCase().includes('hello') || userMessage.toLowerCase().includes('hi')) {
+                    response = this.generateGreetingResponse();
+                } else {
+                    response = this.generateHelpResponse(analysis);
+                }
                 break;
             default:
-                response = this.generateContextualResponse(analysis);
+                response = this.generateDefaultResponse(analysis);
         }
         
-        // Add personalization
+        // Personalize response
         response = this.personalizeResponse(response, analysis);
-        
-        // Add smart suggestions
-        const suggestions = this.generateSmartSuggestions(analysis);
-        if (suggestions.length > 0) {
-            response += '\n\n' + this.formatSuggestions(suggestions);
-        }
         
         return {
             response: response,
-            strategy: responseStrategy,
+            agent: agentName,
             analysis: analysis,
-            suggestions: suggestions,
-            agent: this.selectBestAgent(analysis)
+            confidence: intent.confidence
         };
     }
 
-    selectResponseStrategy(analysis) {
-        const { sentiment, intent, urgencyLevel, complexity } = analysis;
-        
-        if (urgencyLevel === 'high') return 'problem_solving';
-        if (sentiment.overall === 'negative') return 'empathetic_support';
-        if (complexity === 'high') return 'step_by_step';
-        if (intent.intent === 'technical_support') return 'problem_solving';
-        if (intent.intent === 'product_info') return 'information_providing';
-        
-        return 'proactive_assistance';
-    }
+    // === RESPONSE GENERATORS ===
+    generateOrderResponse(analysis) {
+        const currentTime = new Date().toLocaleString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'UTC'
+        });
 
-    generateProblemSolvingResponse(analysis) {
-        const { intent, entities, urgencyLevel } = analysis;
+        let response = `Hi asarekings! 📦 **Real-time Order Dashboard** (Updated: ${currentTime} UTC)\n\n`;
         
-        let response = '';
+        response += `✅ **NEX-2025-001247** - $1,099.99\n`;
+        response += `📱 NexaPhone Pro Max - DELIVERED\n`;
+        response += `📅 Delivered: June 3, 2025\n`;
+        response += `🔍 Tracking: NEX1234567890\n`;
+        response += `⭐ Please rate your delivery experience\n\n`;
         
-        if (urgencyLevel === 'high') {
-            response += `🚨 I understand this is urgent, asarekings. Let me help you resolve this immediately.\n\n`;
-        } else {
-            response += `Hi asarekings! 🔧 I'm here to help solve this issue for you.\n\n`;
-        }
+        response += `🚚 **NEX-2025-001248** - $1,599.99\n`;
+        response += `💻 NexaBook Ultra 16 - IN TRANSIT\n`;
+        response += `📍 Current Location: Distribution Center - Chicago, IL\n`;
+        response += `📊 Progress: ▓▓▓▓▓▓▓░░░ 75%\n`;
+        response += `📅 Est. Delivery: June 10, 2025\n`;
+        response += `🔍 Tracking: NEX1234567891\n\n`;
         
-        // Specific problem-solving based on intent
-        switch (intent.intent) {
-            case 'technical_support':
-                response += this.generateTechnicalSolution(entities);
-                break;
-            case 'order_inquiry':
-                response += this.generateOrderSolution(entities);
-                break;
-            case 'billing_payment':
-                response += this.generateBillingSolution(entities);
-                break;
-            default:
-                response += `Let me analyze your issue and provide a step-by-step solution:\n\n`;
-                response += this.generateGenericSolution(analysis);
-        }
+        response += `⏳ **NEX-2025-001249** - $329.98\n`;
+        response += `🎧 NexaPods Max + Wireless Charger - PROCESSING\n`;
+        response += `🏭 Location: Fulfillment Center - Austin, TX\n`;
+        response += `📊 Progress: ▓▓░░░░░░░░ 25%\n`;
+        response += `📅 Est. Ship: June 9, 2025\n\n`;
         
-        response += `\n💡 **Next Steps:**\n`;
-        response += `• I'll monitor this issue until it's resolved\n`;
-        response += `• You'll receive updates every step of the way\n`;
-        response += `• If this doesn't work, I have backup solutions ready\n\n`;
-        response += `**Is this helping so far? Let me know how it's going!**`;
+        response += `📱 **Quick Actions:**\n`;
+        response += `• Update delivery preferences\n`;
+        response += `• Track packages in real-time\n`;
+        response += `• Enable delivery notifications\n`;
+        response += `• Contact delivery service directly\n\n`;
+        
+        response += `**Need help with any specific order?**`;
         
         return response;
     }
 
-    generateTechnicalSolution(entities) {
-        let solution = `🔧 **Technical Issue Diagnosis:**\n\n`;
+    generateProductResponse(analysis) {
+        let response = `Hi asarekings! 🛍️ **NexaShop Product Showcase** (Live Inventory - 2025-06-08 11:39:29)\n\n`;
         
-        if (entities.productNames.length > 0) {
-            const product = entities.productNames[0];
-            solution += `**Product:** ${product.toUpperCase()}\n\n`;
-            
-            switch (product) {
-                case 'nexaphone':
-                    solution += `📱 **NexaPhone Troubleshooting:**\n`;
-                    solution += `1️⃣ **Quick Reset:** Hold power + volume down for 10 seconds\n`;
-                    solution += `2️⃣ **Software Update:** Settings > System > Updates\n`;
-                    solution += `3️⃣ **Network Reset:** Settings > Network > Reset Network Settings\n`;
-                    solution += `4️⃣ **Factory Reset:** Last resort if above doesn't work\n\n`;
-                    break;
-                case 'nexabook':
-                    solution += `💻 **NexaBook Troubleshooting:**\n`;
-                    solution += `1️⃣ **Power Cycle:** Hold power button for 10 seconds, restart\n`;
-                    solution += `2️⃣ **Check Connections:** Ensure charger and peripherals are secure\n`;
-                    solution += `3️⃣ **Boot in Safe Mode:** Hold Shift while starting up\n`;
-                    solution += `4️⃣ **System Diagnostics:** Run built-in hardware test\n\n`;
-                    break;
-                default:
-                    solution += this.generateGenericTechSolution();
-            }
-        } else {
-            solution += this.generateGenericTechSolution();
-        }
+        response += `🔥 **Featured Products:**\n\n`;
         
-        solution += `🎯 **Advanced Solutions Available:**\n`;
-        solution += `• Remote diagnostic tool\n`;
-        solution += `• Video call troubleshooting\n`;
-        solution += `• Express replacement program\n`;
-        solution += `• Expert technician consultation\n`;
+        response += `📱 **NexaPhone Pro Max** - $1,099.99 ⭐4.9\n`;
+        response += `📋 6.7" OLED Display, 512GB Storage, 5G Ready, Pro Camera System\n`;
+        response += `📦 Stock: 247 units available (East Coast DC)\n`;
+        response += `🔥 Trending Now! +15% sales this week\n\n`;
         
-        return solution;
-    }
-
-    generateGenericTechSolution() {
-        return `🔧 **Universal Troubleshooting Steps:**\n` +
-               `1️⃣ **Restart Device:** Turn off completely, wait 30 seconds, turn on\n` +
-               `2️⃣ **Check Connections:** Ensure all cables are secure\n` +
-               `3️⃣ **Update Software:** Check for and install any available updates\n` +
-               `4️⃣ **Clear Cache:** Clear temporary files and cache\n` +
-               `5️⃣ **Check Settings:** Verify configuration settings are correct\n\n`;
-    }
-
-    generateInformationResponse(analysis) {
-        const { intent, entities } = analysis;
+        response += `💻 **NexaBook Ultra 16** - $1,599.99 ⭐4.8\n`;
+        response += `📋 M2 Pro Chip, 32GB RAM, 1TB SSD, 16.2" Liquid Retina Display\n`;
+        response += `📦 Stock: 89 units available (West Coast DC)\n`;
+        response += `💼 Perfect for professionals and creators\n\n`;
         
-        let response = `Hi asarekings! 🛍️ I'll provide you with detailed information.\n\n`;
+        response += `🎧 **NexaPods Max** - $249.99 ⭐4.7\n`;
+        response += `📋 Spatial Audio, Active Noise Canceling, 30h Battery, Wireless Charging\n`;
+        response += `📦 Stock: 156 units available (Central DC)\n`;
+        response += `🔥 Trending! Perfect companion for your devices\n\n`;
         
-        if (entities.productNames.length > 0) {
-            entities.productNames.forEach(product => {
-                response += this.getProductInformation(product);
-            });
-        } else {
-            response += this.getGeneralProductInformation();
-        }
+        response += `💰 **Current Deals:**\n`;
+        response += `🏷️ NexaPods Max: 20% off - Save $50 (Limited time)\n`;
+        response += `🏷️ NexaWatch Series X: 15% off - Save $75 (Ends June 12)\n\n`;
         
-        response += `\n🎯 **Personalized Recommendations:**\n`;
-        response += this.generatePersonalizedRecommendations();
+        response += `🎯 **Personalized for You:**\n`;
+        response += `• Based on your previous purchases\n`;
+        response += `• Premium Member exclusive deals\n`;
+        response += `• Early access to new releases\n\n`;
         
-        response += `\n💬 **What would you like to know more about?**\n`;
-        response += `• Detailed specifications\n`;
-        response += `• Comparison with other products\n`;
-        response += `• Pricing and availability\n`;
-        response += `• Customer reviews and ratings\n`;
+        response += `**Want specific product details or comparisons?**`;
         
         return response;
     }
 
-    generateEmpatheticResponse(analysis) {
-        const { sentiment, intent } = analysis;
+    generateTechnicalResponse(analysis) {
+        let response = `Hi asarekings! 🔧 **Technical Support Center** (2025-06-08 11:39:29)\n\n`;
         
-        let response = '';
+        response += `🌐 **System Status (Real-time):**\n`;
+        response += `• Website: ✅ Operational (99.99% uptime)\n`;
+        response += `• Mobile App: ✅ Operational (v3.2.1)\n`;
+        response += `• Payment System: ✅ Operational\n`;
+        response += `• Order Processing: ✅ Operational\n`;
+        response += `• Customer Chat: ✅ Operational (You're here!)\n\n`;
         
-        if (sentiment.overall === 'negative') {
-            response += `I sincerely apologize that you're experiencing this issue, asarekings. 😔\n\n`;
-            response += `Your frustration is completely understandable, and I'm here to make this right for you.\n\n`;
-        }
+        response += `🔧 **Common Solutions:**\n\n`;
+        response += `**📱 Device Issues:**\n`;
+        response += `1️⃣ Restart your device (hold power + volume down for 10 seconds)\n`;
+        response += `2️⃣ Check for software updates\n`;
+        response += `3️⃣ Clear cache and temporary files\n`;
+        response += `4️⃣ Reset network settings if connectivity issues\n\n`;
         
-        response += `🤝 **Here's how I'm going to help you:**\n\n`;
-        response += `✅ **Immediate Action:** I'm prioritizing your case right now\n`;
-        response += `✅ **Personal Attention:** I'll stay with you until this is resolved\n`;
-        response += `✅ **Escalation Ready:** I can bring in senior specialists if needed\n`;
-        response += `✅ **Follow-up Guaranteed:** I'll check in with you to ensure satisfaction\n\n`;
+        response += `**💻 Website/App Issues:**\n`;
+        response += `1️⃣ Clear browser cache and cookies\n`;
+        response += `2️⃣ Try incognito/private browsing mode\n`;
+        response += `3️⃣ Update your browser to latest version\n`;
+        response += `4️⃣ Disable browser extensions temporarily\n\n`;
         
-        // Provide specific solution based on intent
-        response += this.generateSolutionForIntent(intent);
+        response += `**📦 Order/Account Issues:**\n`;
+        response += `1️⃣ Log out and log back in\n`;
+        response += `2️⃣ Check email for order confirmations\n`;
+        response += `3️⃣ Verify payment method is active\n`;
+        response += `4️⃣ Contact us if issues persist\n\n`;
         
-        response += `\n💙 **You matter to us, asarekings.** NexaShop is committed to exceeding your expectations.\n\n`;
-        response += `**How are you feeling about this approach? I'm here to adjust based on your needs.**`;
+        response += `🎯 **Advanced Support:**\n`;
+        response += `• Remote diagnostic tools available\n`;
+        response += `• Video call troubleshooting\n`;
+        response += `• Expert technician consultation\n`;
+        response += `• Hardware replacement program\n\n`;
+        
+        response += `**What specific technical issue can I help you resolve?**`;
         
         return response;
     }
 
-    generateStepByStepResponse(analysis) {
-        const { intent, complexity } = analysis;
+    generateBillingResponse(analysis) {
+        let response = `Hi asarekings! 💳 **NexaShop Billing Center** (2025-06-08 11:39:29)\n\n`;
         
-        let response = `Hi asarekings! 📋 I'll guide you through this step-by-step.\n\n`;
-        response += `🎯 **Complexity Level:** ${complexity.toUpperCase()}\n`;
-        response += `⏱️ **Estimated Time:** ${this.estimateTimeRequired(complexity)}\n\n`;
+        response += `🔒 **Your Account Security:**\n`;
+        response += `• 256-bit SSL encryption active\n`;
+        response += `• PCI DSS Level 1 compliant\n`;
+        response += `• Fraud protection enabled\n`;
+        response += `• Zero-liability guarantee\n\n`;
         
-        response += `📝 **Step-by-Step Process:**\n\n`;
+        response += `📊 **Account Summary (asarekings):**\n`;
+        response += `• Membership: Premium Member 🌟\n`;
+        response += `• Member Since: January 2024\n`;
+        response += `• Total Orders: 12 orders\n`;
+        response += `• Lifetime Spent: $2,929.97\n`;
+        response += `• Savings from Deals: $487.23\n`;
+        response += `• Cashback Earned: $58.60\n`;
+        response += `• Available Store Credit: $25.00\n\n`;
         
-        const steps = this.generateStepsForIntent(intent.intent);
-        steps.forEach((step, index) => {
-            response += `**STEP ${index + 1}:** ${step}\n\n`;
+        response += `💰 **Payment Methods on File:**\n`;
+        response += `• Visa ending in 4521 (Primary)\n`;
+        response += `• PayPal (verified)\n`;
+        response += `• Apple Pay (enabled)\n`;
+        response += `• NexaShop Store Credit: $25.00\n\n`;
+        
+        response += `⚡ **Quick Actions:**\n`;
+        response += `• Update payment methods\n`;
+        response += `• Download invoices/receipts\n`;
+        response += `• View transaction history\n`;
+        response += `• Set up automatic payments\n`;
+        response += `• Request refund status\n\n`;
+        
+        response += `🎯 **Current Benefits:**\n`;
+        response += `• 2% cashback on all purchases this month\n`;
+        response += `• Free premium shipping (activated)\n`;
+        response += `• Early access to flash sales\n`;
+        response += `• Birthday month 20% discount (coming soon!)\n\n`;
+        
+        response += `**What billing question can I help you with?**`;
+        
+        return response;
+    }
+
+    generateReturnResponse(analysis) {
+        let response = `Hi asarekings! ↩️ **NexaShop Returns & Exchanges** (2025-06-08 11:39:29)\n\n`;
+        
+        response += `✨ **Our Return Promise:**\n`;
+        response += `• 30-day return window (extended for electronics)\n`;
+        response += `• 100% free return shipping\n`;
+        response += `• No restocking fees ever\n`;
+        response += `• 24-hour return processing\n`;
+        response += `• Full refund guarantee\n\n`;
+        
+        response += `🚀 **Easy Return Process:**\n\n`;
+        response += `**STEP 1: Initiate Return**\n`;
+        response += `• Go to "My Orders" in your account\n`;
+        response += `• Click "Return Item" next to your order\n`;
+        response += `• Select reason for return\n`;
+        response += `• Get instant approval\n\n`;
+        
+        response += `**STEP 2: Ship Back**\n`;
+        response += `• Print prepaid return label (QR code)\n`;
+        response += `• Package item securely\n`;
+        response += `• Drop off at any shipping location\n`;
+        response += `• Track return in real-time\n\n`;
+        
+        response += `**STEP 3: Get Refund**\n`;
+        response += `• 24-hour inspection upon receipt\n`;
+        response += `• Instant refund approval\n`;
+        response += `• 2-3 business days to your account\n`;
+        response += `• Email confirmation with details\n\n`;
+        
+        response += `📊 **Your Return History:**\n`;
+        response += `• Total returns: 2 (Excellent customer!)\n`;
+        response += `• Average processing: 1.5 days\n`;
+        response += `• Customer satisfaction: 5/5 ⭐\n`;
+        response += `• VIP return status: Activated\n\n`;
+        
+        response += `🔄 **Exchange Options:**\n`;
+        response += `• Same product, different size/color\n`;
+        response += `• Upgrade to newer model\n`;
+        response += `• Store credit with 10% bonus\n`;
+        response += `• Cross-category exchanges allowed\n\n`;
+        
+        response += `**Which item would you like to return or exchange?**`;
+        
+        return response;
+    }
+
+    generateGreetingResponse() {
+        const currentTime = new Date('2025-06-08T11:39:29Z').toLocaleString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZoneName: 'short'
         });
         
-        response += `✅ **Completion Checklist:**\n`;
-        response += `• Each step completed successfully\n`;
-        response += `• Issue fully resolved\n`;
-        response += `• You're satisfied with the solution\n`;
-        response += `• Follow-up scheduled if needed\n\n`;
-        
-        response += `**Ready to start? I'll guide you through each step and wait for your confirmation before moving to the next one.**`;
-        
-        return response;
+        return `Hello asarekings! 👋 Welcome back to NexaShop Support!\n\n🎫 **Support Session Details:**\n• Ticket Number: ${this.ticketNumber}\n• Current Time: ${currentTime}\n• Support Level: Premium Member 🌟\n• AI Assistant: Active 🤖\n\n🌟 **I'm here to help with:**\n• 📦 Order tracking & delivery updates\n• 🛍️ Product information & recommendations\n• 🔄 Returns & exchanges  \n• 💳 Billing & payment questions\n• 🔧 Technical support & troubleshooting\n• 💬 General questions & assistance\n\n**What can I help you with today?** I'm committed to providing you with exceptional, AI-powered service! ⚡`;
     }
 
-    generateProactiveResponse(analysis) {
-        const { intent, entities } = analysis;
-        
-        let response = `Hi asarekings! 🚀 I'm here to provide proactive assistance.\n\n`;
-        
-        // Anticipate needs based on context
-        const anticipatedNeeds = this.anticipateUserNeeds(analysis);
-        
-        response += `🔮 **I noticed you might also need:**\n`;
-        anticipatedNeeds.forEach(need => {
-            response += `• ${need}\n`;
-        });
-        response += `\n`;
-        
-        // Main response for the immediate need
-        response += this.generateSolutionForIntent(intent);
-        
-        // Add proactive suggestions
-        response += `\n💡 **Proactive Suggestions:**\n`;
-        const suggestions = this.generateProactiveSuggestions(analysis);
-        suggestions.forEach(suggestion => {
-            response += `• ${suggestion}\n`;
-        });
-        
-        response += `\n**Would you like me to help with any of these additional items while we're here?**`;
-        
-        return response;
+    generateHelpResponse(analysis) {
+        return `I'd be happy to help you with that! 😊\n\n🎯 **I can assist you with:**\n\n📦 **Orders & Shipping**\n• Track packages and delivery updates\n• Modify delivery preferences\n• Handle shipping issues\n\n🛍️ **Products & Shopping**\n• Product recommendations\n• Specifications and comparisons\n• Availability and pricing\n\n💳 **Account & Billing**\n• Payment issues and methods\n• Account settings and preferences\n• Refunds and billing questions\n\n🔧 **Technical Support**\n• Device troubleshooting\n• Website/app issues\n• Setup and configuration help\n\n↩️ **Returns & Exchanges**\n• Easy return process\n• Exchange options\n• Refund status\n\n**What specific area would you like help with?** I'll provide detailed, step-by-step assistance!`;
     }
 
-    // === SMART SUGGESTIONS SYSTEM ===
-    generateSmartSuggestions(analysis) {
-        const suggestions = [];
-        const { intent, entities, sentiment } = analysis;
-        
-        // Intent-based suggestions
-        switch (intent.intent) {
-            case 'order_inquiry':
-                suggestions.push('Set up delivery notifications');
-                suggestions.push('Update delivery preferences');
-                suggestions.push('Track multiple orders at once');
-                break;
-            case 'product_info':
-                suggestions.push('Compare with similar products');
-                suggestions.push('Check current promotions');
-                suggestions.push('Add to wishlist for price alerts');
-                break;
-            case 'technical_support':
-                suggestions.push('Schedule follow-up check');
-                suggestions.push('Enable remote diagnostics');
-                suggestions.push('Download troubleshooting app');
-                break;
-        }
-        
-        // Sentiment-based suggestions
-        if (sentiment.overall === 'negative') {
-            suggestions.push('Speak with a supervisor');
-            suggestions.push('Request priority handling');
-            suggestions.push('Provide feedback for improvement');
-        }
-        
-        // Entity-based suggestions
-        if (entities.productNames.length > 0) {
-            suggestions.push('View product warranty info');
-            suggestions.push('Download user manual');
-            suggestions.push('Join product community forum');
-        }
-        
-        return suggestions;
+    generateDefaultResponse(analysis) {
+        return `Thank you for contacting NexaShop Support! 🛍️\n\nI understand you need assistance, and I'm here to help. Let me connect you with the right solution.\n\n🤖 **AI Analysis Summary:**\n• Confidence Level: ${Math.round(analysis.intent.confidence * 100)}%\n• Priority Level: ${analysis.urgencyLevel}\n• Issue Complexity: ${analysis.complexity}\n\n🎯 **Recommended Actions:**\n• Let me know more specific details about your question\n• Browse our help topics above\n• Ask me anything - I'm here to help!\n\n**Please tell me more about what you need help with, and I'll provide a detailed solution!**`;
     }
 
-    formatSuggestions(suggestions) {
-        let formatted = `🎯 **Smart Suggestions:**\n`;
-        suggestions.forEach((suggestion, index) => {
-            formatted += `${index + 1}. ${suggestion}\n`;
-        });
-        formatted += `\n*Click any suggestion above to get instant help with that topic.*`;
-        return formatted;
-    }
-
-    // === PERSONALIZATION ENGINE ===
-    personalizeResponse(response, analysis) {
-        // Add user's name where appropriate
-        response = response.replace(/\buser\b/gi, 'asarekings');
-        
-        // Adjust tone based on user preferences and sentiment
-        if (analysis.sentiment.overall === 'negative') {
-            response = this.adjustToneForEmpathy(response);
-        }
-        
-        // Add personal touches based on conversation history
-        const personalTouches = this.getPersonalTouches();
-        if (personalTouches.length > 0 && Math.random() > 0.7) {
-            response += `\n\n💎 ${personalTouches[Math.floor(Math.random() * personalTouches.length)]}`;
-        }
-        
-        return response;
-    }
-
-    adjustToneForEmpathy(response) {
-        // Add more empathetic language
-        const empathyPhrases = [
-            'I completely understand your concern',
-            'I can see how frustrating this must be',
-            'Let me take care of this for you right away',
-            'You have every right to expect better'
-        ];
-        
-        const randomPhrase = empathyPhrases[Math.floor(Math.random() * empathyPhrases.length)];
-        return `${randomPhrase}. ${response}`;
-    }
-
-    getPersonalTouches() {
-        return [
-            `As a Premium Member, you have access to our fastest resolution channels.`,
-            `I see you've been with NexaShop since your first order - we truly value your loyalty!`,
-            `Your feedback helps us improve our service for all customers.`,
-            `I'm personally ensuring this gets the attention it deserves.`
-        ];
-    }
-
-    // === AGENT SELECTION AI ===
+    // === AGENT SELECTION ===
     selectBestAgent(analysis) {
         const agents = {
-            'Sarah Chen': { 
-                specialties: ['orders', 'shipping', 'tracking'], 
-                personality: 'efficient',
-                experience: 'senior'
-            },
-            'Mike Rodriguez': { 
-                specialties: ['technical', 'troubleshooting', 'devices'], 
-                personality: 'analytical',
-                experience: 'expert'
-            },
-            'Emma Wilson': { 
-                specialties: ['products', 'recommendations', 'sales'], 
-                personality: 'enthusiastic',
-                experience: 'specialist'
-            },
-            'Alex Thompson': { 
-                specialties: ['billing', 'payments', 'accounts'], 
-                personality: 'precise',
-                experience: 'senior'
-            },
-            'Lisa Chang': { 
-                specialties: ['returns', 'exchanges', 'complaints'], 
-                personality: 'empathetic',
-                experience: 'expert'
-            }
+            'Sarah Chen': { specialties: ['orders', 'shipping'], personality: 'efficient' },
+            'Mike Rodriguez': { specialties: ['technical', 'troubleshooting'], personality: 'analytical' },
+            'Emma Wilson': { specialties: ['products', 'recommendations'], personality: 'enthusiastic' },
+            'Alex Thompson': { specialties: ['billing', 'payments'], personality: 'precise' },
+            'Lisa Chang': { specialties: ['returns', 'complaints'], personality: 'empathetic' }
         };
         
-        const { intent, sentiment, urgencyLevel } = analysis;
-        
-        // Select based on urgency first
-        if (urgencyLevel === 'high') {
-            return Object.entries(agents).find(([name, agent]) => 
-                agent.experience === 'expert'
-            )?.[0] || 'Mike Rodriguez';
-        }
-        
-        // Select based on sentiment
-        if (sentiment.overall === 'negative') {
-            return 'Lisa Chang'; // Most empathetic
-        }
-        
-        // Select based on intent
         const intentToSpecialty = {
             'order_inquiry': 'orders',
             'technical_support': 'technical',
@@ -675,7 +486,12 @@ class NexaShopSupport {
             'return_exchange': 'returns'
         };
         
-        const requiredSpecialty = intentToSpecialty[intent.intent];
+        const requiredSpecialty = intentToSpecialty[analysis.intent.intent];
+        
+        if (analysis.sentiment.overall === 'negative') {
+            return 'Lisa Chang'; // Most empathetic
+        }
+        
         if (requiredSpecialty) {
             const matchingAgent = Object.entries(agents).find(([name, agent]) => 
                 agent.specialties.includes(requiredSpecialty)
@@ -683,10 +499,269 @@ class NexaShopSupport {
             if (matchingAgent) return matchingAgent[0];
         }
         
-        return 'Sarah Chen'; // Default to primary agent
+        return 'Sarah Chen'; // Default agent
     }
 
-    // === ENHANCED MESSAGE PROCESSING ===
+    // === PERSONALIZATION ===
+    personalizeResponse(response, analysis) {
+        // Add empathy for negative sentiment
+        if (analysis.sentiment.overall === 'negative') {
+            response = `I sincerely apologize for any inconvenience, asarekings. ${response}`;
+        }
+        
+        // Add urgency handling
+        if (analysis.urgencyLevel === 'high') {
+            response = `🚨 I understand this is urgent. ${response}\n\n**I'm prioritizing your request for immediate resolution.**`;
+        }
+        
+        return response;
+    }
+
+    // === BASIC FEATURES ===
+    initializeBasicFeatures() {
+        this.inventory = {
+            "nexaphone-pro": { stock: 247, warehouse: "East Coast DC", trending: true },
+            "nexabook-ultra": { stock: 89, warehouse: "West Coast DC", trending: false },
+            "nexapods-max": { stock: 156, warehouse: "Central DC", trending: true }
+        };
+        
+        this.orderManager = {
+            orders: [
+                {
+                    id: "NEX-2025-001247",
+                    status: "delivered",
+                    items: ["NexaPhone Pro Max"],
+                    total: 1099.99,
+                    deliveryProgress: 100
+                },
+                {
+                    id: "NEX-2025-001248", 
+                    status: "in_transit",
+                    items: ["NexaBook Ultra 16"],
+                    total: 1599.99,
+                    deliveryProgress: 75
+                }
+            ]
+        };
+        
+        this.performance = {
+            responseTime: [],
+            messagesSent: 0,
+            messagesReceived: 0,
+            trackResponseTime: (startTime) => {
+                const duration = Date.now() - startTime;
+                this.performance.responseTime.push(duration);
+                if (this.performance.responseTime.length > 20) {
+                    this.performance.responseTime.shift();
+                }
+            },
+            getAverageResponseTime: () => {
+                const times = this.performance.responseTime;
+                return times.length > 0 ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0;
+            }
+        };
+        
+        this.security = {
+            validateInput: (input) => {
+                const dangerous = /<script|javascript:|data:/i;
+                return !dangerous.test(input);
+            },
+            sanitizeInput: (input) => input.replace(/[<>]/g, '').trim(),
+            rateLimiting: { checkLimit: () => true }
+        };
+        
+        this.analytics = {
+            interactionCount: 0,
+            trackInteraction: (action, category, data = {}) => {
+                this.analytics.interactionCount++;
+                console.log('📈 Interaction tracked:', { action, category, data });
+            }
+        };
+        
+        console.log('✅ Basic features initialized');
+    }
+
+    buildUserProfile() {
+        return {
+            name: 'asarekings',
+            membershipLevel: 'Premium',
+            totalOrders: 12,
+            satisfaction: 4.8
+        };
+    }
+
+    loadResponseTemplates() {
+        return {
+            greeting: "Hello {name}! Welcome back to NexaShop.",
+            problem_solving: "I understand you're experiencing {issue}. Let me help.",
+            empathy: "I sincerely apologize for the inconvenience, {name}."
+        };
+    }
+
+    // === INITIALIZATION ===
+    init() {
+        this.setupElements();
+        this.setupEventListeners();
+        this.showWelcomeMessage();
+        
+        window.nexaShopSupport = this;
+        
+        console.log('✅ NexaShop AI Support System initialized successfully');
+        console.log('🤖 AI Features: Sentiment analysis, intent recognition active');
+        this.showNotification('🤖 AI-powered support ready! Try asking me anything.');
+    }
+
+    setupElements() {
+        this.messageInput = document.getElementById('messageInput');
+        this.messageForm = document.getElementById('messageForm');
+        this.messagesContainer = document.getElementById('messagesContainer');
+        this.notification = document.getElementById('notification');
+        this.fileInput = document.getElementById('fileInput');
+        this.fileBtn = document.getElementById('fileBtn');
+        this.filePreview = document.getElementById('filePreview');
+        this.themeToggle = document.getElementById('themeToggle');
+        this.soundToggle = document.getElementById('soundToggle');
+        
+        console.log('✅ DOM elements connected');
+    }
+
+    setupEventListeners() {
+        if (this.messageForm) {
+            this.messageForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.sendMessage();
+            });
+        }
+
+        if (this.messageInput) {
+            this.messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.sendMessage();
+                }
+            });
+            this.messageInput.addEventListener('input', () => this.autoResize());
+        }
+
+        if (this.fileBtn) {
+            this.fileBtn.addEventListener('click', () => this.fileInput?.click());
+        }
+
+        if (this.fileInput) {
+            this.fileInput.addEventListener('change', (e) => {
+                if (e.target.files[0]) this.handleFileSelect(e.target.files[0]);
+            });
+        }
+
+        if (this.themeToggle) {
+            this.themeToggle.addEventListener('click', () => this.toggleTheme());
+        }
+
+        console.log('✅ Event listeners configured');
+    }
+
+    showWelcomeMessage() {
+        if (!this.messagesContainer) return;
+        
+        const welcomeMsg = document.createElement('div');
+        welcomeMsg.className = 'welcome-message';
+        welcomeMsg.innerHTML = `
+            <div class="welcome-header">
+                <h3>🛍️ Welcome to NexaShop AI Support!</h3>
+                <div style="margin: 16px 0; padding: 16px; background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #6b7280; font-weight: 500;">Support Ticket:</span>
+                        <span style="font-weight: 600;">${this.ticketNumber}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #6b7280; font-weight: 500;">Current Time:</span>
+                        <span style="font-weight: 600;">2025-06-08 11:39:29 UTC</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #6b7280; font-weight: 500;">Customer:</span>
+                        <span style="font-weight: 600;">asarekings (Premium Member 🌟)</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #6b7280; font-weight: 500;">AI Assistant:</span>
+                        <span style="font-weight: 600;">🤖 Active & Learning</span>
+                    </div>
+                </div>
+                <p style="margin-bottom: 20px;">Hi asarekings! I'm your AI-powered support assistant. How can I help you today?</p>
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <h4>🚀 Quick Actions:</h4>
+                <div class="action-grid">
+                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('I need to check my order status')">
+                        <span style="font-size: 20px;">📦</span>
+                        Check Order Status
+                    </button>
+                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('I need to track my shipment')">
+                        <span style="font-size: 20px;">🚚</span>
+                        Track Package
+                    </button>
+                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('I want to return an item')">
+                        <span style="font-size: 20px;">↩️</span>
+                        Return & Exchange
+                    </button>
+                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('I need product information')">
+                        <span style="font-size: 20px;">💡</span>
+                        Product Questions
+                    </button>
+                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('I have a billing question')">
+                        <span style="font-size: 20px;">💳</span>
+                        Billing Support
+                    </button>
+                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('I need technical assistance')">
+                        <span style="font-size: 20px;">🔧</span>
+                        Technical Help
+                    </button>
+                </div>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4>🤖 AI Features Active:</h4>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
+                        <div style="font-weight: 600;">Sentiment Analysis</div>
+                        <div style="opacity: 0.9;">Emotion Detection</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
+                        <div style="font-weight: 600;">Intent Recognition</div>
+                        <div style="opacity: 0.9;">Smart Understanding</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
+                        <div style="font-weight: 600;">Context Memory</div>
+                        <div style="opacity: 0.9;">Conversation Flow</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
+                        <div style="font-weight: 600;">Smart Suggestions</div>
+                        <div style="opacity: 0.9;">Proactive Help</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.2);">
+                <p><strong>🎯 Try these AI-powered commands:</strong></p>
+                <p style="font-size: 14px; margin: 8px 0;">• "I'm frustrated with my order" - <em>AI detects emotion & provides empathetic response</em></p>
+                <p style="font-size: 14px; margin: 8px 0;">• "Can you help me?" - <em>AI analyzes intent & offers specific solutions</em></p>
+                <p style="font-size: 14px; margin: 8px 0;">• "I need this urgently" - <em>AI detects urgency & prioritizes response</em></p>
+                <p style="font-size: 14px; margin: 8px 0;">• Ask complex questions - <em>AI provides step-by-step solutions</em></p>
+            </div>
+        `;
+        this.messagesContainer.appendChild(welcomeMsg);
+        
+        this.analytics.trackInteraction('welcome_displayed', 'general');
+    }
+
+    quickMessage(message) {
+        this.analytics.trackInteraction('quick_action_click', 'ui', { message });
+        if (this.messageInput) {
+            this.messageInput.value = message;
+            this.sendMessage();
+        }
+    }
+
     sendMessage() {
         if (!this.messageInput) return;
 
@@ -716,107 +791,77 @@ class NexaShopSupport {
         this.autoResize();
         this.scrollToBottom();
 
-        // Enhanced analytics with AI insights
-        const context = this.understandContext(content);
         this.analytics.trackInteraction('message_sent', 'chat', { 
-            messageLength: content.length,
-            sentiment: context.sentiment.overall,
-            intent: context.intent.intent,
-            urgency: context.urgencyLevel,
-            complexity: context.complexity
+            messageLength: content.length
         });
 
-        // Generate AI-powered response
+        console.log('📤 Message sent:', content);
+
+        // Generate AI response
         setTimeout(() => {
-            this.generateEnhancedAIResponse(content, startTime, context);
+            this.generateEnhancedAIResponse(content, startTime);
         }, 800 + Math.random() * 1200);
     }
 
-    generateEnhancedAIResponse(userMessage, startTime, context) {
-        console.log('🤖 Generating AI response with context:', context);
+    generateEnhancedAIResponse(userMessage, startTime) {
+        console.log('🤖 Generating AI response for:', userMessage);
         
-        // Generate response using AI engine
-        const aiResponse = this.generateAIResponse(userMessage, context);
-        
-        this.showTypingIndicator(aiResponse.agent.name);
+        try {
+            // Generate response using AI engine
+            const aiResponse = this.generateAIResponse(userMessage);
+            
+            console.log('🧠 AI Response generated:', aiResponse);
+            
+            this.showTypingIndicator(aiResponse.agent);
 
-        setTimeout(() => {
-            this.hideTypingIndicator();
-            
-            const botMessage = {
-                id: this.generateId(),
-                content: aiResponse.response,
-                author: aiResponse.agent.name,
-                timestamp: Date.now(),
-                isOwn: false,
-                department: this.getDepartmentFromIntent(context.intent.intent),
-                aiGenerated: true,
-                strategy: aiResponse.strategy,
-                confidence: context.intent.confidence
-            };
+            setTimeout(() => {
+                this.hideTypingIndicator();
+                
+                const botMessage = {
+                    id: this.generateId(),
+                    content: aiResponse.response,
+                    author: aiResponse.agent,
+                    timestamp: Date.now(),
+                    isOwn: false,
+                    department: this.getDepartmentFromIntent(aiResponse.analysis.intent.intent),
+                    aiGenerated: true,
+                    confidence: aiResponse.confidence
+                };
 
-            this.messages.push(botMessage);
-            this.renderMessage(botMessage);
-            this.scrollToBottom();
-            this.performance.messagesReceived++;
-            this.performance.trackResponseTime(startTime);
+                this.messages.push(botMessage);
+                this.renderMessage(botMessage);
+                this.scrollToBottom();
+                this.performance.messagesReceived++;
+                this.performance.trackResponseTime(startTime);
+                
+                const confidencePercent = Math.round(aiResponse.confidence * 100);
+                this.showNotification(`🤖 ${aiResponse.agent} responded (AI: ${confidencePercent}% confidence)`);
+                
+                console.log('✅ AI response delivered successfully');
+            }, 1200 + Math.random() * 800);
+        } catch (error) {
+            console.error('❌ Error generating AI response:', error);
             
-            // Store conversation for learning
-            this.aiEngine.conversation.memory.set(Date.now(), {
-                userMessage: userMessage,
-                aiResponse: aiResponse,
-                context: context,
-                satisfaction: null // To be filled when user provides feedback
-            });
-            
-            this.showNotification(`🤖 ${aiResponse.agent.name} responded (AI-powered • ${Math.round(context.intent.confidence * 100)}% confidence)`);
-            
-            // Add quick action suggestions if available
-            if (aiResponse.suggestions.length > 0) {
-                this.showQuickActionSuggestions(aiResponse.suggestions);
-            }
-        }, 1200 + Math.random() * 800);
+            // Fallback response
+            setTimeout(() => {
+                const fallbackMessage = {
+                    id: this.generateId(),
+                    content: "I apologize, but I'm experiencing a temporary issue. Let me connect you with a human agent who can assist you right away. Thank you for your patience!",
+                    author: 'System',
+                    timestamp: Date.now(),
+                    isOwn: false,
+                    department: 'support'
+                };
+                
+                this.messages.push(fallbackMessage);
+                this.renderMessage(fallbackMessage);
+                this.scrollToBottom();
+                
+                this.showNotification('⚠️ Temporary AI issue - Human agent will assist');
+            }, 1000);
+        }
     }
 
-    // === EXISTING METHODS (Updated for compatibility) ===
-    initializeAdvancedFeatures() {
-        this.addLiveInventory();
-        this.addOrderManagement();
-        this.addMultiLanguageSupport();
-        this.addPerformanceMonitoring();
-        this.addSecurityFeatures();
-        this.addAnalytics();
-    }
-
-    // ... (Include all your existing methods here - addLiveInventory, addOrderManagement, etc.)
-    
-    // Add this method to build user profile
-    buildUserProfile() {
-        return {
-            name: 'asarekings',
-            membershipLevel: 'Premium',
-            joinDate: '2024-01-15',
-            totalOrders: 12,
-            favoriteCategories: ['electronics', 'accessories'],
-            communicationPreference: 'detailed',
-            previousIssues: ['shipping delay', 'product question'],
-            satisfaction: 4.8,
-            preferredAgent: null
-        };
-    }
-
-    // Add this method to load response templates
-    loadResponseTemplates() {
-        return {
-            greeting: "Hello {name}! Welcome back to NexaShop. How can I assist you today?",
-            problem_solving: "I understand you're experiencing {issue}. Let me help you resolve this step by step.",
-            empathy: "I sincerely apologize for the inconvenience, {name}. I'm here to make this right.",
-            resolution: "Great! I'm glad we could resolve {issue} for you. Is there anything else I can help with?",
-            escalation: "I'd like to connect you with a specialist who can provide more advanced assistance."
-        };
-    }
-
-    // Helper methods for the AI features
     getDepartmentFromIntent(intent) {
         const mapping = {
             'order_inquiry': 'orders',
@@ -829,121 +874,171 @@ class NexaShopSupport {
         return mapping[intent] || 'support';
     }
 
-    estimateTimeRequired(complexity) {
-        const timeMap = {
-            'low': '2-5 minutes',
-            'medium': '5-10 minutes',
-            'high': '10-20 minutes'
-        };
-        return timeMap[complexity] || '5-10 minutes';
-    }
+    renderMessage(message) {
+        if (!this.messagesContainer) return;
 
-    generateStepsForIntent(intent) {
-        const steps = {
-            'technical_support': [
-                'Identify the specific issue and error messages',
-                'Check basic connectivity and power status',
-                'Perform initial troubleshooting steps',
-                'Test the solution and verify functionality',
-                'Document the resolution for future reference'
-            ],
-            'order_inquiry': [
-                'Locate your order using order number or email',
-                'Check current status and tracking information',
-                'Verify shipping address and delivery preferences',
-                'Provide updated delivery timeline',
-                'Set up notifications for future updates'
-            ],
-            'return_exchange': [
-                'Review return policy and eligibility',
-                'Generate return authorization and label',
-                'Package item securely for return shipping',
-                'Track return package and processing',
-                'Process refund or exchange completion'
-            ]
-        };
-        return steps[intent] || ['Analyze your request', 'Research solutions', 'Implement resolution', 'Verify success'];
-    }
-
-    anticipateUserNeeds(analysis) {
-        const needs = [];
-        const { intent, entities } = analysis;
+        const messageEl = document.createElement('div');
+        messageEl.className = `message ${message.isOwn ? 'own' : ''}`;
         
-        if (intent.intent === 'order_inquiry') {
-            needs.push('Delivery preference updates');
-            needs.push('Order modification options');
-            needs.push('Related product recommendations');
+        const time = new Date(message.timestamp).toLocaleTimeString([], { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+
+        const departmentColor = this.getDepartmentColor(message.department);
+        const avatar = message.isOwn ? 'A' : (message.author ? message.author.split(' ').map(n => n[0]).join('') : 'S');
+
+        let aiIndicator = '';
+        if (message.aiGenerated) {
+            const confidence = Math.round(message.confidence * 100);
+            aiIndicator = `<span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 5px;">🤖 AI ${confidence}%</span>`;
         }
-        
-        if (entities.productNames.length > 0) {
-            needs.push('Warranty information');
-            needs.push('Compatible accessories');
-            needs.push('Product care instructions');
-        }
-        
-        return needs;
-    }
 
-    generateProactiveSuggestions(analysis) {
-        return [
-            'Enable smart notifications for order updates',
-            'Join our VIP program for early access to deals',
-            'Download our mobile app for faster support',
-            'Set up automatic reordering for frequently purchased items',
-            'Subscribe to product update newsletters'
-        ];
-    }
-
-    showQuickActionSuggestions(suggestions) {
-        // Create a suggestions container
-        const suggestionsEl = document.createElement('div');
-        suggestionsEl.className = 'ai-suggestions';
-        suggestionsEl.innerHTML = `
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border-radius: 12px; margin: 10px 0;">
-                <h4>🤖 AI Suggestions</h4>
-                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
-                    ${suggestions.map(suggestion => 
-                        `<button onclick="nexaShopSupport.quickMessage('${suggestion}')" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">${suggestion}</button>`
-                    ).join('')}
+        messageEl.innerHTML = `
+            <div class="message-content">
+                <div class="message-header">
+                    <div class="message-avatar" style="background: ${departmentColor}">
+                        ${avatar}
+                    </div>
+                    <span class="message-author">${message.author}${aiIndicator}</span>
+                    <span class="message-time">${time}</span>
                 </div>
+                <div class="message-text">${this.escapeHtml(message.content)}</div>
             </div>
         `;
+
+        const welcomeMsg = this.messagesContainer.querySelector('.welcome-message');
+        if (welcomeMsg && this.messages.length === 1) {
+            welcomeMsg.remove();
+        }
+
+        this.messagesContainer.appendChild(messageEl);
+    }
+
+    showTypingIndicator(agentName) {
+        if (!this.messagesContainer) return;
         
-        this.messagesContainer.appendChild(suggestionsEl);
+        const existingIndicator = document.getElementById('typingIndicator');
+        if (existingIndicator) existingIndicator.remove();
+        
+        const indicator = document.createElement('div');
+        indicator.className = 'typing-indicator';
+        indicator.id = 'typingIndicator';
+        indicator.innerHTML = `
+            <span>🤖 ${agentName} is analyzing and crafting your response...</span>
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        `;
+        this.messagesContainer.appendChild(indicator);
         this.scrollToBottom();
     }
 
-    // ... (Rest of your existing methods)
-    
-    // Update the init method to include AI features
-    init() {
-        this.setupElements();
-        this.setupEventListeners();
-        this.showWelcomeMessage();
-        
-        // Set global reference
-        window.nexaShopSupport = this;
-        
-        console.log('✅ NexaShop AI Support System initialized successfully');
-        console.log('🤖 AI Features: Sentiment analysis, intent recognition, smart suggestions active');
-        this.showNotification('🤖 AI-powered support ready! Advanced conversation analysis enabled.');
+    hideTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) {
+            indicator.remove();
+        }
     }
 
-    // ... (Include all other existing methods from your previous code)
+    handleFileSelect(file) {
+        this.selectedFile = file;
+        if (this.filePreview) {
+            this.filePreview.style.display = 'block';
+            this.filePreview.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>📎 ${file.name} (${this.formatFileSize(file.size)})</span>
+                    <button onclick="this.parentElement.parentElement.style.display='none'; nexaShopSupport.selectedFile=null;" style="background: none; border: none; cursor: pointer; color: #ef4444;">✕</button>
+                </div>
+            `;
+        }
+    }
+
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    getDepartmentColor(department) {
+        const colors = {
+            orders: '#10b981',
+            products: '#6366f1', 
+            returns: '#f59e0b',
+            billing: '#ef4444',
+            technical: '#8b5cf6',
+            support: '#06b6d4'
+        };
+        return colors[department] || '#6366f1';
+    }
+
+    autoResize() {
+        if (this.messageInput) {
+            this.messageInput.style.height = 'auto';
+            this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
+        }
+    }
+
+    scrollToBottom() {
+        if (this.settings.autoScroll && this.messagesContainer) {
+            this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+        }
+    }
+
+    showNotification(message) {
+        if (this.notification) {
+            this.notification.textContent = message;
+            this.notification.classList.add('show');
+            setTimeout(() => {
+                this.notification.classList.remove('show');
+            }, 4000);
+        }
+    }
+
+    toggleTheme() {
+        this.settings.darkMode = !this.settings.darkMode;
+        document.documentElement.setAttribute('data-theme', this.settings.darkMode ? 'dark' : 'light');
+        if (this.themeToggle) {
+            this.themeToggle.textContent = this.settings.darkMode ? '☀️' : '🌙';
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
 }
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 DOM loaded, initializing NexaShop AI Support...');
-    console.log('📅 Current Time: 2025-06-08 11:33:17 UTC');
+    console.log('📅 Current Time: 2025-06-08 11:39:29 UTC');
     console.log('👤 User: asarekings logged in');
-    console.log('🤖 Loading advanced AI conversation features...');
-    new NexaShopSupport();
+    console.log('🤖 Starting AI conversation engine...');
+    try {
+        new NexaShopSupport();
+        console.log('✅ NexaShop AI Support initialized successfully');
+    } catch (error) {
+        console.error('❌ Initialization error:', error);
+    }
 });
 
 if (document.readyState === 'loading') {
     // Still loading, wait for DOMContentLoaded
 } else {
     console.log('DOM already loaded, initializing AI system immediately...');
-    new NexaShopSupport();
+    try {
+        new NexaShopSupport();
+    } catch (error) {
+        console.error('❌ Immediate initialization error:', error);
+    }
 }
