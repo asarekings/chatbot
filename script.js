@@ -1,7 +1,7 @@
 class NexaShopSupport {
     constructor() {
-        // Current time as provided: 2025-06-08 11:39:29 UTC
-        this.currentDateTime = new Date('2025-06-08T11:39:29Z');
+        // Current time as provided: 2025-06-08 12:13:20 UTC
+        this.currentDateTime = new Date('2025-06-08T12:13:20Z');
         
         this.currentUser = {
             id: 'user-asarekings',
@@ -38,9 +38,9 @@ class NexaShopSupport {
         this.ticketNumber = 'NEX-2025-0608-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
         
         console.log('🤖 Initializing NexaShop AI Support System...');
-        console.log('📅 Current Time: 2025-06-08 11:39:29 UTC');
+        console.log('📅 Current Time: 2025-06-08 12:13:20 UTC');
         console.log('👤 User: asarekings logged in');
-        console.log('🧠 AI Features: Advanced conversation analysis activated');
+        console.log('🧠 AI Features: Clean response formatting enabled');
         
         this.initializeAIFeatures();
         this.initializeBasicFeatures();
@@ -69,7 +69,7 @@ class NexaShopSupport {
             }
         };
         
-        console.log('🧠 AI Engine initialized with advanced conversation capabilities');
+        console.log('🧠 AI Engine initialized with clean response formatting');
     }
 
     // === SENTIMENT ANALYSIS ===
@@ -242,7 +242,7 @@ class NexaShopSupport {
         };
     }
 
-    // === RESPONSE GENERATORS ===
+    // === CLEAN RESPONSE GENERATORS (NO ASTERISKS) ===
     generateOrderResponse(analysis) {
         const currentTime = new Date().toLocaleString('en-US', {
             month: 'long',
@@ -252,202 +252,232 @@ class NexaShopSupport {
             timeZone: 'UTC'
         });
 
-        let response = `Hi asarekings! 📦 **Real-time Order Dashboard** (Updated: ${currentTime} UTC)\n\n`;
+        let response = `Hi asarekings! 📦 Real-time Order Dashboard (Updated: ${currentTime} UTC)\n\n`;
         
-        response += `✅ **NEX-2025-001247** - $1,099.99\n`;
+        response += `✅ NEX-2025-001247 - $1,099.99\n`;
         response += `📱 NexaPhone Pro Max - DELIVERED\n`;
-        response += `📅 Delivered: June 3, 2025\n`;
+        response += `📅 Delivered: June 3, 2025 at 4:45 PM\n`;
         response += `🔍 Tracking: NEX1234567890\n`;
         response += `⭐ Please rate your delivery experience\n\n`;
         
-        response += `🚚 **NEX-2025-001248** - $1,599.99\n`;
+        response += `🚚 NEX-2025-001248 - $1,599.99\n`;
         response += `💻 NexaBook Ultra 16 - IN TRANSIT\n`;
         response += `📍 Current Location: Distribution Center - Chicago, IL\n`;
-        response += `📊 Progress: ▓▓▓▓▓▓▓░░░ 75%\n`;
-        response += `📅 Est. Delivery: June 10, 2025\n`;
+        response += `📊 Progress: ▓▓▓▓▓▓▓░░░ 75% complete\n`;
+        response += `📅 Estimated Delivery: June 10, 2025\n`;
         response += `🔍 Tracking: NEX1234567891\n\n`;
         
-        response += `⏳ **NEX-2025-001249** - $329.98\n`;
+        response += `⏳ NEX-2025-001249 - $329.98\n`;
         response += `🎧 NexaPods Max + Wireless Charger - PROCESSING\n`;
         response += `🏭 Location: Fulfillment Center - Austin, TX\n`;
-        response += `📊 Progress: ▓▓░░░░░░░░ 25%\n`;
-        response += `📅 Est. Ship: June 9, 2025\n\n`;
+        response += `📊 Progress: ▓▓░░░░░░░░ 25% complete\n`;
+        response += `📅 Estimated Ship Date: June 9, 2025\n\n`;
         
-        response += `📱 **Quick Actions:**\n`;
-        response += `• Update delivery preferences\n`;
-        response += `• Track packages in real-time\n`;
-        response += `• Enable delivery notifications\n`;
-        response += `• Contact delivery service directly\n\n`;
+        response += `📱 Quick Actions Available:\n`;
+        response += `• Update delivery preferences and address\n`;
+        response += `• Track packages in real-time with live updates\n`;
+        response += `• Enable SMS and email delivery notifications\n`;
+        response += `• Contact delivery service directly for special requests\n\n`;
         
-        response += `**Need help with any specific order?**`;
+        response += `Need help with any specific order or have delivery questions?`;
         
         return response;
     }
 
     generateProductResponse(analysis) {
-        let response = `Hi asarekings! 🛍️ **NexaShop Product Showcase** (Live Inventory - 2025-06-08 11:39:29)\n\n`;
+        let response = `Hi asarekings! 🛍️ NexaShop Product Showcase (Live Inventory - 2025-06-08 12:13:20)\n\n`;
         
-        response += `🔥 **Featured Products:**\n\n`;
+        response += `🔥 Featured Products Currently Available:\n\n`;
         
-        response += `📱 **NexaPhone Pro Max** - $1,099.99 ⭐4.9\n`;
-        response += `📋 6.7" OLED Display, 512GB Storage, 5G Ready, Pro Camera System\n`;
-        response += `📦 Stock: 247 units available (East Coast DC)\n`;
-        response += `🔥 Trending Now! +15% sales this week\n\n`;
+        response += `📱 NexaPhone Pro Max - $1,099.99 ⭐4.9/5\n`;
+        response += `📋 6.7" OLED Display, 512GB Storage, 5G Ready, Advanced Pro Camera System\n`;
+        response += `📦 Stock Status: 247 units available (Ships from East Coast DC)\n`;
+        response += `🔥 Trending Alert: +15% sales increase this week\n`;
+        response += `🚚 Free 2-day shipping for Premium Members\n\n`;
         
-        response += `💻 **NexaBook Ultra 16** - $1,599.99 ⭐4.8\n`;
-        response += `📋 M2 Pro Chip, 32GB RAM, 1TB SSD, 16.2" Liquid Retina Display\n`;
-        response += `📦 Stock: 89 units available (West Coast DC)\n`;
-        response += `💼 Perfect for professionals and creators\n\n`;
+        response += `💻 NexaBook Ultra 16 - $1,599.99 ⭐4.8/5\n`;
+        response += `📋 M2 Pro Chip, 32GB Unified Memory, 1TB SSD, 16.2" Liquid Retina Display\n`;
+        response += `📦 Stock Status: 89 units available (Ships from West Coast DC)\n`;
+        response += `💼 Perfect for professionals, creators, and power users\n`;
+        response += `🎯 Recommended based on your previous laptop searches\n\n`;
         
-        response += `🎧 **NexaPods Max** - $249.99 ⭐4.7\n`;
-        response += `📋 Spatial Audio, Active Noise Canceling, 30h Battery, Wireless Charging\n`;
-        response += `📦 Stock: 156 units available (Central DC)\n`;
-        response += `🔥 Trending! Perfect companion for your devices\n\n`;
+        response += `🎧 NexaPods Max - $249.99 ⭐4.7/5\n`;
+        response += `📋 Spatial Audio, Active Noise Canceling, 30-hour battery, Wireless Charging Case\n`;
+        response += `📦 Stock Status: 156 units available (Ships from Central DC)\n`;
+        response += `🔥 Hot Item: Perfect companion for all your NexaShop devices\n`;
+        response += `💡 Pro Tip: Works seamlessly with NexaPhone and NexaBook\n\n`;
         
-        response += `💰 **Current Deals:**\n`;
-        response += `🏷️ NexaPods Max: 20% off - Save $50 (Limited time)\n`;
-        response += `🏷️ NexaWatch Series X: 15% off - Save $75 (Ends June 12)\n\n`;
+        response += `💰 Current Limited-Time Deals:\n`;
+        response += `🏷️ NexaPods Max: 20% discount - Save $50.00 (Ends June 15)\n`;
+        response += `🏷️ NexaWatch Series X: 15% discount - Save $74.99 (Ends June 12)\n`;
+        response += `🎁 Bundle Deal: Buy NexaPhone + NexaPods, get wireless charger FREE\n\n`;
         
-        response += `🎯 **Personalized for You:**\n`;
-        response += `• Based on your previous purchases\n`;
-        response += `• Premium Member exclusive deals\n`;
-        response += `• Early access to new releases\n\n`;
+        response += `🎯 Personalized Recommendations for You:\n`;
+        response += `• Based on your purchase history and preferences\n`;
+        response += `• Premium Member exclusive early access deals\n`;
+        response += `• Curated selection matching your tech ecosystem\n`;
+        response += `• Expert recommendations from our product specialists\n\n`;
         
-        response += `**Want specific product details or comparisons?**`;
+        response += `Want detailed specs, comparisons, or have specific product questions?`;
         
         return response;
     }
 
     generateTechnicalResponse(analysis) {
-        let response = `Hi asarekings! 🔧 **Technical Support Center** (2025-06-08 11:39:29)\n\n`;
+        let response = `Hi asarekings! 🔧 NexaShop Technical Support Center (2025-06-08 12:13:20)\n\n`;
         
-        response += `🌐 **System Status (Real-time):**\n`;
-        response += `• Website: ✅ Operational (99.99% uptime)\n`;
-        response += `• Mobile App: ✅ Operational (v3.2.1)\n`;
-        response += `• Payment System: ✅ Operational\n`;
-        response += `• Order Processing: ✅ Operational\n`;
-        response += `• Customer Chat: ✅ Operational (You're here!)\n\n`;
+        response += `🌐 Live System Status Dashboard:\n`;
+        response += `• Main Website: ✅ Fully Operational (99.99% uptime)\n`;
+        response += `• Mobile Application: ✅ Fully Operational (Latest version 3.2.1)\n`;
+        response += `• Payment Processing: ✅ All systems operational\n`;
+        response += `• Order Management: ✅ Real-time processing active\n`;
+        response += `• Customer Support Chat: ✅ AI-powered assistance online\n`;
+        response += `• Shipping Partners: ✅ All carriers reporting normal operations\n\n`;
         
-        response += `🔧 **Common Solutions:**\n\n`;
-        response += `**📱 Device Issues:**\n`;
-        response += `1️⃣ Restart your device (hold power + volume down for 10 seconds)\n`;
-        response += `2️⃣ Check for software updates\n`;
-        response += `3️⃣ Clear cache and temporary files\n`;
-        response += `4️⃣ Reset network settings if connectivity issues\n\n`;
+        response += `🔧 Universal Troubleshooting Solutions:\n\n`;
         
-        response += `**💻 Website/App Issues:**\n`;
-        response += `1️⃣ Clear browser cache and cookies\n`;
-        response += `2️⃣ Try incognito/private browsing mode\n`;
-        response += `3️⃣ Update your browser to latest version\n`;
-        response += `4️⃣ Disable browser extensions temporarily\n\n`;
+        response += `📱 For NexaShop Device Issues:\n`;
+        response += `1️⃣ Power Reset: Hold power button + volume down for 10 seconds, then restart\n`;
+        response += `2️⃣ Software Update: Go to Settings > System Updates > Check for updates\n`;
+        response += `3️⃣ Network Reset: Settings > Network & Internet > Reset Network Settings\n`;
+        response += `4️⃣ Cache Clear: Settings > Storage > Clear Cache for better performance\n`;
+        response += `5️⃣ Factory Reset: Last resort option if other steps don't resolve the issue\n\n`;
         
-        response += `**📦 Order/Account Issues:**\n`;
-        response += `1️⃣ Log out and log back in\n`;
-        response += `2️⃣ Check email for order confirmations\n`;
-        response += `3️⃣ Verify payment method is active\n`;
-        response += `4️⃣ Contact us if issues persist\n\n`;
+        response += `💻 For Website and App Issues:\n`;
+        response += `1️⃣ Browser Refresh: Clear cache and cookies, then restart browser\n`;
+        response += `2️⃣ Incognito Mode: Try accessing in private/incognito browsing mode\n`;
+        response += `3️⃣ Browser Update: Ensure you're using the latest browser version\n`;
+        response += `4️⃣ Extension Check: Temporarily disable browser extensions\n`;
+        response += `5️⃣ Alternative Access: Try our mobile app or different browser\n\n`;
         
-        response += `🎯 **Advanced Support:**\n`;
-        response += `• Remote diagnostic tools available\n`;
-        response += `• Video call troubleshooting\n`;
-        response += `• Expert technician consultation\n`;
-        response += `• Hardware replacement program\n\n`;
+        response += `📦 For Order and Account Issues:\n`;
+        response += `1️⃣ Account Refresh: Log out completely, wait 30 seconds, then log back in\n`;
+        response += `2️⃣ Email Verification: Check spam folder for order confirmations\n`;
+        response += `3️⃣ Payment Verification: Ensure your payment method is active and valid\n`;
+        response += `4️⃣ Address Confirmation: Verify shipping address is complete and accurate\n`;
+        response += `5️⃣ Direct Contact: Reach out if automated solutions don't work\n\n`;
         
-        response += `**What specific technical issue can I help you resolve?**`;
+        response += `🎯 Advanced Technical Support Options:\n`;
+        response += `• Remote Diagnostic Tools: We can run advanced diagnostics on your device\n`;
+        response += `• Live Video Troubleshooting: Screen-share sessions with expert technicians\n`;
+        response += `• Priority Technical Escalation: Direct access to senior engineering team\n`;
+        response += `• Hardware Replacement Program: Express replacement for defective items\n`;
+        response += `• Extended Warranty Support: Comprehensive coverage for all your devices\n\n`;
+        
+        response += `What specific technical challenge can I help you solve today?`;
         
         return response;
     }
 
     generateBillingResponse(analysis) {
-        let response = `Hi asarekings! 💳 **NexaShop Billing Center** (2025-06-08 11:39:29)\n\n`;
+        let response = `Hi asarekings! 💳 NexaShop Secure Billing Center (2025-06-08 12:13:20)\n\n`;
         
-        response += `🔒 **Your Account Security:**\n`;
-        response += `• 256-bit SSL encryption active\n`;
-        response += `• PCI DSS Level 1 compliant\n`;
-        response += `• Fraud protection enabled\n`;
-        response += `• Zero-liability guarantee\n\n`;
+        response += `🔒 Your Account Security Status:\n`;
+        response += `• Encryption Level: 256-bit SSL encryption currently active\n`;
+        response += `• Compliance: PCI DSS Level 1 certified and compliant\n`;
+        response += `• Fraud Protection: Advanced monitoring systems enabled\n`;
+        response += `• Purchase Protection: Zero-liability guarantee on all transactions\n`;
+        response += `• Data Security: Your financial information is never stored locally\n\n`;
         
-        response += `📊 **Account Summary (asarekings):**\n`;
-        response += `• Membership: Premium Member 🌟\n`;
-        response += `• Member Since: January 2024\n`;
-        response += `• Total Orders: 12 orders\n`;
-        response += `• Lifetime Spent: $2,929.97\n`;
-        response += `• Savings from Deals: $487.23\n`;
-        response += `• Cashback Earned: $58.60\n`;
-        response += `• Available Store Credit: $25.00\n\n`;
+        response += `📊 Complete Account Summary for asarekings:\n`;
+        response += `• Membership Status: Premium Member 🌟 (Active since January 2024)\n`;
+        response += `• Total Orders Placed: 12 orders successfully completed\n`;
+        response += `• Lifetime Purchase Amount: $2,929.97 across all categories\n`;
+        response += `• Total Savings from Deals: $487.23 in discounts and promotions\n`;
+        response += `• Cashback Rewards Earned: $58.60 available for future purchases\n`;
+        response += `• Available Store Credit: $25.00 ready to use\n`;
+        response += `• Account Standing: Excellent (5-star customer rating)\n\n`;
         
-        response += `💰 **Payment Methods on File:**\n`;
-        response += `• Visa ending in 4521 (Primary)\n`;
-        response += `• PayPal (verified)\n`;
-        response += `• Apple Pay (enabled)\n`;
-        response += `• NexaShop Store Credit: $25.00\n\n`;
+        response += `💰 Payment Methods Currently on File:\n`;
+        response += `• Primary Card: Visa ending in 4521 (expires 08/2027) - Verified\n`;
+        response += `• PayPal Account: verified and linked (primary backup method)\n`;
+        response += `• Apple Pay: enabled and configured for quick checkout\n`;
+        response += `• Google Pay: available for mobile purchases\n`;
+        response += `• NexaShop Store Credit: $25.00 balance available\n`;
+        response += `• Buy Now Pay Later: Klarna and Afterpay options available\n\n`;
         
-        response += `⚡ **Quick Actions:**\n`;
-        response += `• Update payment methods\n`;
-        response += `• Download invoices/receipts\n`;
-        response += `• View transaction history\n`;
-        response += `• Set up automatic payments\n`;
-        response += `• Request refund status\n\n`;
+        response += `⚡ Quick Billing Actions You Can Take:\n`;
+        response += `• Update or add new payment methods instantly\n`;
+        response += `• Download receipts and invoices for any past order\n`;
+        response += `• View complete transaction history with detailed breakdowns\n`;
+        response += `• Set up automatic payments for subscription services\n`;
+        response += `• Request refund status updates and processing timelines\n`;
+        response += `• Manage billing addresses and tax information\n\n`;
         
-        response += `🎯 **Current Benefits:**\n`;
-        response += `• 2% cashback on all purchases this month\n`;
-        response += `• Free premium shipping (activated)\n`;
-        response += `• Early access to flash sales\n`;
-        response += `• Birthday month 20% discount (coming soon!)\n\n`;
+        response += `🎯 Your Current Premium Member Benefits:\n`;
+        response += `• Monthly Cashback: 2% on all purchases (active through June)\n`;
+        response += `• Free Premium Shipping: Unlimited express delivery included\n`;
+        response += `• Early Sale Access: 24-hour head start on all flash sales\n`;
+        response += `• Birthday Month Discount: 20% off everything (coming up soon!)\n`;
+        response += `• Extended Return Window: 45 days instead of standard 30 days\n`;
+        response += `• Priority Customer Support: Skip the queue with dedicated assistance\n\n`;
         
-        response += `**What billing question can I help you with?**`;
+        response += `What specific billing question or account matter can I help you with?`;
         
         return response;
     }
 
     generateReturnResponse(analysis) {
-        let response = `Hi asarekings! ↩️ **NexaShop Returns & Exchanges** (2025-06-08 11:39:29)\n\n`;
+        let response = `Hi asarekings! ↩️ NexaShop Returns & Exchanges Center (2025-06-08 12:13:20)\n\n`;
         
-        response += `✨ **Our Return Promise:**\n`;
-        response += `• 30-day return window (extended for electronics)\n`;
-        response += `• 100% free return shipping\n`;
-        response += `• No restocking fees ever\n`;
-        response += `• 24-hour return processing\n`;
-        response += `• Full refund guarantee\n\n`;
+        response += `✨ Our Hassle-Free Return Promise:\n`;
+        response += `• Extended Return Window: 30 days for most items, 45 days for electronics\n`;
+        response += `• Completely Free Return Shipping: We cover all costs, no questions asked\n`;
+        response += `• Zero Restocking Fees: Never any hidden charges or penalties\n`;
+        response += `• Lightning-Fast Processing: 24-hour inspection and approval guarantee\n`;
+        response += `• Full Refund Guarantee: 100% money back for any reason\n`;
+        response += `• Condition Flexibility: Items don't need to be in perfect condition\n\n`;
         
-        response += `🚀 **Easy Return Process:**\n\n`;
-        response += `**STEP 1: Initiate Return**\n`;
-        response += `• Go to "My Orders" in your account\n`;
-        response += `• Click "Return Item" next to your order\n`;
-        response += `• Select reason for return\n`;
-        response += `• Get instant approval\n\n`;
+        response += `🚀 Simple 3-Step Return Process:\n\n`;
         
-        response += `**STEP 2: Ship Back**\n`;
-        response += `• Print prepaid return label (QR code)\n`;
-        response += `• Package item securely\n`;
-        response += `• Drop off at any shipping location\n`;
-        response += `• Track return in real-time\n\n`;
+        response += `STEP 1 - Instant Return Authorization:\n`;
+        response += `• Log into your NexaShop account dashboard\n`;
+        response += `• Navigate to "My Orders" and find your purchase\n`;
+        response += `• Click "Return Item" button next to the product\n`;
+        response += `• Select your reason from the dropdown menu\n`;
+        response += `• Receive instant approval and return authorization number\n\n`;
         
-        response += `**STEP 3: Get Refund**\n`;
-        response += `• 24-hour inspection upon receipt\n`;
-        response += `• Instant refund approval\n`;
-        response += `• 2-3 business days to your account\n`;
-        response += `• Email confirmation with details\n\n`;
+        response += `STEP 2 - Smart Return Shipping:\n`;
+        response += `• Print your prepaid return label (QR code available for mobile)\n`;
+        response += `• Package item securely (original packaging not required)\n`;
+        response += `• Drop off at any UPS, FedEx, or USPS location\n`;
+        response += `• Track your return package in real-time through our system\n`;
+        response += `• Receive confirmation when package reaches our facility\n\n`;
         
-        response += `📊 **Your Return History:**\n`;
-        response += `• Total returns: 2 (Excellent customer!)\n`;
-        response += `• Average processing: 1.5 days\n`;
-        response += `• Customer satisfaction: 5/5 ⭐\n`;
-        response += `• VIP return status: Activated\n\n`;
+        response += `STEP 3 - Quick Refund Processing:\n`;
+        response += `• 24-hour quality inspection upon package receipt\n`;
+        response += `• Instant refund approval and processing initiation\n`;
+        response += `• 2-3 business days for refund to appear in your account\n`;
+        response += `• Email confirmation with detailed refund breakdown\n`;
+        response += `• Optional satisfaction survey to help us improve\n\n`;
         
-        response += `🔄 **Exchange Options:**\n`;
-        response += `• Same product, different size/color\n`;
-        response += `• Upgrade to newer model\n`;
-        response += `• Store credit with 10% bonus\n`;
-        response += `• Cross-category exchanges allowed\n\n`;
+        response += `📊 Your Personal Return History:\n`;
+        response += `• Total Returns Processed: 2 items (You're an excellent customer!)\n`;
+        response += `• Average Processing Time: 1.5 days (faster than our 2-day guarantee)\n`;
+        response += `• Customer Satisfaction Score: 5 out of 5 stars ⭐\n`;
+        response += `• VIP Return Status: Activated (even faster processing for you)\n`;
+        response += `• Return Success Rate: 100% - all returns processed smoothly\n\n`;
         
-        response += `**Which item would you like to return or exchange?**`;
+        response += `🔄 Flexible Exchange Options Available:\n`;
+        response += `• Same Product Different Specs: Change size, color, or model instantly\n`;
+        response += `• Product Upgrade Path: Pay difference to upgrade to newer model\n`;
+        response += `• Cross-Category Exchanges: Exchange phone for laptop, etc.\n`;
+        response += `• Store Credit Option: Get 10% bonus when choosing store credit\n`;
+        response += `• Gift Card Conversion: Perfect for giving as gifts\n\n`;
+        
+        response += `🎯 Premium Member Return Perks:\n`;
+        response += `• Express Return Processing: 12-hour turnaround available\n`;
+        response += `• Advance Replacement: Get new item before returning old one\n`;
+        response += `• Dedicated Return Specialist: Personal assistant for complex returns\n`;
+        response += `• Return Pickup Service: We can collect returns from your location\n\n`;
+        
+        response += `Which specific item would you like to return or exchange today?`;
         
         return response;
     }
 
     generateGreetingResponse() {
-        const currentTime = new Date('2025-06-08T11:39:29Z').toLocaleString('en-US', {
+        const currentTime = new Date('2025-06-08T12:13:20Z').toLocaleString('en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
@@ -457,15 +487,15 @@ class NexaShopSupport {
             timeZoneName: 'short'
         });
         
-        return `Hello asarekings! 👋 Welcome back to NexaShop Support!\n\n🎫 **Support Session Details:**\n• Ticket Number: ${this.ticketNumber}\n• Current Time: ${currentTime}\n• Support Level: Premium Member 🌟\n• AI Assistant: Active 🤖\n\n🌟 **I'm here to help with:**\n• 📦 Order tracking & delivery updates\n• 🛍️ Product information & recommendations\n• 🔄 Returns & exchanges  \n• 💳 Billing & payment questions\n• 🔧 Technical support & troubleshooting\n• 💬 General questions & assistance\n\n**What can I help you with today?** I'm committed to providing you with exceptional, AI-powered service! ⚡`;
+        return `Hello asarekings! 👋 Welcome back to NexaShop Support!\n\n🎫 Your Support Session Information:\n• Support Ticket Number: ${this.ticketNumber}\n• Current Date and Time: ${currentTime}\n• Your Account Status: Premium Member 🌟\n• AI Assistant Status: Fully Active and Learning 🤖\n• Session Security Level: Encrypted and Secure 🔒\n\n🌟 How I Can Assist You Today:\n• 📦 Order Tracking and Delivery Management\n• 🛍️ Product Information and Smart Recommendations\n• 🔄 Returns, Exchanges, and Refund Processing  \n• 💳 Billing Questions and Account Management\n• 🔧 Technical Support and Device Troubleshooting\n• 💬 General Questions and Customer Care\n\n🤖 Advanced AI Features Ready:\n• Intelligent conversation analysis for better understanding\n• Emotional tone detection for personalized responses\n• Smart suggestion system based on your needs\n• Proactive problem-solving with step-by-step guidance\n• Real-time learning to improve our conversation\n\nWhat can I help you with today? I'm here to provide exceptional, personalized service! ⚡`;
     }
 
     generateHelpResponse(analysis) {
-        return `I'd be happy to help you with that! 😊\n\n🎯 **I can assist you with:**\n\n📦 **Orders & Shipping**\n• Track packages and delivery updates\n• Modify delivery preferences\n• Handle shipping issues\n\n🛍️ **Products & Shopping**\n• Product recommendations\n• Specifications and comparisons\n• Availability and pricing\n\n💳 **Account & Billing**\n• Payment issues and methods\n• Account settings and preferences\n• Refunds and billing questions\n\n🔧 **Technical Support**\n• Device troubleshooting\n• Website/app issues\n• Setup and configuration help\n\n↩️ **Returns & Exchanges**\n• Easy return process\n• Exchange options\n• Refund status\n\n**What specific area would you like help with?** I'll provide detailed, step-by-step assistance!`;
+        return `I'd be delighted to help you with whatever you need! 😊\n\n🎯 Here are all the ways I can assist you:\n\n📦 Orders and Shipping Support:\n• Track packages with real-time location updates\n• Modify delivery preferences and shipping addresses\n• Handle shipping delays, issues, or special requests\n• Coordinate with delivery services for optimal timing\n\n🛍️ Product and Shopping Assistance:\n• Provide detailed product specifications and comparisons\n• Offer personalized recommendations based on your history\n• Check real-time availability and pricing information\n• Help you find the perfect product for your needs\n\n💳 Account and Billing Services:\n• Resolve payment issues and update payment methods\n• Manage account settings and personal preferences\n• Process refund requests and check refund status\n• Explain billing charges and transaction history\n\n🔧 Technical Support Solutions:\n• Troubleshoot device problems with step-by-step guidance\n• Resolve website and mobile app issues\n• Help with product setup and configuration\n• Provide advanced technical diagnostics when needed\n\n↩️ Returns and Exchange Processing:\n• Guide you through our simple return process\n• Explore exchange options for different products\n• Check return eligibility and processing status\n• Arrange special return accommodations if needed\n\n🤖 AI-Powered Smart Assistance:\n• Understand your questions with context and emotion\n• Provide personalized responses based on your history\n• Offer proactive suggestions to prevent future issues\n• Learn from our conversation to serve you better\n\nWhat specific area would you like help with? I'll provide detailed, step-by-step assistance tailored just for you!`;
     }
 
     generateDefaultResponse(analysis) {
-        return `Thank you for contacting NexaShop Support! 🛍️\n\nI understand you need assistance, and I'm here to help. Let me connect you with the right solution.\n\n🤖 **AI Analysis Summary:**\n• Confidence Level: ${Math.round(analysis.intent.confidence * 100)}%\n• Priority Level: ${analysis.urgencyLevel}\n• Issue Complexity: ${analysis.complexity}\n\n🎯 **Recommended Actions:**\n• Let me know more specific details about your question\n• Browse our help topics above\n• Ask me anything - I'm here to help!\n\n**Please tell me more about what you need help with, and I'll provide a detailed solution!**`;
+        return `Thank you for reaching out to NexaShop Support! 🛍️\n\nI understand you need assistance, and I'm here to provide you with the best possible help. Let me connect you with exactly the right solution for your needs.\n\n🤖 AI Analysis of Your Request:\n• Understanding Confidence Level: ${Math.round(analysis.intent.confidence * 100)}%\n• Urgency Assessment: ${analysis.urgencyLevel}\n• Issue Complexity Rating: ${analysis.complexity}\n• Emotional Tone Detected: ${analysis.sentiment.overall}\n\n🎯 Recommended Next Steps:\n• Please provide a bit more detail about your specific question or concern\n• Browse the quick action buttons above for common requests\n• Ask me anything - I'm equipped with advanced AI to understand and help\n• Let me know if you prefer to speak with a human specialist\n\n💡 Pro Tip: The more specific you can be about your question, the better I can tailor my response to give you exactly what you need!\n\nPlease tell me more about what you'd like help with, and I'll provide a comprehensive, personalized solution just for you!`;
     }
 
     // === AGENT SELECTION ===
@@ -511,7 +541,7 @@ class NexaShopSupport {
         
         // Add urgency handling
         if (analysis.urgencyLevel === 'high') {
-            response = `🚨 I understand this is urgent. ${response}\n\n**I'm prioritizing your request for immediate resolution.**`;
+            response = `🚨 I understand this is urgent. ${response}\n\nI'm prioritizing your request for immediate resolution.`;
         }
         
         return response;
@@ -607,8 +637,8 @@ class NexaShopSupport {
         window.nexaShopSupport = this;
         
         console.log('✅ NexaShop AI Support System initialized successfully');
-        console.log('🤖 AI Features: Sentiment analysis, intent recognition active');
-        this.showNotification('🤖 AI-powered support ready! Try asking me anything.');
+        console.log('🤖 AI Features: Clean formatting, sentiment analysis, intent recognition active');
+        this.showNotification('🤖 AI-powered support ready! Clean, natural responses enabled.');
     }
 
     setupElements() {
@@ -675,7 +705,7 @@ class NexaShopSupport {
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span style="color: #6b7280; font-weight: 500;">Current Time:</span>
-                        <span style="font-weight: 600;">2025-06-08 11:39:29 UTC</span>
+                        <span style="font-weight: 600;">2025-06-08 12:13:20 UTC</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span style="color: #6b7280; font-weight: 500;">Customer:</span>
@@ -683,10 +713,10 @@ class NexaShopSupport {
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <span style="color: #6b7280; font-weight: 500;">AI Assistant:</span>
-                        <span style="font-weight: 600;">🤖 Active & Learning</span>
+                        <span style="font-weight: 600;">🤖 Active & Clean Formatting</span>
                     </div>
                 </div>
-                <p style="margin-bottom: 20px;">Hi asarekings! I'm your AI-powered support assistant. How can I help you today?</p>
+                <p style="margin-bottom: 20px;">Hi asarekings! I'm your AI-powered support assistant with clean, natural responses. How can I help you today?</p>
             </div>
             
             <div style="margin: 20px 0;">
@@ -720,33 +750,33 @@ class NexaShopSupport {
             </div>
 
             <div style="margin: 20px 0;">
-                <h4>🤖 AI Features Active:</h4>
+                <h4>🤖 AI Features (Clean Format):</h4>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px;">
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
-                        <div style="font-weight: 600;">Sentiment Analysis</div>
-                        <div style="opacity: 0.9;">Emotion Detection</div>
+                        <div style="font-weight: 600;">Natural Language</div>
+                        <div style="opacity: 0.9;">No Bold Formatting</div>
                     </div>
                     <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
-                        <div style="font-weight: 600;">Intent Recognition</div>
-                        <div style="opacity: 0.9;">Smart Understanding</div>
+                        <div style="font-weight: 600;">Clean Responses</div>
+                        <div style="opacity: 0.9;">Easy to Read</div>
                     </div>
                     <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
-                        <div style="font-weight: 600;">Context Memory</div>
-                        <div style="opacity: 0.9;">Conversation Flow</div>
+                        <div style="font-weight: 600;">Smart Analysis</div>
+                        <div style="opacity: 0.9;">Context Understanding</div>
                     </div>
                     <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
-                        <div style="font-weight: 600;">Smart Suggestions</div>
-                        <div style="opacity: 0.9;">Proactive Help</div>
+                        <div style="font-weight: 600;">Personal Touch</div>
+                        <div style="opacity: 0.9;">Tailored Responses</div>
                     </div>
                 </div>
             </div>
 
             <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.2);">
-                <p><strong>🎯 Try these AI-powered commands:</strong></p>
-                <p style="font-size: 14px; margin: 8px 0;">• "I'm frustrated with my order" - <em>AI detects emotion & provides empathetic response</em></p>
-                <p style="font-size: 14px; margin: 8px 0;">• "Can you help me?" - <em>AI analyzes intent & offers specific solutions</em></p>
-                <p style="font-size: 14px; margin: 8px 0;">• "I need this urgently" - <em>AI detects urgency & prioritizes response</em></p>
-                <p style="font-size: 14px; margin: 8px 0;">• Ask complex questions - <em>AI provides step-by-step solutions</em></p>
+                <p><strong>🎯 Try these natural conversation starters:</strong></p>
+                <p style="font-size: 14px; margin: 8px 0;">• "I'm having trouble with my phone" - Natural problem description</p>
+                <p style="font-size: 14px; margin: 8px 0;">• "Can you help me find a good laptop?" - Simple product request</p>
+                <p style="font-size: 14px; margin: 8px 0;">• "Where is my package?" - Direct tracking question</p>
+                <p style="font-size: 14px; margin: 8px 0;">• "I need to return something" - Straightforward return request</p>
             </div>
         `;
         this.messagesContainer.appendChild(welcomeMsg);
@@ -804,13 +834,13 @@ class NexaShopSupport {
     }
 
     generateEnhancedAIResponse(userMessage, startTime) {
-        console.log('🤖 Generating AI response for:', userMessage);
+        console.log('🤖 Generating clean AI response for:', userMessage);
         
         try {
             // Generate response using AI engine
             const aiResponse = this.generateAIResponse(userMessage);
             
-            console.log('🧠 AI Response generated:', aiResponse);
+            console.log('🧠 Clean AI Response generated:', aiResponse);
             
             this.showTypingIndicator(aiResponse.agent);
 
@@ -835,9 +865,9 @@ class NexaShopSupport {
                 this.performance.trackResponseTime(startTime);
                 
                 const confidencePercent = Math.round(aiResponse.confidence * 100);
-                this.showNotification(`🤖 ${aiResponse.agent} responded (AI: ${confidencePercent}% confidence)`);
+                this.showNotification(`🤖 ${aiResponse.agent} responded (Clean Format • ${confidencePercent}% confidence)`);
                 
-                console.log('✅ AI response delivered successfully');
+                console.log('✅ Clean AI response delivered successfully');
             }, 1200 + Math.random() * 800);
         } catch (error) {
             console.error('❌ Error generating AI response:', error);
@@ -925,7 +955,7 @@ class NexaShopSupport {
         indicator.className = 'typing-indicator';
         indicator.id = 'typingIndicator';
         indicator.innerHTML = `
-            <span>🤖 ${agentName} is analyzing and crafting your response...</span>
+            <span>🤖 ${agentName} is crafting a clean, natural response...</span>
             <div class="typing-dots">
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
@@ -1020,13 +1050,13 @@ class NexaShopSupport {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 DOM loaded, initializing NexaShop AI Support...');
-    console.log('📅 Current Time: 2025-06-08 11:39:29 UTC');
+    console.log('🚀 DOM loaded, initializing NexaShop Clean AI Support...');
+    console.log('📅 Current Time: 2025-06-08 12:13:20 UTC');
     console.log('👤 User: asarekings logged in');
-    console.log('🤖 Starting AI conversation engine...');
+    console.log('🤖 Loading clean response formatting...');
     try {
         new NexaShopSupport();
-        console.log('✅ NexaShop AI Support initialized successfully');
+        console.log('✅ NexaShop Clean AI Support initialized successfully');
     } catch (error) {
         console.error('❌ Initialization error:', error);
     }
@@ -1035,7 +1065,7 @@ document.addEventListener('DOMContentLoaded', () => {
 if (document.readyState === 'loading') {
     // Still loading, wait for DOMContentLoaded
 } else {
-    console.log('DOM already loaded, initializing AI system immediately...');
+    console.log('DOM already loaded, initializing clean AI system immediately...');
     try {
         new NexaShopSupport();
     } catch (error) {
