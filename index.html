@@ -4,17 +4,502 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexaShop - Customer Support</title>
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
     
     <style>
-        /* Your main CSS styles here */
+        :root {
+            --primary: #3b82f6;
+            --primary-light: rgba(59, 130, 246, 0.1);
+            --accent: #06b6d4;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --background: #f9fafb;
+            --white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --text: #f9fafb;
+            --text-light: #d1d5db;
+            --border: #374151;
+            --background: #111827;
+            --white: #1f2937;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            background: var(--white);
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .chat-container {
+            flex: 1;
+            background: var(--white);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .agents-list {
+            display: flex;
+            gap: 8px;
+        }
+
+        .agent-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 500px;
+            min-height: 300px;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            animation: messageSlideIn 0.4s ease;
+        }
+
+        @keyframes messageSlideIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.own {
+            text-align: right;
+        }
+
+        .message-content {
+            display: inline-block;
+            max-width: 80%;
+            background: var(--background);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .message.own .message-content {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .message-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .message-text {
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .welcome-message {
+            background: linear-gradient(135deg, var(--primary-light) 0%, rgba(6, 182, 212, 0.05) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-header h3 {
+            color: var(--primary);
+            margin-bottom: 16px;
+            font-size: 20px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .quick-action-btn {
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .quick-action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .typing-indicator {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: typingDot 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingDot {
+            0%, 60%, 100% { transform: scale(1); opacity: 0.5; }
+            30% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .input-container {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            background: var(--background);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+            background: var(--white);
+            color: var(--text);
+            transition: border-color 0.2s ease;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .send-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s ease;
+            min-height: 44px;
+        }
+
+        .send-button:hover {
+            background: #2563eb;
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-button {
+            background: var(--background);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.2s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .file-preview {
+            background: var(--primary-light);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .control-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-size: 16px;
+        }
+
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-info {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+            
+            .status-bar {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
     </style>
     
     <!-- Link to enhanced styles -->
     <link rel="stylesheet" href="enhanced-styles.css">
 </head>
 <body>
-    <!-- Your HTML content -->
+    <div class="container">
+        <div class="header">
+            <h1>🛍️ NexaShop Customer Support</h1>
+            <div class="header-info">
+                <span>📅 Current Time: 2025-06-08 11:25:12 UTC</span>
+                <span>👤 Welcome back, asarekings!</span>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-indicator"></div>
+                <span id="connectionStatus">Live Support Active</span>
+            </div>
+            <div class="status-item">
+                <span>🎯 Premium Member</span>
+            </div>
+            <div class="status-item">
+                <span id="agentCount">5</span>
+                <span>agents online</span>
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <div>
+                    <h3>💬 Live Chat Support</h3>
+                    <p style="font-size: 12px; opacity: 0.9;">Advanced e-commerce assistance</p>
+                </div>
+                <div class="controls">
+                    <button class="control-button" id="themeToggle" title="Toggle Theme">🌙</button>
+                    <button class="control-button" id="soundToggle" title="Toggle Sound">🔊</button>
+                </div>
+                <div class="agents-list" id="agentsList">
+                    <div class="agent-avatar">SC</div>
+                    <div class="agent-avatar">MR</div>
+                    <div class="agent-avatar">EW</div>
+                    <div class="agent-avatar">AT</div>
+                    <div class="agent-avatar">LC</div>
+                </div>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <!-- Messages will be populated by JavaScript -->
+            </div>
+
+            <div class="file-preview" id="filePreview"></div>
+
+            <div class="input-container">
+                <form id="messageForm" class="input-wrapper">
+                    <button type="button" class="file-button" id="fileBtn" title="Upload File">📎</button>
+                    <textarea 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="Type your message here... (Press Enter to send)"
+                        rows="1"
+                    ></textarea>
+                    <button type="submit" class="send-button" id="sendButton">Send</button>
+                </form>
+                <input type="file" id="fileInput" class="file-input" accept=".pdf,.doc,.docx,.txt,image/*">
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
     <script src="script.js"></script>
 </body>
 </html>
