@@ -1,7 +1,7 @@
 class NexaShopSupport {
     constructor() {
-        // Current time as provided: 2025-06-08 12:13:20 UTC
-        this.currentDateTime = new Date('2025-06-08T12:13:20Z');
+        // Current time as provided: 2025-06-08 12:22:56 UTC
+        this.currentDateTime = new Date('2025-06-08T12:22:56Z');
         
         this.currentUser = {
             id: 'user-asarekings',
@@ -38,9 +38,9 @@ class NexaShopSupport {
         this.ticketNumber = 'NEX-2025-0608-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
         
         console.log('🤖 Initializing NexaShop AI Support System...');
-        console.log('📅 Current Time: 2025-06-08 12:13:20 UTC');
+        console.log('📅 Current Time: 2025-06-08 12:22:56 UTC');
         console.log('👤 User: asarekings logged in');
-        console.log('🧠 AI Features: Clean response formatting enabled');
+        console.log('🧠 AI Features: Clean response formatting (NO asterisks)');
         
         this.initializeAIFeatures();
         this.initializeBasicFeatures();
@@ -69,7 +69,7 @@ class NexaShopSupport {
             }
         };
         
-        console.log('🧠 AI Engine initialized with clean response formatting');
+        console.log('🧠 AI Engine initialized with asterisk-free formatting');
     }
 
     // === SENTIMENT ANALYSIS ===
@@ -165,11 +165,9 @@ class NexaShopSupport {
             amounts: []
         };
         
-        // Extract order numbers
         const orderRegex = /NEX-\d{4}-\d{6}/gi;
         entities.orderNumbers = text.match(orderRegex) || [];
         
-        // Extract product names
         const products = ['nexaphone', 'nexabook', 'nexapods', 'nexawatch', 'nexacharge'];
         products.forEach(product => {
             if (text.toLowerCase().includes(product)) {
@@ -177,7 +175,6 @@ class NexaShopSupport {
             }
         });
         
-        // Extract amounts
         const amountRegex = /\$\d+\.?\d*/gi;
         entities.amounts = text.match(amountRegex) || [];
         
@@ -231,6 +228,9 @@ class NexaShopSupport {
                 response = this.generateDefaultResponse(analysis);
         }
         
+        // Remove any remaining asterisks
+        response = this.cleanResponse(response);
+        
         // Personalize response
         response = this.personalizeResponse(response, analysis);
         
@@ -242,7 +242,17 @@ class NexaShopSupport {
         };
     }
 
-    // === CLEAN RESPONSE GENERATORS (NO ASTERISKS) ===
+    // === UTILITY METHOD TO REMOVE ALL ASTERISKS ===
+    cleanResponse(response) {
+        // Remove all asterisks and clean up formatting
+        return response
+            .replace(/\*\*/g, '')  // Remove all double asterisks
+            .replace(/\*/g, '')    // Remove all single asterisks
+            .replace(/\n\n\n/g, '\n\n')  // Clean up extra line breaks
+            .trim();
+    }
+
+    // === COMPLETELY CLEAN RESPONSE GENERATORS ===
     generateOrderResponse(analysis) {
         const currentTime = new Date().toLocaleString('en-US', {
             month: 'long',
@@ -257,20 +267,20 @@ class NexaShopSupport {
         response += `✅ NEX-2025-001247 - $1,099.99\n`;
         response += `📱 NexaPhone Pro Max - DELIVERED\n`;
         response += `📅 Delivered: June 3, 2025 at 4:45 PM\n`;
-        response += `🔍 Tracking: NEX1234567890\n`;
+        response += `🔍 Tracking Number: NEX1234567890\n`;
         response += `⭐ Please rate your delivery experience\n\n`;
         
         response += `🚚 NEX-2025-001248 - $1,599.99\n`;
         response += `💻 NexaBook Ultra 16 - IN TRANSIT\n`;
         response += `📍 Current Location: Distribution Center - Chicago, IL\n`;
-        response += `📊 Progress: ▓▓▓▓▓▓▓░░░ 75% complete\n`;
+        response += `📊 Delivery Progress: 75% complete\n`;
         response += `📅 Estimated Delivery: June 10, 2025\n`;
-        response += `🔍 Tracking: NEX1234567891\n\n`;
+        response += `🔍 Tracking Number: NEX1234567891\n\n`;
         
         response += `⏳ NEX-2025-001249 - $329.98\n`;
         response += `🎧 NexaPods Max + Wireless Charger - PROCESSING\n`;
-        response += `🏭 Location: Fulfillment Center - Austin, TX\n`;
-        response += `📊 Progress: ▓▓░░░░░░░░ 25% complete\n`;
+        response += `🏭 Current Location: Fulfillment Center - Austin, TX\n`;
+        response += `📊 Processing Progress: 25% complete\n`;
         response += `📅 Estimated Ship Date: June 9, 2025\n\n`;
         
         response += `📱 Quick Actions Available:\n`;
@@ -285,24 +295,24 @@ class NexaShopSupport {
     }
 
     generateProductResponse(analysis) {
-        let response = `Hi asarekings! 🛍️ NexaShop Product Showcase (Live Inventory - 2025-06-08 12:13:20)\n\n`;
+        let response = `Hi asarekings! 🛍️ NexaShop Product Showcase (Live Inventory - 2025-06-08 12:22:56)\n\n`;
         
         response += `🔥 Featured Products Currently Available:\n\n`;
         
         response += `📱 NexaPhone Pro Max - $1,099.99 ⭐4.9/5\n`;
-        response += `📋 6.7" OLED Display, 512GB Storage, 5G Ready, Advanced Pro Camera System\n`;
+        response += `📋 Specifications: 6.7" OLED Display, 512GB Storage, 5G Ready, Advanced Pro Camera System\n`;
         response += `📦 Stock Status: 247 units available (Ships from East Coast DC)\n`;
-        response += `🔥 Trending Alert: +15% sales increase this week\n`;
+        response += `🔥 Trending Alert: 15% sales increase this week\n`;
         response += `🚚 Free 2-day shipping for Premium Members\n\n`;
         
         response += `💻 NexaBook Ultra 16 - $1,599.99 ⭐4.8/5\n`;
-        response += `📋 M2 Pro Chip, 32GB Unified Memory, 1TB SSD, 16.2" Liquid Retina Display\n`;
+        response += `📋 Specifications: M2 Pro Chip, 32GB Unified Memory, 1TB SSD, 16.2" Liquid Retina Display\n`;
         response += `📦 Stock Status: 89 units available (Ships from West Coast DC)\n`;
         response += `💼 Perfect for professionals, creators, and power users\n`;
         response += `🎯 Recommended based on your previous laptop searches\n\n`;
         
         response += `🎧 NexaPods Max - $249.99 ⭐4.7/5\n`;
-        response += `📋 Spatial Audio, Active Noise Canceling, 30-hour battery, Wireless Charging Case\n`;
+        response += `📋 Specifications: Spatial Audio, Active Noise Canceling, 30-hour battery, Wireless Charging Case\n`;
         response += `📦 Stock Status: 156 units available (Ships from Central DC)\n`;
         response += `🔥 Hot Item: Perfect companion for all your NexaShop devices\n`;
         response += `💡 Pro Tip: Works seamlessly with NexaPhone and NexaBook\n\n`;
@@ -324,7 +334,7 @@ class NexaShopSupport {
     }
 
     generateTechnicalResponse(analysis) {
-        let response = `Hi asarekings! 🔧 NexaShop Technical Support Center (2025-06-08 12:13:20)\n\n`;
+        let response = `Hi asarekings! 🔧 NexaShop Technical Support Center (2025-06-08 12:22:56)\n\n`;
         
         response += `🌐 Live System Status Dashboard:\n`;
         response += `• Main Website: ✅ Fully Operational (99.99% uptime)\n`;
@@ -370,7 +380,7 @@ class NexaShopSupport {
     }
 
     generateBillingResponse(analysis) {
-        let response = `Hi asarekings! 💳 NexaShop Secure Billing Center (2025-06-08 12:13:20)\n\n`;
+        let response = `Hi asarekings! 💳 NexaShop Secure Billing Center (2025-06-08 12:22:56)\n\n`;
         
         response += `🔒 Your Account Security Status:\n`;
         response += `• Encryption Level: 256-bit SSL encryption currently active\n`;
@@ -418,7 +428,7 @@ class NexaShopSupport {
     }
 
     generateReturnResponse(analysis) {
-        let response = `Hi asarekings! ↩️ NexaShop Returns & Exchanges Center (2025-06-08 12:13:20)\n\n`;
+        let response = `Hi asarekings! ↩️ NexaShop Returns & Exchanges Center (2025-06-08 12:22:56)\n\n`;
         
         response += `✨ Our Hassle-Free Return Promise:\n`;
         response += `• Extended Return Window: 30 days for most items, 45 days for electronics\n`;
@@ -477,7 +487,7 @@ class NexaShopSupport {
     }
 
     generateGreetingResponse() {
-        const currentTime = new Date('2025-06-08T12:13:20Z').toLocaleString('en-US', {
+        const currentTime = new Date('2025-06-08T12:22:56Z').toLocaleString('en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
@@ -519,7 +529,7 @@ class NexaShopSupport {
         const requiredSpecialty = intentToSpecialty[analysis.intent.intent];
         
         if (analysis.sentiment.overall === 'negative') {
-            return 'Lisa Chang'; // Most empathetic
+            return 'Lisa Chang';
         }
         
         if (requiredSpecialty) {
@@ -529,17 +539,15 @@ class NexaShopSupport {
             if (matchingAgent) return matchingAgent[0];
         }
         
-        return 'Sarah Chen'; // Default agent
+        return 'Sarah Chen';
     }
 
     // === PERSONALIZATION ===
     personalizeResponse(response, analysis) {
-        // Add empathy for negative sentiment
         if (analysis.sentiment.overall === 'negative') {
             response = `I sincerely apologize for any inconvenience, asarekings. ${response}`;
         }
         
-        // Add urgency handling
         if (analysis.urgencyLevel === 'high') {
             response = `🚨 I understand this is urgent. ${response}\n\nI'm prioritizing your request for immediate resolution.`;
         }
@@ -637,8 +645,8 @@ class NexaShopSupport {
         window.nexaShopSupport = this;
         
         console.log('✅ NexaShop AI Support System initialized successfully');
-        console.log('🤖 AI Features: Clean formatting, sentiment analysis, intent recognition active');
-        this.showNotification('🤖 AI-powered support ready! Clean, natural responses enabled.');
+        console.log('🧠 AI Features: Completely asterisk-free formatting active');
+        this.showNotification('🤖 AI-powered support ready! Zero asterisk formatting enabled.');
     }
 
     setupElements() {
@@ -705,18 +713,18 @@ class NexaShopSupport {
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span style="color: #6b7280; font-weight: 500;">Current Time:</span>
-                        <span style="font-weight: 600;">2025-06-08 12:13:20 UTC</span>
+                        <span style="font-weight: 600;">2025-06-08 12:22:56 UTC</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span style="color: #6b7280; font-weight: 500;">Customer:</span>
                         <span style="font-weight: 600;">asarekings (Premium Member 🌟)</span>
                     </div>
                     <div style="display: flex; justify-content: space-between;">
-                        <span style="color: #6b7280; font-weight: 500;">AI Assistant:</span>
-                        <span style="font-weight: 600;">🤖 Active & Clean Formatting</span>
+                        <span style="color: #6b7280; font-weight: 500;">Formatting:</span>
+                        <span style="font-weight: 600;">🚫 Zero Asterisks Mode</span>
                     </div>
                 </div>
-                <p style="margin-bottom: 20px;">Hi asarekings! I'm your AI-powered support assistant with clean, natural responses. How can I help you today?</p>
+                <p style="margin-bottom: 20px;">Hi asarekings! I'm your AI-powered support assistant with completely clean, asterisk-free responses. How can I help you today?</p>
             </div>
             
             <div style="margin: 20px 0;">
@@ -749,34 +757,12 @@ class NexaShopSupport {
                 </div>
             </div>
 
-            <div style="margin: 20px 0;">
-                <h4>🤖 AI Features (Clean Format):</h4>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px;">
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
-                        <div style="font-weight: 600;">Natural Language</div>
-                        <div style="opacity: 0.9;">No Bold Formatting</div>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
-                        <div style="font-weight: 600;">Clean Responses</div>
-                        <div style="opacity: 0.9;">Easy to Read</div>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
-                        <div style="font-weight: 600;">Smart Analysis</div>
-                        <div style="opacity: 0.9;">Context Understanding</div>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px;">
-                        <div style="font-weight: 600;">Personal Touch</div>
-                        <div style="opacity: 0.9;">Tailored Responses</div>
-                    </div>
-                </div>
-            </div>
-
             <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.2);">
-                <p><strong>🎯 Try these natural conversation starters:</strong></p>
-                <p style="font-size: 14px; margin: 8px 0;">• "I'm having trouble with my phone" - Natural problem description</p>
-                <p style="font-size: 14px; margin: 8px 0;">• "Can you help me find a good laptop?" - Simple product request</p>
-                <p style="font-size: 14px; margin: 8px 0;">• "Where is my package?" - Direct tracking question</p>
-                <p style="font-size: 14px; margin: 8px 0;">• "I need to return something" - Straightforward return request</p>
+                <p><strong>🎯 Clean Formatting Guarantee:</strong></p>
+                <p style="font-size: 14px; margin: 8px 0;">✅ No asterisks in any responses</p>
+                <p style="font-size: 14px; margin: 8px 0;">✅ Natural, easy-to-read text</p>
+                <p style="font-size: 14px; margin: 8px 0;">✅ Clean, professional formatting</p>
+                <p style="font-size: 14px; margin: 8px 0;">✅ All AI features still active</p>
             </div>
         `;
         this.messagesContainer.appendChild(welcomeMsg);
@@ -827,20 +813,18 @@ class NexaShopSupport {
 
         console.log('📤 Message sent:', content);
 
-        // Generate AI response
         setTimeout(() => {
             this.generateEnhancedAIResponse(content, startTime);
         }, 800 + Math.random() * 1200);
     }
 
     generateEnhancedAIResponse(userMessage, startTime) {
-        console.log('🤖 Generating clean AI response for:', userMessage);
+        console.log('🤖 Generating asterisk-free AI response for:', userMessage);
         
         try {
-            // Generate response using AI engine
             const aiResponse = this.generateAIResponse(userMessage);
             
-            console.log('🧠 Clean AI Response generated:', aiResponse);
+            console.log('🧠 Clean AI Response generated (no asterisks):', aiResponse);
             
             this.showTypingIndicator(aiResponse.agent);
 
@@ -867,12 +851,11 @@ class NexaShopSupport {
                 const confidencePercent = Math.round(aiResponse.confidence * 100);
                 this.showNotification(`🤖 ${aiResponse.agent} responded (Clean Format • ${confidencePercent}% confidence)`);
                 
-                console.log('✅ Clean AI response delivered successfully');
+                console.log('✅ Asterisk-free AI response delivered successfully');
             }, 1200 + Math.random() * 800);
         } catch (error) {
             console.error('❌ Error generating AI response:', error);
             
-            // Fallback response
             setTimeout(() => {
                 const fallbackMessage = {
                     id: this.generateId(),
@@ -955,7 +938,7 @@ class NexaShopSupport {
         indicator.className = 'typing-indicator';
         indicator.id = 'typingIndicator';
         indicator.innerHTML = `
-            <span>🤖 ${agentName} is crafting a clean, natural response...</span>
+            <span>🤖 ${agentName} is crafting a clean, asterisk-free response...</span>
             <div class="typing-dots">
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
@@ -1050,13 +1033,13 @@ class NexaShopSupport {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 DOM loaded, initializing NexaShop Clean AI Support...');
-    console.log('📅 Current Time: 2025-06-08 12:13:20 UTC');
+    console.log('🚀 DOM loaded, initializing NexaShop Asterisk-Free AI Support...');
+    console.log('📅 Current Time: 2025-06-08 12:22:56 UTC');
     console.log('👤 User: asarekings logged in');
-    console.log('🤖 Loading clean response formatting...');
+    console.log('🚫 Zero asterisk formatting mode activated');
     try {
         new NexaShopSupport();
-        console.log('✅ NexaShop Clean AI Support initialized successfully');
+        console.log('✅ NexaShop Asterisk-Free AI Support initialized successfully');
     } catch (error) {
         console.error('❌ Initialization error:', error);
     }
@@ -1065,7 +1048,7 @@ document.addEventListener('DOMContentLoaded', () => {
 if (document.readyState === 'loading') {
     // Still loading, wait for DOMContentLoaded
 } else {
-    console.log('DOM already loaded, initializing clean AI system immediately...');
+    console.log('DOM already loaded, initializing asterisk-free AI system immediately...');
     try {
         new NexaShopSupport();
     } catch (error) {
