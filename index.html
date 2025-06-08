@@ -1,0 +1,1745 @@
+        class GitChat {
+            constructor() {
+                this.users = new Map();
+                this.messages = [];
+                this.currentUser = null;
+                this.currentRoom = 'general';
+                this.typingUsers = new Set();
+                this.typingTimeout = null;
+                this.soundEnabled = true;
+                this.selectedFile = null;
+                this.settings = {
+                    darkMode: false,
+                    soundEffects: true,
+                    desktopNotifications: false,
+                    autoScroll: true,
+                    typingIndicators: true
+                };
+                
+                this.initializeElements();
+                this.setupEventListeners();
+                this.loadFromStorage();
+                this.simulateOnlineUsers();
+                this.initializeSettings();
+                this.playSound('connect');
+            }
+
+            initializeElements() {
+                this.usernameInput = document.getElementById('usernameInput');
+                this.messageInput = document.getElementById('messageInput');
+                this.messageForm = document.getElementById('messageForm');
+                this.messagesContainer = document.getElementById('messagesContainer');
+                this.usersList = document.getElementById('usersList');
+                this.userCount = document.getElementById('userCount');
+                this.connectionStatus = document.getElementById('connectionStatus');
+                this.notification = document.getElementById('notification');
+                this.emojiPicker = document.getElementById('emojiPicker');
+                this.emojiBtn = document.getElementById('emojiBtn');
+                this.fileBtn = document.getElementById('fileBtn');
+                this.fileInput = document.getElementById('fileInput');
+                this.filePreview = document.getElementById('filePreview');
+                this.themeToggle = document.getElementById('themeToggle');
+                this.soundToggle = document.getElementById('soundToggle');
+                this.userSearch = document.getElementById('userSearch');
+                this.settingsPanel = document.getElementById('settingsPanel');
+            }
+
+            setupEventListeners() {
+                this.usernameInput.addEventListener('input', (e) => {
+                    this.handleUsernameChange(e.target.value);
+                });
+
+                this.messageForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.sendMessage();
+                });
+
+                this.messageInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                this.messageInput.addEventListener('input', () => {
+                    this.handleTyping();
+                    this.autoResize();
+                });
+
+                // Emoji picker
+                this.emojiBtn.addEventListener('click', () => {
+                    this.emojiPicker.classList.toggle('show');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!this.emojiBtn.contains(e.target) && !this.emojiPicker.contains(e.target)) {
+                        this.emojiPicker.classList.remove('show');
+                    }
+                });
+
+                this.emojiPicker.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('emoji-btn')) {
+                        this.insertEmoji(e.target.textContent);
+                    }
+                });
+
+                // File upload
+                this.fileBtn.addEventListener('click', () => {
+                    this.fileInput.click();
+                });
+
+                this.fileInput.addEventListener('change', (e) => {
+                    this.handleFileSelect(e.target.files[0]);
+                });
+
+                // Theme toggle
+                this.themeToggle.addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+
+                // Sound toggle
+                this.soundToggle.addEventListener('click', () => {
+                    this.toggleSound();
+                });
+
+                // Room selection
+                document.querySelectorAll('.room-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.switchRoom(btn.dataset.room);
+                    });
+                });
+
+                // User search
+                this.userSearch.addEventListener('input', (e) => {
+                    this.filterUsers(e.target.value);
+                });
+
+                // Settings panel
+                document.getElementById('closeSettings').addEventListener('click', () => {
+                    this.settingsPanel.classList.remove('open');
+                });
+
+                // Settings toggles
+                this.setupSettingsToggles();
+
+                // Auto-resize textarea
+                this.messageInput.addEventListener('input', this.autoResize.bind(this));
+            }
+
+            setupSettingsToggles() {
+                const toggles = {
+                    darkModeToggle: 'darkMode',
+                    soundToggleSettings: 'soundEffects',
+                    desktopNotifications: 'desktopNotifications',
+                    autoScroll: 'autoScroll',
+                    typingIndicators: 'typingIndicators'
+                };
+
+                Object.entries(toggles).forEach(([id, setting]) => {
+                    const toggle = document.getElementById(id);
+                    toggle.addEventListener('click', () => {
+                        this.settings[setting] = !this.settings[setting];
+                        toggle.classList.toggle('active', this.settings[setting]);
+                        this.handleSettingChange(setting);
+                    });
+                });
+            }
+
+            handleSettingChange(setting) {
+                switch(setting) {
+                    case 'darkMode':
+                        document.documentElement.setAttribute('data-theme', this.settings.darkMode ? 'dark' : 'light');
+                        break;
+                    case 'desktopNotifications':
+                        if (this.settings.desktopNotifications) {
+                            this.requestNotificationPermission();
+                        }
+                        break;
+                }
+                this.saveToStorage();
+            }
+
+            initializeSettings() {
+                Object.entries(this.settings).forEach(([setting, value]) => {
+                    const toggle = document.getElementById(setting + 'Toggle') || 
+                                  document.getElementById(setting.replace(/([A-Z])/g, '$1').toLowerCase() + 'Toggle');
+                    if (toggle) {
+                        toggle.classList.toggle('active', value);
+                    }
+                });
+
+                if (this.settings.darkMode) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            }
+
+            insertEmoji(emoji) {
+                const start = this.messageInput.selectionStart;
+                const end = this.messageInput.selectionEnd;
+                const text = this.messageInput.value;
+                this.messageInput.value = text.substring(0, start) + emoji + text.substring(end);
+                this.messageInput.focus();
+                this.messageInput.setSelectionRange(start + emoji.length, start + emoji.length);
+                this.emojiPicker.classList.remove('show');
+            }
+
+            handleFileSelect(file) {
+                if (!file) return;
+                
+                this.selectedFile = file;
+                this.filePreview.style.display = 'block';
+                this.filePreview.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>📎 ${file.name} (${this.formatFileSize(file.size)})</span>
+                        <button onclick="this.parentElement.parentElement.style.display='none'; gitChat.selectedFile=null;" style="background: none; border: none; cursor: pointer;">✕</button>
+                    </div>
+                `;
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            switchRoom(room) {
+                document.querySelectorAll('.room-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-room="${room}"]`).classList.add('active');
+                
+                this.currentRoom = room;
+                this.messagesContainer.innerHTML = '';
+                
+                const welcomeMsg = document.createElement('div');
+                welcomeMsg.className = 'welcome-message';
+                welcomeMsg.innerHTML = `
+                    <h3>Welcome to ${room.charAt(0).toUpperCase() + room.slice(1)}! 🎉</h3>
+                    <p>You've switched to the ${room} room.</p>
+                `;
+                this.messagesContainer.appendChild(welcomeMsg);
+                
+                this.playSound('notification');
+                this.showNotification(`Switched to ${room} room`);
+            }
+
+            filterUsers(searchTerm) {
+                const userItems = document.querySelectorAll('.user-item');
+                userItems.forEach(item => {
+                    const userName = item.querySelector('.user-name').textContent.toLowerCase();
+                    item.style.display = userName.includes(searchTerm.toLowerCase()) ? 'flex' : 'none';
+                });
+            }
+
+            toggleTheme() {
+                this.settings.darkMode = !this.settings.darkMode;
+                document.documentElement.setAttribute('data-theme', this.settings.darkMode ? 'dark' : 'light');
+                document.getElementById('darkModeToggle').classList.toggle('active', this.settings.darkMode);
+                this.saveToStorage();
+            }
+
+            toggleSound() {
+                this.soundEnabled = !this.soundEnabled;
+                this.settings.soundEffects = this.soundEnabled;
+                this.soundToggle.style.opacity = this.soundEnabled ? '1' : '0.5';
+                document.getElementById('soundToggleSettings').classList.toggle('active', this.soundEnabled);
+                this.saveToStorage();
+                this.showNotification(this.soundEnabled ? 'Sound enabled' : 'Sound disabled');
+            }
+
+            playSound(type) {
+                if (!this.settings.soundEffects) return;
+                
+                // Create audio context and play different sounds based on type
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // Different frequencies for different sounds
+                const frequencies = {
+                    message: 800,
+                    notification: 1000,
+                    connect: 600,
+                    error: 300
+                };
+                
+                oscillator.frequency.setValueAtTime(frequencies[type] || 800, audioContext.currentTime);
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.3);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            }
+
+            showDesktopNotification(title, message) {
+                if (!this.settings.desktopNotifications || !('Notification' in window)) return;
+                
+                if (Notification.permission === 'granted') {
+                    new Notification(title, {
+                        body: message,
+                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%236366f1"/></svg>'
+                    });
+                }
+            }
+
+            requestNotificationPermission() {
+                if ('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission().then(permission => {
+                        if (permission !== 'granted') {
+                            this.settings.desktopNotifications = false;
+                            document.getElementById('desktopNotifications').classList.remove('active');
+                        }
+                    });
+                }
+            }<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitChat - Real-time Messaging</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f8fafc;
+            --accent: #0ea5e9;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 900px;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            display: flex;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            background: white;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--bg-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .user-setup {
+            padding: 24px;
+        }
+
+        .user-setup input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .user-setup input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .online-users {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .online-users h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            transition: background 0.2s ease;
+        }
+
+        .user-item:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .user-status {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            background: white;
+        }
+
+        .chat-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .chat-subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            background: linear-gradient(180deg, #fafbfc 0%, #f8fafc 100%);
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.own {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .own .message-content {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .message-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 10px;
+        }
+
+        .message-author {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .own .message-author {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-left: auto;
+        }
+
+        .own .message-time {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .message-text {
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .message-input-container {
+            padding: 24px;
+            background: white;
+            border-top: 1px solid var(--border);
+        }
+
+        .message-input-form {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            font-size: 14px;
+            resize: none;
+            min-height: 48px;
+            max-height: 120px;
+            transition: all 0.3s ease;
+            background: var(--secondary);
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .send-button {
+            padding: 12px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+        }
+
+        .send-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .send-button:active {
+            transform: translateY(0);
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+
+        .welcome-message h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: 20px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+                max-width: none;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .emoji-picker {
+            position: absolute;
+            bottom: 70px;
+            right: 24px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .emoji-picker.show {
+            display: block;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+        }
+
+        .emoji-btn {
+            padding: 8px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 18px;
+            transition: background 0.2s ease;
+        }
+
+        .emoji-btn:hover {
+            background: var(--secondary);
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .action-btn {
+            padding: 8px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 8px;
+            color: var(--text-light);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-preview {
+            margin-top: 8px;
+            padding: 8px;
+            background: var(--secondary);
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-light);
+            display: none;
+        }
+
+        .message-file {
+            margin-top: 8px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .file-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        [data-theme="dark"] {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --secondary: #1e293b;
+            --accent: #06b6d4;
+            --text: #f1f5f9;
+            --text-light: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        [data-theme="dark"] body {
+            background: var(--bg-gradient);
+        }
+
+        [data-theme="dark"] .chat-container {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        [data-theme="dark"] .sidebar {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        [data-theme="dark"] .sidebar-header,
+        [data-theme="dark"] .chat-header,
+        [data-theme="dark"] .message-input-container {
+            background: #1e293b;
+        }
+
+        [data-theme="dark"] .message-content {
+            background: #334155;
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        [data-theme="dark"] .own .message-content {
+            background: var(--primary);
+        }
+
+        [data-theme="dark"] .messages-container {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        [data-theme="dark"] .message-input {
+            background: #334155;
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        [data-theme="dark"] .message-input:focus {
+            background: #475569;
+        }
+
+        [data-theme="dark"] .emoji-picker {
+            background: #334155;
+            border-color: var(--border);
+        }
+
+        .search-bar {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--secondary);
+            margin-bottom: 16px;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .room-selector {
+            margin-bottom: 16px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .room-selector h4 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .room-btn {
+            display: block;
+            width: 100%;
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            border: none;
+            background: none;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .room-btn:hover,
+        .room-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .message-reactions {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .reaction {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 2px 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reaction:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .reaction.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sound-toggle {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .settings-panel.open {
+            right: 0;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-section {
+            margin-bottom: 20px;
+        }
+
+        .settings-section h4 {
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
+        </svg>
+    </div>
+
+    <div class="sound-toggle" id="soundToggle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+    </div>
+
+    <div class="chat-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">GitChat</div>
+                <div class="status">
+                    <div class="status-dot"></div>
+                    <span id="connectionStatus">Connected</span>
+                </div>
+            </div>
+            
+            <div class="user-setup">
+                <input 
+                    type="text" 
+                    id="usernameInput" 
+                    placeholder="Enter your name..." 
+                    maxlength="20"
+                >
+            </div>
+
+            <div class="room-selector">
+                <h4>Chat Rooms</h4>
+                <button class="room-btn active" data-room="general">🏠 General</button>
+                <button class="room-btn" data-room="tech">💻 Tech Talk</button>
+                <button class="room-btn" data-room="random">🎲 Random</button>
+                <button class="room-btn" data-room="gaming">🎮 Gaming</button>
+            </div>
+            
+            <div class="online-users">
+                <input type="text" class="search-bar" id="userSearch" placeholder="Search users...">
+                <h3>Online Users (<span id="userCount">1</span>)</h3>
+                <div id="usersList"></div>
+            </div>
+        </div>
+        
+        <div class="chat-main">
+            <div class="chat-header">
+                <div class="chat-title">General Chat</div>
+                <div class="chat-subtitle">Welcome to the community discussion</div>
+            </div>
+            
+            <div class="messages-container" id="messagesContainer">
+                <div class="welcome-message">
+                    <h3>Welcome to GitChat! 👋</h3>
+                    <p>Start by entering your name and join the conversation.</p>
+                </div>
+            </div>
+            
+            <div class="message-input-container">
+                <div class="file-preview" id="filePreview"></div>
+                <form class="message-input-form" id="messageForm">
+                    <div class="message-actions">
+                        <button type="button" class="action-btn" id="emojiBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                            </svg>
+                        </button>
+                        <button type="button" class="action-btn" id="fileBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14,2 14,8 20,8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10,9 9,9 8,9"></polyline>
+                            </svg>
+                        </button>
+                        <input type="file" id="fileInput" class="file-input" accept="image/*,.pdf,.doc,.docx,.txt">
+                    </div>
+                    <textarea 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="Type your message..." 
+                        rows="1"
+                        maxlength="500"
+                    ></textarea>
+                    <button type="submit" class="send-button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22,2 15,22 11,13 2,9"></polygon>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="emoji-picker" id="emojiPicker">
+        <div class="emoji-grid">
+            <button class="emoji-btn">😀</button>
+            <button class="emoji-btn">😂</button>
+            <button class="emoji-btn">🥰</button>
+            <button class="emoji-btn">😎</button>
+            <button class="emoji-btn">🤔</button>
+            <button class="emoji-btn">😢</button>
+            <button class="emoji-btn">😡</button>
+            <button class="emoji-btn">🤯</button>
+            <button class="emoji-btn">👍</button>
+            <button class="emoji-btn">👎</button>
+            <button class="emoji-btn">❤️</button>
+            <button class="emoji-btn">💯</button>
+            <button class="emoji-btn">🔥</button>
+            <button class="emoji-btn">⭐</button>
+            <button class="emoji-btn">🎉</button>
+            <button class="emoji-btn">🚀</button>
+        </div>
+    </div>
+
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h3>Settings</h3>
+            <button class="action-btn" id="closeSettings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="settings-section">
+            <h4>Appearance</h4>
+            <div class="setting-item">
+                <span>Dark Mode</span>
+                <div class="toggle-switch" id="darkModeToggle"></div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h4>Notifications</h4>
+            <div class="setting-item">
+                <span>Sound Effects</span>
+                <div class="toggle-switch active" id="soundToggleSettings"></div>
+            </div>
+            <div class="setting-item">
+                <span>Desktop Notifications</span>
+                <div class="toggle-switch" id="desktopNotifications"></div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h4>Chat</h4>
+            <div class="setting-item">
+                <span>Auto-scroll</span>
+                <div class="toggle-switch active" id="autoScroll"></div>
+            </div>
+            <div class="setting-item">
+                <span>Typing Indicators</span>
+                <div class="toggle-switch active" id="typingIndicators"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        class GitChat {
+            constructor() {
+                this.users = new Map();
+                this.messages = [];
+                this.currentUser = null;
+                this.typingUsers = new Set();
+                this.typingTimeout = null;
+                
+                this.initializeElements();
+                this.setupEventListeners();
+                this.loadFromStorage();
+                this.simulateOnlineUsers();
+            }
+
+            initializeElements() {
+                this.usernameInput = document.getElementById('usernameInput');
+                this.messageInput = document.getElementById('messageInput');
+                this.messageForm = document.getElementById('messageForm');
+                this.messagesContainer = document.getElementById('messagesContainer');
+                this.usersList = document.getElementById('usersList');
+                this.userCount = document.getElementById('userCount');
+                this.connectionStatus = document.getElementById('connectionStatus');
+                this.notification = document.getElementById('notification');
+            }
+
+            setupEventListeners() {
+                this.usernameInput.addEventListener('input', (e) => {
+                    this.handleUsernameChange(e.target.value);
+                });
+
+                this.messageForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.sendMessage();
+                });
+
+                this.messageInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                this.messageInput.addEventListener('input', () => {
+                    this.handleTyping();
+                    this.autoResize();
+                });
+
+                // Auto-resize textarea
+                this.messageInput.addEventListener('input', this.autoResize.bind(this));
+            }
+
+            autoResize() {
+                this.messageInput.style.height = 'auto';
+                this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
+            }
+
+            handleUsernameChange(username) {
+                username = username.trim();
+                if (username && username !== this.currentUser?.name) {
+                    this.currentUser = {
+                        id: this.generateId(),
+                        name: username,
+                        avatar: username.charAt(0).toUpperCase(),
+                        joinTime: Date.now()
+                    };
+                    this.users.set(this.currentUser.id, this.currentUser);
+                    this.saveToStorage();
+                    this.updateUsersList();
+                    this.showNotification(`Welcome, ${username}! 🎉`);
+                }
+            }
+
+            sendMessage() {
+                const content = this.messageInput.value.trim();
+                if (!content && !this.selectedFile || !this.currentUser) return;
+
+                const message = {
+                    id: this.generateId(),
+                    content: content,
+                    author: this.currentUser.name,
+                    authorId: this.currentUser.id,
+                    timestamp: Date.now(),
+                    isOwn: true,
+                    room: this.currentRoom,
+                    file: this.selectedFile ? {
+                        name: this.selectedFile.name,
+                        size: this.selectedFile.size,
+                        type: this.selectedFile.type
+                    } : null,
+                    reactions: {}
+                };
+
+                this.messages.push(message);
+                this.renderMessage(message);
+                this.messageInput.value = '';
+                this.selectedFile = null;
+                this.filePreview.style.display = 'none';
+                this.autoResize();
+                this.saveToStorage();
+                this.scrollToBottom();
+                this.playSound('message');
+
+                // Simulate responses
+                setTimeout(() => this.simulateResponse(content), 1000 + Math.random() * 2000);
+            }
+
+            simulateResponse(originalMessage) {
+                const responses = [
+                    "That's interesting! Tell me more about that.",
+                    "I completely agree with your point.",
+                    "Thanks for sharing that insight!",
+                    "Great question! I've been thinking about that too.",
+                    "Nice! Have you tried exploring that further?",
+                    "I had a similar experience recently.",
+                    "That's a really good point to consider.",
+                    "Thanks for bringing that up in the discussion.",
+                    "Wow, that's fascinating! 🤔",
+                    "I never thought about it that way before.",
+                    "Could you elaborate on that?",
+                    "That reminds me of something I read recently.",
+                ];
+
+                const botUsers = [
+                    { name: "Alex", avatar: "A", color: "#10b981" },
+                    { name: "Jordan", avatar: "J", color: "#8b5cf6" },
+                    { name: "Sam", avatar: "S", color: "#f59e0b" },
+                    { name: "Riley", avatar: "R", color: "#ef4444" },
+                    { name: "Casey", avatar: "C", color: "#06b6d4" },
+                    { name: "Morgan", avatar: "M", color: "#f97316" },
+                ];
+
+                const randomBot = botUsers[Math.floor(Math.random() * botUsers.length)];
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+                // Show typing indicator
+                if (this.settings.typingIndicators) {
+                    this.showTypingIndicator(randomBot.name);
+                }
+
+                setTimeout(() => {
+                    this.hideTypingIndicator();
+                    
+                    const message = {
+                        id: this.generateId(),
+                        content: randomResponse,
+                        author: randomBot.name,
+                        authorId: this.generateId(),
+                        timestamp: Date.now(),
+                        isOwn: false,
+                        room: this.currentRoom,
+                        avatar: randomBot.avatar,
+                        color: randomBot.color,
+                        reactions: {}
+                    };
+
+                    this.messages.push(message);
+                    this.renderMessage(message);
+                    this.saveToStorage();
+                    this.scrollToBottom();
+                    this.playSound('notification');
+                    
+                    if (this.settings.desktopNotifications) {
+                        this.showDesktopNotification(`${randomBot.name} replied`, randomResponse);
+                    }
+                }, 1500 + Math.random() * 1000);
+            }
+
+            renderMessage(message) {
+                const messageEl = document.createElement('div');
+                messageEl.className = `message ${message.isOwn ? 'own' : ''}`;
+                messageEl.dataset.messageId = message.id;
+                
+                const time = new Date(message.timestamp).toLocaleTimeString([], { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+
+                let fileContent = '';
+                if (message.file) {
+                    const fileIcon = this.getFileIcon(message.file.type);
+                    fileContent = `
+                        <div class="message-file">
+                            <div class="file-info">
+                                <div class="file-icon">${fileIcon}</div>
+                                <div>
+                                    <div style="font-weight: 500;">${message.file.name}</div>
+                                    <div style="font-size: 11px; opacity: 0.7;">${this.formatFileSize(message.file.size)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                let reactionsContent = '';
+                if (Object.keys(message.reactions).length > 0) {
+                    reactionsContent = '<div class="message-reactions">';
+                    Object.entries(message.reactions).forEach(([emoji, users]) => {
+                        const isActive = users.includes(this.currentUser?.id);
+                        reactionsContent += `
+                            <span class="reaction ${isActive ? 'active' : ''}" onclick="gitChat.toggleReaction('${message.id}', '${emoji}')">
+                                ${emoji} ${users.length}
+                            </span>
+                        `;
+                    });
+                    reactionsContent += '</div>';
+                }
+
+                messageEl.innerHTML = `
+                    <div class="message-content" oncontextmenu="gitChat.showMessageMenu(event, '${message.id}')">
+                        <div class="message-header">
+                            <div class="message-avatar" style="background: ${message.color || '#6366f1'}">
+                                ${message.isOwn ? this.currentUser.avatar : (message.avatar || message.author.charAt(0).toUpperCase())}
+                            </div>
+                            <span class="message-author">${message.author}</span>
+                            <span class="message-time">${time}</span>
+                        </div>
+                        ${message.content ? `<div class="message-text">${this.escapeHtml(message.content)}</div>` : ''}
+                        ${fileContent}
+                        ${reactionsContent}
+                    </div>
+                `;
+
+                // Remove welcome message if it exists
+                const welcomeMsg = this.messagesContainer.querySelector('.welcome-message');
+                if (welcomeMsg) {
+                    welcomeMsg.remove();
+                }
+
+                this.messagesContainer.appendChild(messageEl);
+            }
+
+            getFileIcon(fileType) {
+                if (fileType.startsWith('image/')) return '🖼️';
+                if (fileType.includes('pdf')) return '📄';
+                if (fileType.includes('word') || fileType.includes('doc')) return '📝';
+                if (fileType.includes('text')) return '📄';
+                return '📎';
+            }
+
+            toggleReaction(messageId, emoji) {
+                const message = this.messages.find(m => m.id === messageId);
+                if (!message || !this.currentUser) return;
+
+                if (!message.reactions[emoji]) {
+                    message.reactions[emoji] = [];
+                }
+
+                const userIndex = message.reactions[emoji].indexOf(this.currentUser.id);
+                if (userIndex > -1) {
+                    message.reactions[emoji].splice(userIndex, 1);
+                    if (message.reactions[emoji].length === 0) {
+                        delete message.reactions[emoji];
+                    }
+                } else {
+                    message.reactions[emoji].push(this.currentUser.id);
+                }
+
+                this.saveToStorage();
+                this.rerenderMessage(messageId);
+                this.playSound('notification');
+            }
+
+            showMessageMenu(event, messageId) {
+                event.preventDefault();
+                
+                // Simple reaction menu - in a full app this would be a context menu
+                const reactions = ['👍', '❤️', '😂', '😮', '😢', '😡'];
+                const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
+                this.toggleReaction(messageId, randomReaction);
+            }
+
+            rerenderMessage(messageId) {
+                const messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+                const message = this.messages.find(m => m.id === messageId);
+                if (messageEl && message) {
+                    const newEl = document.createElement('div');
+                    newEl.className = messageEl.className;
+                    newEl.dataset.messageId = messageId;
+                    
+                    // Re-render with updated reactions
+                    this.renderMessage(message);
+                    const newContent = this.messagesContainer.lastChild;
+                    messageEl.replaceWith(newContent);
+                }
+            }
+
+            showTypingIndicator(username) {
+                const indicator = document.createElement('div');
+                indicator.className = 'typing-indicator';
+                indicator.id = 'typingIndicator';
+                indicator.innerHTML = `
+                    <span>${username} is typing</span>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                `;
+                this.messagesContainer.appendChild(indicator);
+                this.scrollToBottom();
+            }
+
+            hideTypingIndicator() {
+                const indicator = document.getElementById('typingIndicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+            }
+
+            renderMessage(message) {
+                const messageEl = document.createElement('div');
+                messageEl.className = `message ${message.isOwn ? 'own' : ''}`;
+                messageEl.dataset.messageId = message.id;
+                
+                const time = new Date(message.timestamp).toLocaleTimeString([], { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+
+                let fileContent = '';
+                if (message.file) {
+                    const fileIcon = this.getFileIcon(message.file.type);
+                    fileContent = `
+                        <div class="message-file">
+                            <div class="file-info">
+                                <div class="file-icon">${fileIcon}</div>
+                                <div>
+                                    <div style="font-weight: 500;">${message.file.name}</div>
+                                    <div style="font-size: 11px; opacity: 0.7;">${this.formatFileSize(message.file.size)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                let reactionsContent = '';
+                if (message.reactions && Object.keys(message.reactions).length > 0) {
+                    reactionsContent = '<div class="message-reactions">';
+                    Object.entries(message.reactions).forEach(([emoji, users]) => {
+                        const isActive = this.currentUser && users.includes(this.currentUser.id);
+                        reactionsContent += `
+                            <span class="reaction ${isActive ? 'active' : ''}" onclick="gitChat.toggleReaction('${message.id}', '${emoji}')">
+                                ${emoji} ${users.length}
+                            </span>
+                        `;
+                    });
+                    reactionsContent += '</div>';
+                }
+
+                messageEl.innerHTML = `
+                    <div class="message-content" oncontextmenu="gitChat.showMessageMenu(event, '${message.id}')">
+                        <div class="message-header">
+                            <div class="message-avatar" style="background: ${message.color || '#6366f1'}">
+                                ${message.isOwn ? this.currentUser.avatar : (message.avatar || message.author.charAt(0).toUpperCase())}
+                            </div>
+                            <span class="message-author">${message.author}</span>
+                            <span class="message-time">${time}</span>
+                        </div>
+                        ${message.content ? `<div class="message-text">${this.escapeHtml(message.content)}</div>` : ''}
+                        ${fileContent}
+                        ${reactionsContent}
+                    </div>
+                `;
+
+                // Remove welcome message if it exists
+                const welcomeMsg = this.messagesContainer.querySelector('.welcome-message');
+                if (welcomeMsg) {
+                    welcomeMsg.remove();
+                }
+
+                this.messagesContainer.appendChild(messageEl);
+            }
+
+            showNotification(message) {
+                this.notification.textContent = message;
+                this.notification.classList.add('show');
+                setTimeout(() => {
+                    this.notification.classList.remove('show');
+                }, 3000);
+            }
+
+            generateId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2);
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            simulateOnlineUsers() {
+                const simulatedUsers = [
+                    { name: "Alex Chen", avatar: "A", status: "Online" },
+                    { name: "Jordan Smith", avatar: "J", status: "Away" },
+                    { name: "Sam Wilson", avatar: "S", status: "Online" },
+                ];
+
+                simulatedUsers.forEach(user => {
+                    const userId = this.generateId();
+                    this.users.set(userId, {
+                        id: userId,
+                        name: user.name,
+                        avatar: user.avatar,
+                        status: user.status,
+                        joinTime: Date.now() - Math.random() * 3600000
+                    });
+                });
+
+                this.updateUsersList();
+            }
+
+            updateUsersList() {
+                this.usersList.innerHTML = '';
+                this.userCount.textContent = this.users.size;
+
+                this.users.forEach(user => {
+                    const userEl = document.createElement('div');
+                    userEl.className = 'user-item';
+                    userEl.innerHTML = `
+                        <div class="user-avatar">${user.avatar}</div>
+                        <div class="user-info">
+                            <div class="user-name">${user.name}</div>
+                            <div class="user-status">${user.status || 'Online'}</div>
+                        </div>
+                    `;
+                    this.usersList.appendChild(userEl);
+                });
+            }
+
+            scrollToBottom() {
+                if (this.settings.autoScroll) {
+                    this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+                }
+            }
+
+            saveToStorage() {
+                const data = {
+                    currentUser: this.currentUser,
+                    messages: this.messages.slice(-100), // Keep last 100 messages
+                    users: Array.from(this.users.entries()),
+                    settings: this.settings,
+                    currentRoom: this.currentRoom
+                };
+                localStorage.setItem('gitchat-data', JSON.stringify(data));
+            }
+
+            loadFromStorage() {
+                try {
+                    const data = JSON.parse(localStorage.getItem('gitchat-data') || '{}');
+                    
+                    if (data.currentUser) {
+                        this.currentUser = data.currentUser;
+                        this.usernameInput.value = this.currentUser.name;
+                    }
+                    
+                    if (data.messages) {
+                        this.messages = data.messages;
+                        this.messages
+                            .filter(msg => msg.room === this.currentRoom)
+                            .forEach(msg => this.renderMessage(msg));
+                        this.scrollToBottom();
+                    }
+                    
+                    if (data.users) {
+                        this.users = new Map(data.users);
+                    }
+
+                    if (data.settings) {
+                        this.settings = { ...this.settings, ...data.settings };
+                    }
+
+                    if (data.currentRoom) {
+                        this.currentRoom = data.currentRoom;
+                        this.switchRoom(this.currentRoom);
+                    }
+                } catch (error) {
+                    console.warn('Failed to load saved data:', error);
+                }
+            }
+
+            // Add global reference for onclick handlers
+            window.gitChat = this;
+        }
+
+        // Initialize the chat application
+        document.addEventListener('DOMContentLoaded', () => {
+            new GitChat();
+        });
+    </script>
+</body>
+</html>
