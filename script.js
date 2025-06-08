@@ -1,7 +1,7 @@
 class NexaShopSupport {
     constructor() {
-        // Current time as provided: 2025-06-08 12:54:44 UTC
-        this.currentDateTime = new Date('2025-06-08T12:54:44Z');
+        // Current time as provided: 2025-06-08 13:08:31 UTC
+        this.currentDateTime = new Date('2025-06-08T13:08:31Z');
         
         this.currentUser = {
             id: 'user-asarekings',
@@ -37,20 +37,54 @@ class NexaShopSupport {
         
         this.ticketNumber = 'NEX-2025-0608-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
         
-        console.log('🤖 Initializing NexaShop Large Response Bank AI...');
-        console.log('📅 Current Time: 2025-06-08 12:54:44 UTC');
+        console.log('🤖 Initializing NexaShop Comprehensive Service AI...');
+        console.log('📅 Current Time: 2025-06-08 13:08:31 UTC');
         console.log('👤 User: asarekings logged in');
-        console.log('🧠 Large Response Bank: Comprehensive answer database activated');
+        console.log('🛍️ Expanded Services: Complete business ecosystem activated');
         
-        this.initializeLargeResponseBank();
+        this.initializeExpandedResponseBank();
         this.initializeBasicFeatures();
         this.init();
     }
 
-    // === LARGE RESPONSE BANK SYSTEM ===
-    initializeLargeResponseBank() {
+    // === EXPANDED COMPREHENSIVE RESPONSE BANK ===
+    initializeExpandedResponseBank() {
         this.responseBank = {
-            // === ORDER & SHIPPING RESPONSES ===
+            // === CORE SERVICES & OVERVIEW ===
+            services: {
+                'services_overview': {
+                    keywords: [
+                        'tell me about your services', 'what services', 'your services', 
+                        'what do you offer', 'services available', 'complete services',
+                        'not sure', 'help me decide', 'tell me about', 'overview',
+                        'what can you do', 'full services', 'service options', 'about nexashop'
+                    ],
+                    response: () => this.generateComprehensiveServicesOverview()
+                },
+                'shopping_services': {
+                    keywords: [
+                        'shopping services', 'how to shop', 'shopping experience', 'personal shopping',
+                        'shopping assistance', 'product selection', 'shopping guide'
+                    ],
+                    response: () => this.generateShoppingServicesDetail()
+                },
+                'business_services': {
+                    keywords: [
+                        'business services', 'enterprise', 'corporate', 'bulk orders', 'b2b',
+                        'business account', 'wholesale', 'procurement', 'corporate solutions'
+                    ],
+                    response: () => this.generateBusinessServicesDetail()
+                },
+                'premium_services': {
+                    keywords: [
+                        'premium services', 'membership benefits', 'vip services', 'premium features',
+                        'elite membership', 'premium support', 'concierge services'
+                    ],
+                    response: () => this.generatePremiumServicesDetail()
+                }
+            },
+
+            // === ENHANCED ORDER & SHIPPING ===
             orders: {
                 'order_list': {
                     keywords: ['order list', 'my orders', 'all orders', 'order history', 'order summary'],
@@ -64,740 +98,1111 @@ class NexaShopSupport {
                     keywords: ['track', 'tracking', 'where is', 'location of', 'package location'],
                     response: () => this.generateAdvancedTracking()
                 },
-                'delivery_time': {
-                    keywords: ['when will', 'delivery time', 'arrival time', 'expected delivery', 'eta'],
-                    response: () => this.generateDeliveryTimeInfo()
+                'delivery_options': {
+                    keywords: ['delivery options', 'shipping methods', 'delivery methods', 'shipping options'],
+                    response: () => this.generateDeliveryOptionsDetail()
                 },
-                'shipping_options': {
-                    keywords: ['shipping options', 'delivery options', 'shipping methods', 'express shipping'],
-                    response: () => this.generateShippingOptions()
+                'international_shipping': {
+                    keywords: ['international shipping', 'overseas', 'global shipping', 'worldwide delivery'],
+                    response: () => this.generateInternationalShippingDetail()
                 },
-                'modify_delivery': {
-                    keywords: ['change delivery', 'modify delivery', 'reschedule delivery', 'delivery preferences'],
-                    response: () => this.generateDeliveryModification()
+                'express_delivery': {
+                    keywords: ['express delivery', 'fast shipping', 'overnight', 'same day', 'rush delivery'],
+                    response: () => this.generateExpressDeliveryDetail()
                 },
-                'missing_package': {
-                    keywords: ['missing package', 'lost package', 'package not delivered', 'where is my package'],
-                    response: () => this.generateMissingPackageHelp()
-                },
-                'delivery_issues': {
-                    keywords: ['delivery problem', 'delivery issue', 'wrong address', 'failed delivery'],
-                    response: () => this.generateDeliveryIssuesHelp()
+                'delivery_scheduling': {
+                    keywords: ['schedule delivery', 'delivery time', 'delivery appointment', 'delivery window'],
+                    response: () => this.generateDeliverySchedulingDetail()
                 }
             },
 
-            // === PRODUCT INFORMATION RESPONSES ===
+            // === EXPANDED PRODUCT INFORMATION ===
             products: {
-                'nexaphone_info': {
-                    keywords: ['nexaphone', 'phone specs', 'phone features', 'nexaphone pro', 'phone information'],
-                    response: () => this.generateNexaPhoneInfo()
+                'nexaphone_comprehensive': {
+                    keywords: ['nexaphone', 'phone specs', 'phone features', 'nexaphone pro', 'smartphone'],
+                    response: () => this.generateNexaPhoneComprehensive()
                 },
-                'nexabook_info': {
-                    keywords: ['nexabook', 'laptop specs', 'laptop features', 'nexabook ultra', 'laptop information'],
-                    response: () => this.generateNexaBookInfo()
+                'nexabook_comprehensive': {
+                    keywords: ['nexabook', 'laptop specs', 'laptop features', 'nexabook ultra', 'computer'],
+                    response: () => this.generateNexaBookComprehensive()
                 },
-                'nexapods_info': {
+                'nexapods_comprehensive': {
                     keywords: ['nexapods', 'earbuds', 'headphones', 'nexapods max', 'wireless earbuds'],
-                    response: () => this.generateNexaPodsInfo()
+                    response: () => this.generateNexaPodsComprehensive()
+                },
+                'nexawatch_comprehensive': {
+                    keywords: ['nexawatch', 'smartwatch', 'watch features', 'wearable', 'fitness tracker'],
+                    response: () => this.generateNexaWatchComprehensive()
+                },
+                'accessories_catalog': {
+                    keywords: ['accessories', 'cases', 'chargers', 'cables', 'add-ons', 'peripherals'],
+                    response: () => this.generateAccessoriesCatalog()
+                },
+                'product_bundles': {
+                    keywords: ['bundles', 'package deals', 'combo offers', 'bundle pricing', 'product sets'],
+                    response: () => this.generateProductBundles()
+                },
+                'new_releases': {
+                    keywords: ['new products', 'latest releases', 'new arrivals', 'coming soon', 'newest'],
+                    response: () => this.generateNewReleases()
                 },
                 'product_comparison': {
                     keywords: ['compare', 'comparison', 'vs', 'difference between', 'which is better'],
                     response: () => this.generateProductComparison()
-                },
-                'availability': {
-                    keywords: ['available', 'in stock', 'stock status', 'inventory', 'when available'],
-                    response: () => this.generateAvailabilityInfo()
-                },
-                'pricing': {
-                    keywords: ['price', 'cost', 'how much', 'pricing', 'deals', 'discounts'],
-                    response: () => this.generatePricingInfo()
-                },
-                'accessories': {
-                    keywords: ['accessories', 'cases', 'chargers', 'cables', 'add-ons'],
-                    response: () => this.generateAccessoriesInfo()
-                },
-                'warranty': {
-                    keywords: ['warranty', 'guarantee', 'protection plan', 'coverage', 'repair'],
-                    response: () => this.generateWarrantyInfo()
                 }
             },
 
-            // === BILLING & PAYMENT RESPONSES ===
+            // === COMPREHENSIVE BILLING & FINANCIAL ===
             billing: {
-                'payment_methods': {
+                'payment_methods_comprehensive': {
                     keywords: ['payment methods', 'how to pay', 'payment options', 'accepted cards'],
-                    response: () => this.generatePaymentMethods()
+                    response: () => this.generatePaymentMethodsComprehensive()
                 },
-                'billing_issue': {
+                'financing_options': {
+                    keywords: ['financing', 'payment plans', 'installments', 'credit', 'loan options'],
+                    response: () => this.generateFinancingOptions()
+                },
+                'billing_support': {
                     keywords: ['billing problem', 'payment issue', 'charge error', 'billing question'],
-                    response: () => this.generateBillingIssueHelp()
+                    response: () => this.generateBillingSupport()
                 },
-                'refund_status': {
-                    keywords: ['refund status', 'refund update', 'when refund', 'refund time'],
-                    response: () => this.generateRefundStatus()
+                'refund_comprehensive': {
+                    keywords: ['refund status', 'refund policy', 'when refund', 'refund process'],
+                    response: () => this.generateRefundComprehensive()
                 },
-                'invoice': {
-                    keywords: ['invoice', 'receipt', 'billing statement', 'download receipt'],
-                    response: () => this.generateInvoiceHelp()
+                'invoice_services': {
+                    keywords: ['invoice', 'receipt', 'billing statement', 'tax documents'],
+                    response: () => this.generateInvoiceServices()
                 },
-                'payment_security': {
-                    keywords: ['payment security', 'safe payment', 'secure checkout', 'payment protection'],
-                    response: () => this.generatePaymentSecurity()
-                },
-                'subscription': {
-                    keywords: ['subscription', 'recurring payment', 'auto pay', 'monthly charge'],
-                    response: () => this.generateSubscriptionInfo()
+                'corporate_billing': {
+                    keywords: ['corporate billing', 'business payment', 'purchase orders', 'net terms'],
+                    response: () => this.generateCorporateBilling()
                 }
             },
 
-            // === RETURNS & EXCHANGES RESPONSES ===
+            // === ENHANCED RETURNS & EXCHANGES ===
             returns: {
-                'return_process': {
-                    keywords: ['how to return', 'return process', 'return steps', 'return procedure'],
-                    response: () => this.generateReturnProcess()
+                'return_policy_comprehensive': {
+                    keywords: ['return policy', 'return rules', 'return process', 'how to return'],
+                    response: () => this.generateReturnPolicyComprehensive()
                 },
-                'return_policy': {
-                    keywords: ['return policy', 'return rules', 'return window', 'return terms'],
-                    response: () => this.generateReturnPolicy()
+                'exchange_services': {
+                    keywords: ['exchange', 'swap', 'change item', 'different model', 'upgrade'],
+                    response: () => this.generateExchangeServices()
                 },
-                'exchange_process': {
-                    keywords: ['exchange', 'swap', 'change item', 'different size', 'different color'],
-                    response: () => this.generateExchangeProcess()
+                'warranty_services': {
+                    keywords: ['warranty', 'guarantee', 'protection plan', 'coverage', 'repair'],
+                    response: () => this.generateWarrantyServices()
                 },
-                'return_shipping': {
-                    keywords: ['return shipping', 'return label', 'how to ship back', 'return cost'],
-                    response: () => this.generateReturnShipping()
-                },
-                'damaged_item': {
+                'damaged_defective': {
                     keywords: ['damaged', 'broken', 'defective', 'not working', 'faulty'],
-                    response: () => this.generateDamagedItemHelp()
-                },
-                'wrong_item': {
-                    keywords: ['wrong item', 'incorrect item', 'different item', 'not what ordered'],
-                    response: () => this.generateWrongItemHelp()
+                    response: () => this.generateDamagedDefectiveSupport()
                 }
             },
 
-            // === TECHNICAL SUPPORT RESPONSES ===
+            // === TECHNICAL SUPPORT EXPANSION ===
             technical: {
-                'device_setup': {
-                    keywords: ['setup', 'initial setup', 'first time setup', 'configure', 'install'],
-                    response: () => this.generateDeviceSetup()
+                'setup_services': {
+                    keywords: ['setup', 'installation', 'configuration', 'first time setup'],
+                    response: () => this.generateSetupServices()
                 },
-                'troubleshooting': {
-                    keywords: ['not working', 'problem', 'issue', 'error', 'bug', 'fix'],
-                    response: () => this.generateTroubleshooting()
+                'troubleshooting_comprehensive': {
+                    keywords: ['troubleshooting', 'not working', 'problem', 'issue', 'fix'],
+                    response: () => this.generateTroubleshootingComprehensive()
                 },
-                'software_update': {
-                    keywords: ['update', 'software update', 'firmware', 'latest version'],
-                    response: () => this.generateSoftwareUpdate()
+                'data_services': {
+                    keywords: ['data transfer', 'backup', 'sync', 'migration', 'data recovery'],
+                    response: () => this.generateDataServices()
                 },
-                'connectivity': {
-                    keywords: ['wifi', 'bluetooth', 'connection', 'network', 'internet'],
-                    response: () => this.generateConnectivityHelp()
+                'security_services': {
+                    keywords: ['security', 'privacy', 'protection', 'antivirus', 'cybersecurity'],
+                    response: () => this.generateSecurityServices()
                 },
-                'performance': {
-                    keywords: ['slow', 'laggy', 'performance', 'speed', 'optimization'],
-                    response: () => this.generatePerformanceHelp()
+                'software_services': {
+                    keywords: ['software', 'apps', 'programs', 'updates', 'installation'],
+                    response: () => this.generateSoftwareServices()
                 },
-                'data_transfer': {
-                    keywords: ['transfer data', 'move files', 'backup', 'sync', 'migration'],
-                    response: () => this.generateDataTransferHelp()
+                'network_services': {
+                    keywords: ['network', 'wifi', 'internet', 'connectivity', 'router setup'],
+                    response: () => this.generateNetworkServices()
                 }
             },
 
-            // === ACCOUNT & MEMBERSHIP RESPONSES ===
-            account: {
-                'account_info': {
-                    keywords: ['account info', 'profile', 'account details', 'membership'],
-                    response: () => this.generateAccountInfo()
+            // === CUSTOMER EXPERIENCE SERVICES ===
+            experience: {
+                'customer_support': {
+                    keywords: ['customer support', 'help desk', 'contact support', 'support options'],
+                    response: () => this.generateCustomerSupportServices()
                 },
-                'premium_benefits': {
-                    keywords: ['premium benefits', 'membership perks', 'premium features', 'member advantages'],
-                    response: () => this.generatePremiumBenefits()
+                'consultation_services': {
+                    keywords: ['consultation', 'expert advice', 'recommendations', 'guidance'],
+                    response: () => this.generateConsultationServices()
                 },
-                'password_reset': {
-                    keywords: ['reset password', 'forgot password', 'change password', 'password help'],
-                    response: () => this.generatePasswordReset()
+                'training_education': {
+                    keywords: ['training', 'education', 'tutorials', 'learning', 'workshops'],
+                    response: () => this.generateTrainingEducation()
                 },
-                'update_info': {
-                    keywords: ['update info', 'change address', 'update profile', 'modify account'],
-                    response: () => this.generateUpdateInfo()
-                },
-                'privacy_settings': {
-                    keywords: ['privacy', 'data protection', 'privacy settings', 'personal data'],
-                    response: () => this.generatePrivacySettings()
+                'loyalty_programs': {
+                    keywords: ['loyalty program', 'rewards', 'points', 'cashback', 'member benefits'],
+                    response: () => this.generateLoyaltyPrograms()
                 }
             },
 
-            // === GENERAL RESPONSES ===
-            general: {
-                'store_hours': {
-                    keywords: ['store hours', 'operating hours', 'open hours', 'business hours'],
-                    response: () => this.generateStoreHours()
+            // === SPECIALIZED SERVICES ===
+            specialized: {
+                'enterprise_solutions': {
+                    keywords: ['enterprise', 'large business', 'corporation', 'fleet management'],
+                    response: () => this.generateEnterpriseSolutions()
                 },
-                'contact_info': {
-                    keywords: ['contact', 'phone number', 'email', 'address', 'location'],
-                    response: () => this.generateContactInfo()
+                'educational_services': {
+                    keywords: ['education', 'school', 'university', 'student', 'teacher'],
+                    response: () => this.generateEducationalServices()
                 },
-                'about_company': {
-                    keywords: ['about nexashop', 'company info', 'who are you', 'about company'],
-                    response: () => this.generateAboutCompany()
+                'healthcare_solutions': {
+                    keywords: ['healthcare', 'medical', 'hospital', 'clinic', 'telehealth'],
+                    response: () => this.generateHealthcareSolutions()
                 },
-                'careers': {
-                    keywords: ['jobs', 'careers', 'hiring', 'work here', 'employment'],
-                    response: () => this.generateCareersInfo()
+                'government_services': {
+                    keywords: ['government', 'public sector', 'municipal', 'federal', 'state'],
+                    response: () => this.generateGovernmentServices()
+                },
+                'nonprofit_services': {
+                    keywords: ['nonprofit', 'charity', 'foundation', 'ngo', 'community'],
+                    response: () => this.generateNonprofitServices()
+                }
+            },
+
+            // === GENERAL COMPANY INFO ===
+            company: {
+                'about_nexashop': {
+                    keywords: ['about nexashop', 'company info', 'who are you', 'company history'],
+                    response: () => this.generateAboutNexaShop()
+                },
+                'locations_stores': {
+                    keywords: ['locations', 'stores', 'retail locations', 'where are you'],
+                    response: () => this.generateLocationsStores()
+                },
+                'careers_jobs': {
+                    keywords: ['careers', 'jobs', 'hiring', 'employment', 'work here'],
+                    response: () => this.generateCareersJobs()
                 },
                 'partnerships': {
-                    keywords: ['partnership', 'business partnership', 'collaborate', 'vendor'],
-                    response: () => this.generatePartnershipsInfo()
+                    keywords: ['partnerships', 'business partners', 'vendors', 'suppliers'],
+                    response: () => this.generatePartnerships()
+                },
+                'sustainability': {
+                    keywords: ['sustainability', 'environment', 'green', 'eco-friendly', 'carbon neutral'],
+                    response: () => this.generateSustainability()
                 }
             }
         };
 
-        // Default fallback messages
+        // Enhanced default responses with more variety
         this.defaultResponses = {
             no_match: [
-                "I understand you're looking for specific information, and I want to make sure I give you the most accurate answer possible. Let me connect you with one of our specialists who can provide detailed assistance with your question.\n\nIn the meantime, here are some quick options:\n• Check our comprehensive FAQ section\n• Browse our product catalog for detailed specifications\n• Review your account dashboard for order and billing information\n• Contact our 24/7 support line for immediate assistance\n\nIs there a specific area I can help guide you to while we get you connected with the right expert?",
-                
-                "Thank you for your question! While I want to make sure I provide you with the most accurate and helpful information, I'd like to connect you with a specialist who can give you detailed guidance on this specific topic.\n\n🎯 Quick Self-Service Options:\n• Visit your account dashboard for order tracking and billing\n• Browse our knowledge base for step-by-step guides\n• Check product pages for detailed specifications and reviews\n• Use our live chat for real-time assistance\n\n📞 Direct Support:\n• Call our support team at 1-800-NEXASHOP\n• Email support@nexashop.com for detailed assistance\n• Schedule a callback for personalized help\n\nWhat would be most helpful for you right now?",
-                
-                "I appreciate your question and want to ensure you get the best possible answer. Let me get you connected with the right resource for detailed assistance.\n\n🔍 While I'm setting that up, you might find these helpful:\n• Your personalized account dashboard has real-time order and billing information\n• Our extensive help center covers most common questions\n• Product pages include detailed specs, reviews, and compatibility information\n• Our mobile app offers convenient access to all account features\n\n🤝 Personal Assistance:\n• Live chat with human agents (available 24/7)\n• Phone support with product specialists\n• Video call support for technical issues\n• In-store appointments for hands-on help\n\nWhich option would work best for your specific needs?"
+                `Thank you for your question, asarekings! I want to make sure I provide you with the most accurate and comprehensive information possible. 
+
+🎯 Here's how I can help you get exactly what you need:
+
+Immediate Self-Service Options:
+• Your Premium Member Dashboard: Real-time access to orders, billing, and account info
+• Comprehensive Knowledge Base: Step-by-step guides for most common questions  
+• Product Catalog: Detailed specs, reviews, and compatibility information
+• Live Chat: 24/7 support with human specialists
+• Mobile App: Full account access with notifications and tracking
+
+🤝 Personal Assistance Available:
+• Phone Support: 1-800-NEXASHOP (Premium member priority line)
+• Video Call Support: Schedule face-to-face assistance
+• In-Store Consultations: 200+ locations with expert staff
+• Email Support: support@nexashop.com with 2-hour response guarantee
+• Callback Service: We'll call you at your convenience
+
+💡 Popular Topics I Can Help With:
+• Complete product information and recommendations
+• Order tracking and delivery management  
+• Billing, payments, and account questions
+• Technical support and troubleshooting
+• Returns, exchanges, and warranty services
+• Business and enterprise solutions
+
+What specific area interests you most? I'm here to provide detailed, personalized assistance!`,
+
+                `Hi asarekings! I appreciate your question and want to ensure you get the most helpful and accurate response possible.
+
+🔍 Let me connect you with the right resources:
+
+Quick Access Options:
+• Account Dashboard: nexashop.com/account (order history, tracking, billing)
+• Help Center: nexashop.com/help (comprehensive guides and FAQs)
+• Product Pages: Detailed specs, reviews, and compatibility info
+• Store Locator: Find nearby retail locations for hands-on assistance
+
+📞 Expert Support Channels:
+• Premium Support Line: 1-800-NEXASHOP (skip the queue with your membership)
+• Live Chat: Instant connection with specialist agents
+• Video Support: Screen sharing for technical issues
+• Email: support@nexashop.com (guaranteed 2-hour response)
+
+🎯 I'm particularly well-equipped to help with:
+• Product selection and recommendations
+• Order and shipping information
+• Account and billing questions  
+• Technical support and setup
+• Return and exchange processes
+• Premium member benefits and services
+
+Is there a specific product, service, or account question I can help you with right now?`,
+
+                `Thank you for reaching out, asarekings! As a Premium Gold member, you deserve exceptional service, and I want to make sure you get exactly the information you need.
+
+🌟 Premium Member Resources at Your Fingertips:
+• Dedicated Premium Support: 1-800-NEXASHOP-VIP
+• Personal Account Manager: Available for complex questions
+• Priority Chat Queue: Skip to the front of support lines
+• Video Consultation: Schedule one-on-one product sessions
+• Concierge Service: Let us handle research and ordering for you
+
+📱 Instant Access Tools:
+• NexaShop Mobile App: Complete account management on-the-go
+• Real-Time Tracking: GPS-enabled package monitoring
+• Smart Reorder: AI-powered suggestions based on your history
+• Price Alerts: Notifications when items you want go on sale
+
+🛍️ What I Can Help You With Right Now:
+• Detailed product comparisons and recommendations
+• Complete order and shipping information
+• Account management and billing questions
+• Technical support with step-by-step guidance
+• Return/exchange processes and policies
+• Premium member exclusive benefits and offers
+
+What would be most helpful for you today? I'm here to provide comprehensive, personalized assistance!`
             ],
             
             unclear_request: [
-                "I want to make sure I understand exactly what you're looking for so I can provide the most helpful response. Could you help me by being a bit more specific about your question or concern?\n\n💡 For example:\n• If it's about an order: 'Where is my NexaPhone order?' or 'I need to track my package'\n• If it's about a product: 'Tell me about NexaBook features' or 'Compare NexaPhone models'\n• If it's about billing: 'I have a payment question' or 'I need to update my payment method'\n• If it's technical: 'My device isn't working' or 'I need setup help'\n\nWhat specific topic can I help you with today?",
-                
-                "Thanks for reaching out! I'd love to help you get exactly the information you need. To provide you with the most accurate and detailed response, could you give me a bit more context about your question?\n\n🎯 Here are some ways to help me understand:\n• What product or service are you asking about?\n• Are you looking for information, trying to solve a problem, or need to take an action?\n• Is this related to an existing order, account question, or new purchase?\n\nThe more specific you can be, the better I can tailor my response to exactly what you need!",
-                
-                "I'm here to help and want to make sure I give you the most useful information! To provide you with a comprehensive and accurate response, could you help me understand a bit more about what you're looking for?\n\n📝 Feel free to ask about:\n• Order tracking and shipping questions\n• Product information and comparisons\n• Account and billing inquiries\n• Technical support and setup help\n• Returns, exchanges, and warranty information\n• Company policies and procedures\n\nWhat's the main thing I can help you with today?"
+                `I'd love to help you get exactly what you're looking for! To provide the most accurate and detailed response, could you help me understand your specific needs?
+
+💡 Here are some ways to help me assist you better:
+
+For Product Questions:
+• "Tell me about the NexaPhone Pro Max features"
+• "Compare NexaBook models for video editing" 
+• "What accessories work with my NexaPods?"
+
+For Order & Shipping:
+• "Where is my order NEX-2025-001248?"
+• "I need to track my NexaBook delivery"
+• "Can I change my delivery address?"
+
+For Account & Billing:
+• "I have a question about my last payment"
+• "How do I update my payment method?"
+• "I need help with a billing issue"
+
+For Technical Support:
+• "My NexaPhone isn't connecting to WiFi"
+• "I need help setting up my new laptop"
+• "How do I transfer data from my old device?"
+
+🎯 Or simply ask: "What are your complete services?" for a comprehensive overview of everything we offer!
+
+What specific topic can I help you with today?`,
+
+                `Thanks for your question! I want to make sure I give you the most helpful and detailed response possible. 
+
+🔍 To provide you with comprehensive information, it would help to know:
+
+What You're Looking For:
+• Information about a specific product or service?
+• Help with an existing order or account?
+• Technical support for a device you own?
+• Guidance on making a new purchase?
+• Questions about policies or procedures?
+
+Your Situation:
+• Are you a new customer exploring options?
+• Existing customer with a specific need?
+• Business customer looking for enterprise solutions?
+• Having an issue that needs resolution?
+
+📋 Popular Topics I Can Cover in Detail:
+• Complete product catalogs with specs and pricing
+• Comprehensive service offerings and benefits
+• Step-by-step order and shipping processes
+• Technical support and troubleshooting guides
+• Account management and billing information
+• Return, exchange, and warranty policies
+
+The more specific you can be, the more detailed and helpful my response will be! What would you like to know more about?`
             ]
         };
 
-        console.log('🧠 Large Response Bank initialized with comprehensive answer database');
+        console.log('🧠 Expanded Response Bank initialized with comprehensive service coverage');
     }
 
-    // === COMPREHENSIVE RESPONSE GENERATORS ===
+    // === COMPREHENSIVE SERVICE OVERVIEW ===
+    generateComprehensiveServicesOverview() {
+        return `Hi asarekings! I'm excited to tell you about our complete ecosystem of services at NexaShop. Here's everything we offer to make your technology experience exceptional:
 
-    generateComprehensiveOrderList() {
-        const currentTime = new Date().toLocaleString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: 'UTC'
-        });
+🛍️ Complete NexaShop Services Ecosystem (Updated: 2025-06-08 13:08:31 UTC)
 
-        return `Hi asarekings! Here's your complete order history and current status (Updated: ${currentTime} UTC)
+🌟 Core Shopping & E-Commerce Services:
 
-📋 Complete Order Dashboard - asarekings Premium Account
+Premium Technology Marketplace:
+• Curated selection of 10,000+ cutting-edge technology products
+• AI-powered product recommendations based on your usage patterns
+• Real-time inventory tracking across 15 global warehouses
+• Advanced search with 50+ filter options for precise product discovery
+• Detailed product specifications with 360° views and AR previews
+• Expert reviews, customer ratings, and compatibility matrices
+• Price matching guarantee with 500+ major competitors worldwide
+• Exclusive early access to new releases (Premium members get 48-hour head start)
 
-Current Active Orders (3):
+Personalized Shopping Experience:
+• Dedicated Personal Shopping Consultants (free for Premium members)
+• Custom product bundles tailored to your workflow
+• AI-driven smart reorder suggestions based on usage analytics
+• Wish list management with price drop notifications
+• Birthday and anniversary reminder services with special offers
+• Seasonal recommendations and holiday gift curation
+• Virtual try-before-you-buy programs for select products
 
-✅ Order NEX-2025-001247 - $1,099.99
-📱 NexaPhone Pro Max (Space Black, 512GB)
-📅 Order Date: May 28, 2025 | Delivered: June 3, 2025 at 4:45 PM
-📍 Delivery Status: COMPLETED - Delivered to front door with signature
-📦 Package Condition: Excellent (No damage reported)
-🔍 Tracking: NEX1234567890
-📋 Delivery Notes: "Left with resident at front door"
-⭐ Your Rating: Pending (Please rate your experience)
-💳 Payment: Visa ****4521 - Charged successfully
-📄 Invoice: Available for download in your account
+📦 Advanced Fulfillment & Delivery Services:
 
-🚚 Order NEX-2025-001248 - $1,599.99
-💻 NexaBook Ultra 16 (Silver, 32GB RAM, 1TB SSD)
-📅 Order Date: June 1, 2025 | Shipped: June 5, 2025
-📍 Current Status: IN TRANSIT - Last location: Chicago Distribution Hub
-🚛 Carrier: FedEx Express | Driver: Michael S.
-📊 Delivery Progress: 75% complete | 2 stops remaining
-📅 Expected Delivery: Tomorrow, June 10, 2025
-⏰ Delivery Window: 10:00 AM - 2:00 PM (Signature required)
-🔍 Live Tracking: NEX1234567891 (GPS tracking available after 9 AM)
-📱 SMS Updates: Enabled - You'll receive delivery notifications
-💡 Pro Tip: You can track the delivery truck in real-time starting at 9 AM
+Global Shipping Network:
+• Same-Day Delivery: Available in 75+ major metropolitan areas ($19.99)
+• Overnight Express: Next business day delivery ($24.99)
+• 2-Day Premium: Free for Premium members, $9.99 for standard
+• Standard Shipping: 3-5 business days (FREE on orders over $50)
+• International Express: 190+ countries, 2-7 business days
+• Freight Services: White-glove delivery for large enterprise orders
 
-⏳ Order NEX-2025-001249 - $329.98
-🎧 NexaPods Max + Wireless Charger Bundle (Midnight Black)
-📅 Order Date: June 7, 2025 | Processing Started: Today
-📍 Current Status: IN FULFILLMENT - Austin Processing Center
-⚙️ Current Stage: Quality inspection completed ✅
-📦 Next Steps: Final packaging and shipping label creation
-📊 Processing Progress: 45% complete
-📅 Expected Ship Date: June 9, 2025 (Tomorrow)
-📅 Expected Delivery: June 11-12, 2025
-🔍 Tracking Number: Will be generated when shipped
-📧 Notifications: You'll receive email and SMS when shipped
+Smart Delivery Innovation:
+• Real-time GPS tracking with 15-minute delivery windows
+• Flexible scheduling: Choose specific 2-hour delivery slots
+• Smart delivery options: Secure lockboxes, neighbor delivery, workplace delivery
+• Contactless delivery with photo confirmation and digital signatures
+• Delivery attempt notifications with instant rescheduling options
+• Temperature-controlled shipping for sensitive electronics
+• Carbon-neutral delivery options with environmental impact reporting
 
-📊 Order History Summary:
-• Total Orders This Year: 12 completed orders
-• Total Order Value: $2,929.97
-• Average Order Processing Time: 1.2 days
-• On-Time Delivery Rate: 100% (Excellent!)
-• Customer Satisfaction Score: 4.9/5 stars
-• Returned Items: 2 (Hassle-free returns processed)
-• Warranty Claims: 0 (Great product reliability!)
+🎯 Membership & Loyalty Programs:
 
-🎯 Quick Order Actions Available:
-• Track any order with real-time GPS location
-• Modify delivery address or delivery instructions
-• Schedule delivery for a specific time slot
-• Set up delivery notifications via SMS/email
-• Download invoices and receipts for tax purposes
-• Initiate returns or exchanges with one click
-• Contact delivery drivers directly (for in-transit orders)
-• Rate and review delivered products
+Premium Gold Membership (Your Current Status 🌟):
+• FREE 2-day shipping on all orders (no minimum purchase required)
+• Extended 45-day return window (vs 30-day standard)
+• Automatic 5% discount on all purchases (applied at checkout)
+• Early access to sales events and new product launches
+• Priority customer support with dedicated premium phone line
+• Extended warranty coverage at no additional cost
+• Exclusive member-only events and product preview sessions
+• Birthday month 20% discount on entire order
 
-💎 Premium Member Benefits Applied:
-• Free 2-day shipping on all orders ✅
-• Priority processing and fulfillment ✅
-• Extended 45-day return window ✅
-• Dedicated premium customer support ✅
-• Early access to new product launches ✅
-• Exclusive member-only deals and discounts ✅
+Elite Platinum Membership (Upgrade Available):
+• FREE overnight shipping on all orders
+• 60-day return window with complimentary pickup service
+• Automatic 10% discount on all purchases  
+• Personal technology concierge service
+• VIP customer support with guaranteed 30-second response time
+• Complimentary device setup and data transfer services
+• Annual comprehensive tech health check for all devices
+• Access to exclusive limited-edition products
 
-🔄 Upcoming Features (Beta Access):
-• Predictive reordering based on usage patterns
-• Smart delivery scheduling with calendar integration
-• Advanced package protection with real-time monitoring
-• Carbon-neutral shipping options
+💳 Comprehensive Financial Services:
 
-Need specific details about any order, want to modify delivery preferences, or have questions about your order history?`;
+Flexible Payment Solutions:
+• All major credit and debit cards (Visa, MC, Amex, Discover, JCB)
+• Digital wallets: Apple Pay, Google Pay, Samsung Pay, PayPal
+• Buy Now, Pay Later: Klarna, Afterpay, Affirm, Zip (0% APR available)
+• Cryptocurrency: Bitcoin, Ethereum, Litecoin, Bitcoin Cash
+• Corporate accounts with NET-30, NET-60, and NET-90 terms
+• International payment support with 25+ local currencies
+
+NexaShop Credit & Financing:
+• NexaShop Credit Card: 3% cashback on all purchases, 0% APR for 15 months
+• Instant credit decisions with approval amounts up to $25,000
+• Special promotional financing: 0% APR for 12-48 months on qualifying purchases
+• Trade-in credit program: Up to $1,200 credit for qualifying devices
+• Layaway program: Reserve items with 25% down, pay over 6 months
+• Business credit lines with revolving credit up to $100,000
+
+🔧 Technical Support & Professional Services:
+
+24/7 Technical Support Excellence:
+• Multi-channel support: Phone, chat, email, video, and in-person
+• Remote diagnostic services with screen sharing capabilities
+• On-site technical support for business customers (within 4 hours)
+• Dedicated technical account managers for enterprise clients
+• Multi-language support in 12 languages
+• Average response time: 30 seconds for Premium members
+
+Expert Professional Services:
+• Device setup and configuration (free for Premium members)
+• Data migration and transfer services ($99 value, free for Premium)
+• Network design and implementation for businesses
+• Custom software installation and configuration
+• Cybersecurity assessment and implementation
+• Cloud integration and backup solutions
+• Smart home and IoT device integration
+• Regular maintenance and optimization packages
+
+🛡️ Protection & Security Services:
+
+Comprehensive Protection Plans:
+• Extended warranties: 2-5 years beyond manufacturer coverage
+• Accidental damage protection: Covers drops, spills, and impacts
+• Theft and loss protection: Device replacement within 24 hours
+• Global coverage: Protection valid in 100+ countries
+• No-deductible repair services at authorized service centers
+• Rapid replacement program: Next-day device replacement
+• Data recovery services: Professional data rescue from damaged devices
+
+Advanced Security Services:
+• Identity theft protection and monitoring ($200 value included)
+• VPN services: Secure browsing and privacy protection
+• Comprehensive antivirus and malware protection suites
+• Privacy consultation and digital security setup
+• Secure cloud backup with end-to-end encryption
+• Parental control setup and family safety management
+• Business cybersecurity audits and compliance assistance
+
+↩️ Hassle-Free Return & Exchange Services:
+
+Industry-Leading Return Policy:
+• 45-day return window for Premium members (30 days standard)
+• 100% free return shipping with prepaid labels
+• No restocking fees on any product category
+• Multiple return methods: Online, in-store, pickup, or mail
+• Same-day return processing for urgent replacements
+• International return support with local pickup services
+
+Flexible Exchange Programs:
+• Same product exchanges: Different color, size, or storage capacity
+• Upgrade exchanges: Pay difference for newer or higher-end models
+• Cross-category exchanges: Phone for laptop, etc. (pay/receive difference)
+• Bulk exchange programs for business customers
+• Gift exchange services with extended holiday return windows
+• Defective product expedited replacement (24-48 hour turnaround)
+
+🏢 Business & Enterprise Solutions:
+
+Corporate Technology Services:
+• Volume discounts: 5-25% off based on annual purchase volume
+• Custom procurement solutions with dedicated account management
+• Asset management and inventory tracking services
+• Device lifecycle management from purchase to disposal
+• Custom configuration and imaging services
+• Deployment services: On-site setup for 100+ devices
+• Training programs for employee technology adoption
+
+Enterprise Support Services:
+• Dedicated business account managers
+• Priority support with guaranteed 15-minute response times
+• Custom service level agreements (SLAs)
+• Bulk device management and monitoring
+• Enterprise security solutions and compliance support
+• Lease-to-own programs for equipment financing
+• End-of-life device recycling and data destruction
+
+🎓 Educational & Institutional Services:
+
+Academic Programs:
+• Student discounts: 10% off all products with valid student ID
+• Educator pricing: Special rates for teachers and faculty
+• Institutional volume pricing for schools and universities
+• Grant application assistance for technology funding
+• Summer storage programs for educational devices
+• Classroom setup and training services
+• Educational software licensing and management
+
+Research & Development Support:
+• Academic research partnerships
+• Beta testing programs for educational institutions
+• Custom development for educational applications
+• Accessibility compliance and adaptive technology solutions
+• Digital equity programs for underserved communities
+
+🌍 Global & International Services:
+
+Worldwide Reach:
+• Service in 190+ countries and territories
+• Local customer support in 12 languages
+• Regional warehouses for faster international delivery
+• Local warranty and repair services in major markets
+• Export documentation and customs assistance
+• Cultural customization for regional preferences
+
+Environmental & Social Responsibility:
+• Carbon-neutral shipping options in 50+ countries
+• Electronic waste recycling and responsible disposal
+• Solar-powered fulfillment centers (75% of operations)
+• Device refurbishment and second-life programs
+• Community technology education initiatives
+• Sustainable packaging with 90% recyclable materials
+
+🎁 Additional Premium Services:
+
+Concierge & Lifestyle Services:
+• Personal technology consultations and planning
+• Custom device engraving and personalization
+• Professional gift wrapping and corporate gifting programs
+• Event technology planning and coordination
+• VIP customer events and exclusive product launches
+• Technology trend analysis and future planning consultations
+
+Innovation & Beta Programs:
+• Early access to beta products and features (6 months before public release)
+• Product feedback and development collaboration
+• Innovation lab visits and behind-the-scenes tours
+• Annual technology summit invitations
+• Direct communication channels with product development teams
+
+💡 Getting Started - Next Steps for Your Order:
+
+Since you mentioned interest in making an order, here's how I can help you today:
+
+1. Needs Assessment:
+   • What type of technology are you looking for?
+   • Personal use, business, or educational purposes?
+   • Budget range and timeline considerations?
+   • Specific features or requirements?
+
+2. Product Consultation:
+   • Personalized recommendations based on your needs
+   • Detailed comparisons between options
+   • Compatibility analysis with existing devices
+   • Future-proofing considerations
+
+3. Custom Solution Design:
+   • Bundle packages for cost savings
+   • Financing and payment options review
+   • Service add-ons and protection plans
+   • Implementation and setup planning
+
+4. Seamless Ordering:
+   • Guided checkout process
+   • Multiple payment and delivery options
+   • Order tracking and communication preferences
+   • Post-purchase support planning
+
+🎯 What specific area interests you most?
+• Consumer Electronics (phones, laptops, tablets, audio)
+• Business Solutions (fleet management, productivity tools)
+• Smart Home & IoT (automation, security, entertainment)
+• Gaming & Entertainment (consoles, VR, streaming)
+• Professional Equipment (creative tools, development hardware)
+• Educational Technology (learning tools, classroom solutions)
+
+I'm here to provide detailed information about any of these categories and help guide you to the perfect solution for your needs!`;
     }
 
-    generateAdvancedTracking() {
-        return `Hi asarekings! Here's your comprehensive package tracking dashboard with real-time updates:
+    // === EXPANDED BUSINESS SERVICES ===
+    generateBusinessServicesDetail() {
+        return `Hi asarekings! Here's our comprehensive suite of business and enterprise technology services:
 
-🚚 Advanced Package Tracking - Live Updates (2025-06-08 12:54:44 UTC)
+🏢 Complete Business & Enterprise Solutions (2025-06-08 13:08:31 UTC)
 
-Active Shipment #1:
-📦 Order NEX-2025-001248 - NexaBook Ultra 16
-🔍 Tracking Number: NEX1234567891
-📍 Current Location: FedEx Chicago Distribution Center
-🌐 GPS Coordinates: 41.8781° N, 87.6298° W
-📊 Transit Progress: 75% complete (673 miles of 897 miles)
+🎯 Enterprise Technology Services:
 
-Live Journey Map:
-Austin, TX → Dallas, TX → Memphis, TN → Chicago, IL → Your Location
-✅ Shipped      ✅ Processed    ✅ Sorted       🚛 Current      📍 Destination
+Corporate Procurement Solutions:
+• Volume discounts: 5-35% off based on annual purchase commitments
+• Custom procurement portals with pre-approved products and pricing
+• Automated purchasing workflows with approval hierarchies
+• Budget management tools with spending analytics and alerts
+• Contract negotiations for large-scale technology deployments
+• Multi-year technology roadmap planning and consultation
+• Competitive bidding support for government and institutional contracts
 
-Detailed Timeline:
-📅 June 5, 8:30 AM - Package picked up from Austin facility
-📅 June 6, 2:15 PM - Processed at Dallas hub
-📅 June 7, 11:45 PM - Departed Memphis sorting facility
-📅 June 8, 7:20 AM - Arrived at Chicago distribution center
-📅 June 8, 10:30 AM - Out for delivery (Current status)
+Fleet Management Services:
+• Device lifecycle management from procurement to retirement
+• Automated asset tracking with RFID and barcode systems
+• Real-time inventory management across multiple locations
+• Predictive maintenance scheduling and repair coordination
+• Usage analytics and optimization recommendations
+• Compliance reporting for regulatory requirements
+• End-of-life device recycling and secure data destruction
 
-🚛 Delivery Information:
-• Driver: Michael S. (Veteran FedEx driver, 4.9/5 rating)
-• Delivery Truck: Vehicle #4521 (Real-time tracking available at 9 AM)
-• Expected Delivery: Tomorrow, June 10, 2025
-• Time Window: 10:00 AM - 2:00 PM
-• Delivery Type: Signature required (Adult signature)
-• Special Instructions: "Leave with neighbor if not home - Unit 4B preferred"
+🔧 Professional Implementation Services:
 
-📱 Real-Time Tracking Features:
-• Live GPS tracking of delivery truck (available starting 9 AM)
-• SMS notifications for each delivery milestone
-• 30-minute delivery window notification
-• Photo confirmation upon successful delivery
-• Delivery attempt notifications with rescheduling options
+Custom Configuration & Deployment:
+• Factory imaging with custom OS configurations and software packages
+• Mass device enrollment and management system setup
+• Network integration and security protocol implementation
+• User profile migration and data transfer services
+• On-site deployment teams for large-scale rollouts (100-10,000+ devices)
+• Change management support and user training programs
+• Post-deployment support and optimization services
 
-Processing Order:
-📦 Order NEX-2025-001249 - NexaPods Max Bundle
-📍 Current Location: Austin Fulfillment Center
-⚙️ Processing Stage: Quality inspection complete ✅
-📊 Fulfillment Progress: 45% complete
+Infrastructure Design & Setup:
+• Network architecture design and implementation
+• Server and cloud infrastructure planning
+• Security infrastructure and compliance setup
+• Disaster recovery and business continuity planning
+• Performance monitoring and optimization systems
+• Integration with existing enterprise systems and workflows
 
-Processing Timeline:
-📅 June 7, 3:45 PM - Order received and validated
-📅 June 8, 9:20 AM - Inventory allocation confirmed
-📅 June 8, 11:15 AM - Quality inspection completed ✅
-📅 June 8, 2:30 PM - Packaging in progress (Current)
-📅 June 9, 10:00 AM - Expected shipping (Tomorrow)
+📊 Business Intelligence & Analytics:
 
-🎯 Delivery Optimization Options:
-• Upgrade to overnight shipping (Additional $25.99)
-• Schedule specific delivery time slot ($12.99)
-• Delivery to FedEx Office location (Free)
-• Delivery to workplace address (Free address change)
-• Weekend delivery available (Saturday +$15.99)
+Technology Usage Analytics:
+• Comprehensive usage reporting across all deployed devices
+• Cost optimization analysis and recommendations
+• ROI measurement for technology investments
+• Predictive analytics for future technology needs
+• Benchmarking against industry standards and best practices
+• Custom dashboard creation for executive reporting
 
-🔒 Security Features:
-• Package tampering detection with sensors
-• Chain of custody tracking at every checkpoint
-• Insurance coverage up to $2,000 included
-• Secure delivery with photo confirmation
-• Signature verification with digital records
+Performance Optimization:
+• Regular system health monitoring and reporting
+• Proactive issue identification and resolution
+• Capacity planning and scaling recommendations
+• Security vulnerability assessments and remediation
+• Software licensing optimization and compliance management
 
-⚡ Instant Actions Available:
-• Modify delivery address (up to 2 hours before delivery)
-• Add special delivery instructions
-• Request delivery hold for vacation
-• Set up delivery notifications for family members
-• Schedule redelivery if missed
-• Contact delivery driver directly (when out for delivery)
+🔒 Enterprise Security Solutions:
 
-📧 Communication Preferences:
-✅ SMS notifications enabled: +1 (555) XXX-4521
-✅ Email updates enabled: asarekings@email.com
-✅ Push notifications enabled: NexaShop Mobile App
-❌ Phone call notifications (Click to enable)
+Cybersecurity Services:
+• Comprehensive security audits and vulnerability assessments
+• Implementation of zero-trust security frameworks
+• Multi-factor authentication and identity management systems
+• Endpoint detection and response (EDR) solutions
+• Security incident response and forensic analysis
+• Compliance support for HIPAA, SOX, GDPR, and other regulations
+• Employee security training and awareness programs
 
-🌍 Environmental Impact:
-• Carbon offset: 2.4 lbs CO2 offset purchased for your shipments
-• Eco-friendly packaging materials used
-• Optimized routing to reduce environmental impact
-• Electric delivery vehicles used when available in your area
+Data Protection & Privacy:
+• Enterprise-grade backup and disaster recovery solutions
+• Data encryption and secure communication systems
+• Privacy impact assessments and compliance consulting
+• Secure data migration and cloud integration services
+• Digital rights management and access control systems
+• Regular security updates and patch management
 
-Need to modify delivery preferences, track a different order, or have questions about your shipment?`;
+💼 Industry-Specific Solutions:
+
+Healthcare Technology:
+• HIPAA-compliant device configuration and management
+• Telehealth platform setup and integration
+• Medical device integration and interoperability
+• Electronic health record (EHR) system optimization
+• Patient data security and privacy compliance
+• Medical imaging and diagnostic equipment support
+
+Financial Services:
+• SOX and regulatory compliance solutions
+• Secure trading platform infrastructure
+• Real-time data analytics and reporting systems
+• Customer data protection and fraud prevention
+• High-frequency trading technology optimization
+• Blockchain and cryptocurrency infrastructure support
+
+Manufacturing & Industrial:
+• IoT sensor networks and industrial automation
+• Supply chain visibility and tracking systems
+• Quality control and inspection technology
+• Predictive maintenance and equipment monitoring
+• Safety and compliance monitoring systems
+• Integration with ERP and MES systems
+
+Education & Government:
+• Student information system integration
+• Classroom technology and interactive learning platforms
+• Campus-wide network infrastructure and WiFi deployment
+• Government security clearance and compliance support
+• Public safety and emergency communication systems
+• Digital equity and accessibility solutions
+
+🎓 Training & Support Services:
+
+Executive Technology Leadership:
+• Digital transformation strategy consulting
+• Technology leadership training for executives
+• Change management and organizational development
+• Innovation workshops and technology trend analysis
+• Board-level technology governance and oversight
+• Strategic technology investment planning
+
+Employee Training Programs:
+• Device-specific training for new technology deployments
+• Productivity software training and certification
+• Cybersecurity awareness and best practices training
+• Digital collaboration and remote work optimization
+• Custom training curriculum development
+• Train-the-trainer programs for internal teams
+
+🔄 Ongoing Support & Maintenance:
+
+Enterprise Help Desk Services:
+• 24/7/365 technical support with guaranteed response times
+• Multi-tier support with escalation to specialized engineers
+• Remote diagnostic and troubleshooting capabilities
+• On-site support teams for critical business systems
+• Preventive maintenance and system optimization
+• Change management and update coordination
+
+Business Continuity Services:
+• Disaster recovery planning and testing
+• Business continuity consulting and implementation
+• Emergency response coordination and communication
+• Backup and restoration services with RPO/RTO guarantees
+• Crisis management and incident response support
+• Regular business continuity testing and updates
+
+💰 Flexible Business Financing:
+
+Corporate Credit Solutions:
+• Lines of credit up to $1,000,000 for qualified businesses
+• NET-30, NET-60, and NET-90 payment terms
+• Purchase order financing for large projects
+• Equipment leasing and lease-to-own programs
+• Budget-friendly monthly payment plans
+• Seasonal billing adjustments for cyclical businesses
+
+Financial Planning & Analysis:
+• Total cost of ownership (TCO) analysis for technology investments
+• ROI calculations and business case development
+• Technology budget planning and forecasting
+• Cost-benefit analysis for upgrade and replacement decisions
+• Financial modeling for multi-year technology initiatives
+
+📈 Growth & Scaling Support:
+
+Expansion Services:
+• Technology infrastructure scaling for rapid business growth
+• Multi-location deployment and management
+• International expansion technology support
+• Merger and acquisition technology integration
+• Startup incubation and technology acceleration programs
+• Franchise technology standardization and support
+
+Innovation Partnerships:
+• Early access to emerging technologies and beta programs
+• Custom product development partnerships
+• Integration with startup ecosystems and innovation labs
+• Technology research and development collaboration
+• Intellectual property licensing and development
+
+🌍 Global Enterprise Services:
+
+International Business Support:
+• Multi-country deployment and management
+• Local compliance and regulatory support in 50+ countries
+• Regional data sovereignty and privacy compliance
+• Cultural customization and localization services
+• Global supply chain management and logistics
+• International warranty and support coordination
+
+Remote Work & Collaboration:
+• Distributed team technology infrastructure
+• Video conferencing and collaboration platform setup
+• Remote device management and security
+• Digital workspace optimization
+• Productivity analytics and optimization
+• Work-from-home technology packages
+
+📞 Dedicated Business Support:
+
+Account Management:
+• Dedicated business account managers for personalized service
+• Regular business reviews and technology planning sessions
+• Proactive recommendations for optimization and upgrades
+• Direct escalation channels for urgent business needs
+• Executive briefing centers for technology demonstrations
+• Custom service level agreements (SLAs) tailored to business needs
+
+Business Development Partnership:
+• Joint go-to-market strategies for technology solutions
+• Co-marketing opportunities and case study development
+• Industry event participation and thought leadership
+• Networking opportunities with other business customers
+• Access to exclusive business customer community and forums
+
+Ready to transform your business with enterprise-grade technology solutions? Let me know:
+• What industry or business sector are you in?
+• How many employees or devices would you be supporting?
+• What are your primary technology challenges or goals?
+• Are you looking for immediate solutions or long-term planning?
+
+I can provide detailed proposals and custom pricing based on your specific business needs!`;
     }
 
-    generateNexaPhoneInfo() {
-        return `Hi asarekings! Here's everything you need to know about the NexaPhone Pro Max:
+    // === PREMIUM SERVICES DETAIL ===
+    generatePremiumServicesDetail() {
+        return `Hi asarekings! As a Premium Gold member, here are all the exclusive services and benefits available to you, plus upgrade options:
 
-📱 NexaPhone Pro Max - Complete Product Guide
+🌟 Complete Premium Services Portfolio (2025-06-08 13:08:31 UTC)
 
-🌟 Overview:
-The NexaPhone Pro Max represents the pinnacle of smartphone technology, combining cutting-edge innovation with premium craftsmanship. Designed for professionals, creators, and tech enthusiasts who demand the absolute best.
+🏆 Your Current Premium Gold Benefits:
 
-📋 Detailed Technical Specifications:
+Exclusive Shopping Privileges:
+• Early Access: 48-hour head start on all new product launches
+• Member-Only Products: Access to exclusive limited editions and special releases
+• Flash Sale Priority: First notification and access to lightning deals
+• Price Lock Guarantee: Lock in sale prices for 48 hours while you decide
+• Personal Shopping Sessions: Complimentary 1-hour consultations with product experts
+• Custom Bundle Creation: Personalized product packages at discounted rates
+• Birthday Month Special: 20% off everything during your birthday month (Coming up!)
 
-Display & Design:
-• Screen: 6.7" OLED Super Retina XDR Display
-• Resolution: 2796 x 1290 pixels (460 PPI)
-• Brightness: 2000 nits peak brightness (industry leading)
-• Refresh Rate: ProMotion 120Hz adaptive refresh rate
-• Display Protection: Ceramic Shield front, tougher than any smartphone glass
-• Colors: Space Black, Silver, Gold, Deep Purple, Alpine Green
-• Build: Aerospace-grade titanium frame with textured matte glass back
-• Water Resistance: IP68 (6 meters for 30 minutes)
-• Dimensions: 160.7 x 77.6 x 7.85 mm
-• Weight: 240 grams (perfectly balanced)
+Enhanced Shipping & Delivery:
+• FREE 2-Day Shipping: On every order, no minimum purchase required
+• Priority Processing: Your orders skip to the front of fulfillment queues
+• Flexible Delivery Scheduling: Choose exact 2-hour delivery windows
+• Premium Packaging: Eco-friendly premium packaging with extra protection
+• Delivery Concierge: Text directly with delivery drivers for special instructions
+• Vacation Hold Service: Pause deliveries when you're away
+• Corporate Delivery: Ship to multiple business locations with one order
 
-Performance & Processing:
-• Chip: A17 Pro Bionic with 6-core CPU
-• GPU: 6-core GPU with hardware-accelerated ray tracing
-• Neural Engine: 16-core for advanced machine learning
-• Memory: 8GB RAM (unified memory architecture)
-• Storage Options: 256GB, 512GB, 1TB (no expandable storage needed)
-• Performance: 20% faster CPU, 30% faster GPU than previous generation
+Premium Customer Support:
+• Dedicated Premium Support Line: 1-800-NEXASHOP-VIP (skip all queues)
+• 30-Second Response Guarantee: Average response time for Premium members
+• Video Call Support: Screen sharing and face-to-face troubleshooting
+• Priority Chat Queue: Jump to front of live chat support
+• Extended Support Hours: 24/7/365 access to human agents
+• Callback Service: Schedule calls at your convenience
+• Multi-Language Support: Available in 12 languages
 
-Camera System (Pro Photography & Video):
-• Main Camera: 48MP with f/1.78 aperture
-• Ultra Wide: 12MP with f/2.2 aperture, 120° field of view
-• Telephoto: 12MP with f/2.8 aperture, 3x optical zoom
-• Front Camera: 12MP TrueDepth with f/1.9 aperture
-• Video Recording: 4K ProRes at 60fps, Dolby Vision HDR
-• Advanced Features: Night mode, Portrait mode, Cinematic mode
-• Optical Image Stabilization on all lenses
-• LiDAR scanner for enhanced AR and improved autofocus
+Financial & Return Benefits:
+• Extended Return Window: 45 days (vs 30-day standard)
+• Free Return Pickup: We collect returns from your location
+• 5% Automatic Discount: Applied to every purchase at checkout
+• Member-Only Financing: 0% APR for 18 months (vs 12 months standard)
+• Price Protection: Automatic refunds if prices drop within 30 days
+• Purchase Protection: Extended warranty coverage included free
+• Expedited Refunds: 24-hour processing vs 3-5 day standard
 
-Connectivity & Network:
-• 5G: Sub-6 GHz and mmWave (ultra-fast speeds)
-• WiFi: 6E (latest standard for fastest wireless speeds)
-• Bluetooth: 5.3 with spatial audio support
-• NFC: Advanced NFC for payments and device pairing
-• USB-C: Thunderbolt/USB 4 support for pro workflows
-• MagSafe: Magnetic charging and accessory ecosystem
+💎 Elite Platinum Membership Upgrade (Available):
 
-Battery & Charging:
-• Battery Life: Up to 29 hours video playback
-• Charging: 30W fast charging (0-50% in 30 minutes)
-• Wireless Charging: 15W MagSafe, 7.5W Qi wireless charging
-• Reverse Wireless Charging: Charge AirPods and other devices
-• Battery Health: Advanced battery management for longer lifespan
+Ultimate Convenience Services:
+• FREE Overnight Shipping: On every order, even rush orders
+• Same-Day Delivery: Available in 75+ cities at no extra charge
+• White-Glove Delivery: Professional setup and installation included
+• 60-Day Return Window: Extended return period with pickup included
+• Concierge Shopping: Personal shoppers handle your entire purchasing process
+• Technology Planning: Annual consultation to plan your tech ecosystem
+• Device Health Monitoring: Proactive monitoring and maintenance alerts
 
-Software & Features:
-• Operating System: iOS 17 (latest version with exclusive features)
-• Security: Face ID (most secure facial recognition)
-• Privacy: Advanced privacy controls and data protection
-• AI Features: Personal voice assistant with local processing
-• Productivity: Desktop-class apps and multitasking
-• Gaming: Console-level gaming with MetalFX upscaling
+Exclusive Access & Experiences:
+• 10% Automatic Discount: On all purchases (vs 5% Gold level)
+• Beta Product Access: Try new products 6 months before public release
+• Executive Briefing Center: Private product demonstrations and briefings
+• Annual Tech Summit: Exclusive invitation to VIP technology events
+• Product Development Input: Direct feedback channel to engineering teams
+• Innovation Lab Tours: Behind-the-scenes access to R&D facilities
+• Celebrity Tech Events: Meet technology leaders and innovators
 
-💰 Pricing & Value:
+Personal Technology Concierge:
+• Dedicated Account Manager: Personal relationship manager for all needs
+• Technology Life Planning: Long-term strategy for your digital ecosystem
+• Custom Solution Design: Bespoke technology solutions for your lifestyle
+• Proactive Maintenance: Regular check-ins and optimization services
+• Emergency Tech Support: 24/7 hotline for urgent technology issues
+• Data Migration Services: Professional data transfer and backup management
+• Integration Consulting: Seamless connection of all your devices and services
 
-Current Pricing (Premium Member Discount Applied):
-• 256GB: $1,099.99 → $1,044.99 (5% member discount)
-• 512GB: $1,299.99 → $1,234.99 (5% member discount)
-• 1TB: $1,599.99 → $1,519.99 (5% member discount)
+🎯 Specialized Premium Services:
 
-Financing Options:
-• 0% APR for 24 months (qualified customers)
-• Monthly payments as low as $43.54/month
-• Trade-in credit up to $800 for eligible devices
-• Student discount: Additional 10% off with valid student ID
+Business Executive Services:
+• Executive Technology Assessments: Comprehensive evaluation of business tech needs
+• Leadership Technology Training: Private training on latest business tools
+• Secure Communication Setup: Enterprise-grade privacy and security implementation
+• Travel Technology Packages: Optimized gear and support for frequent travelers
+• Board Presentation Technology: Professional AV setup and support services
+• C-Suite Consulting: Technology strategy consulting for senior executives
 
-📦 What's in the Box:
-• NexaPhone Pro Max
-• USB-C to USB-C cable (1 meter)
-• Documentation and quick start guide
-• SIM ejection tool
-• Apple stickers
+Family Premium Services:
+• Family Device Management: Centralized management of all family technology
+• Parental Control Consulting: Professional setup of family safety systems
+• Educational Technology Planning: Optimal technology for children's learning
+• Elderly Family Support: Simplified technology and dedicated senior support
+• Multi-Generational Training: Technology education for all family members
+• Family Safety Monitoring: Digital wellness and screen time management
 
-Free Premium Services Included (1 Year):
-• 50GB cloud storage
-• Premium customer support
-• Extended warranty coverage
-• Exclusive member benefits and early access
+Creative Professional Services:
+• Professional Workflow Optimization: Custom setup for creative professionals
+• Color Calibration Services: Professional monitor and display calibration
+• Creative Software Integration: Seamless workflow between creative applications
+• Cloud Workflow Setup: Professional cloud storage and collaboration systems
+• Backup and Archive Management: Professional data protection for creative work
+• Performance Optimization: Hardware tuning for maximum creative performance
 
-🏆 Awards & Recognition:
-• "Best Smartphone 2025" - Tech Review Magazine
-• "Editor's Choice" - Digital Trends
-• "Innovation Award" - Consumer Electronics Show 2025
-• "Best Camera Phone" - Photography Weekly
+Healthcare & Accessibility Services:
+• Accessibility Consulting: Technology solutions for users with disabilities
+• Health Technology Integration: Seamless connection with health monitoring devices
+• Telehealth Setup: Professional telemedicine platform configuration
+• Medical Device Integration: Connection with medical monitoring equipment
+• Emergency Technology Planning: Technology solutions for health emergencies
+• Caregiver Technology Training: Training for family caregivers on assistive technology
 
-🎯 Perfect For:
-• Professional photographers and videographers
-• Business executives and entrepreneurs
-• Content creators and social media influencers
-• Mobile gamers and entertainment enthusiasts
-• Anyone who wants the absolute best smartphone experience
+🔒 Premium Security & Privacy Services:
 
-🛡️ Protection & Support:
-• 1-year limited warranty included
-• AppleCare+ available for extended coverage
-• 24/7 technical support
-• Free setup and data transfer service
-• Damage protection plans available
+Advanced Security Suite:
+• Personal Cybersecurity Assessment: Comprehensive evaluation of digital security
+• VPN and Privacy Setup: Professional privacy protection implementation
+• Identity Theft Protection: Premium monitoring and resolution services
+• Secure Communication Systems: Encrypted messaging and communication setup
+• Digital Estate Planning: Technology and digital asset inheritance planning
+• Financial Technology Security: Enhanced protection for digital financial services
 
-📱 Compatibility:
-• Compatible with all NexaShop accessories
-• Works with existing MagSafe and Lightning accessories (with adapters)
-• Seamless integration with NexaBook, NexaPods, and NexaWatch
-• Enterprise-grade security for business use
+Data Protection Services:
+• Professional Backup Solutions: Automated, encrypted backup systems
+• Cloud Security Optimization: Secure cloud storage and sharing setup
+• Personal Data Audit: Comprehensive review of personal data exposure
+• Privacy Settings Optimization: Professional privacy configuration across all platforms
+• Secure File Sharing: Professional secure document and file sharing systems
+• Digital Forensics Support: Professional investigation of security incidents
 
-🌍 Environmental Commitment:
-• 100% recycled materials in packaging
-• Carbon neutral shipping
-• Recycling program for old devices
-• Energy-efficient manufacturing process
+🎁 Exclusive Events & Experiences:
 
-📊 Customer Satisfaction:
-• 4.9/5 stars from over 50,000 reviews
-• 98% customer satisfaction rate
-• 95% would recommend to friends and family
-• Industry-leading reliability and build quality
+VIP Technology Events:
+• Annual Premium Member Summit: Exclusive 3-day technology conference
+• Product Launch Events: VIP access to major product launches and demonstrations
+• Industry Insider Briefings: Private sessions with technology leaders and innovators
+• Hands-On Workshops: Exclusive training sessions with product experts
+• Networking Events: Connect with other technology enthusiasts and professionals
+• Factory Tours: Behind-the-scenes visits to manufacturing and R&D facilities
 
-Ready to experience the future of smartphones? Want to see specific comparisons with other models, or need help choosing the right storage capacity for your needs?`;
+Educational Experiences:
+• Technology Masterclasses: Advanced training on emerging technologies
+• Innovation Workshops: Collaborative sessions on technology trends and futures
+• Certification Programs: Professional certifications for technology skills
+• Mentorship Programs: Connection with technology industry mentors
+• Startup Showcase Events: Early access to innovative new technologies
+• University Partnership Programs: Access to cutting-edge research and development
+
+🌍 Global Premium Services:
+
+International Premium Support:
+• Global Premium Hotline: 24/7 support in major international markets
+• Local Premium Representatives: Personal service in 25+ countries
+• International Warranty Extension: Global coverage for all premium members
+• Customs and Import Support: Assistance with international shipping and customs
+• Currency Protection: Protection against unfavorable exchange rate fluctuations
+• Local Event Access: Premium member events in major international cities
+
+Travel & Mobile Services:
+• Travel Technology Packages: Optimized technology gear for international travel
+• Roaming and Connectivity Support: Global connectivity solutions and support
+• Airport Lounge Access: Technology-equipped premium lounges in major airports
+• Emergency Travel Support: 24/7 assistance for technology issues while traveling
+• International Device Replacement: Emergency device replacement anywhere in the world
+• Cultural Technology Consulting: Local technology customs and best practices
+
+💡 Premium Member ROI Calculator:
+
+Annual Value Analysis (Based on Your Usage):
+• Free 2-Day Shipping Value: $580/year (based on average order frequency)
+• 5% Discount Savings: $146/year (based on annual spending)
+• Extended Return Window: $95/year (calculated risk protection value)
+• Premium Support Value: $240/year (based on support usage)
+• Early Access Value: $150/year (exclusive product access)
+• Total Annual Value: $1,211/year
+• Premium Membership Cost: $99/year
+• Your Annual Savings: $1,112/year (ROI: 1,122%)
+
+Platinum Upgrade Analysis:
+• Additional Overnight Shipping Value: $480/year
+• Increased Discount (10% vs 5%): Additional $146/year savings
+• Concierge Services Value: $600/year
+• Total Additional Value: $1,226/year
+• Platinum Upgrade Cost: $199/year additional
+• Platinum ROI: 615% annual return
+
+🎯 Ready to Maximize Your Premium Experience?
+
+Current Opportunities:
+• Upgrade to Platinum: Double your savings and unlock concierge services
+• Add Family Members: Extend benefits to your family at 50% off additional memberships
+• Business Account Upgrade: Combine personal and business benefits
+• Annual Service Planning: Schedule your complimentary technology consultation
+
+Personalized Recommendations:
+Based on your purchase history and preferences, I recommend:
+• Technology Health Check: Schedule your annual device optimization
+• Security Audit: Review and enhance your digital security posture
+• Workflow Optimization: Streamline your technology usage for maximum productivity
+• Family Technology Planning: Extend premium benefits to family members
+
+What premium service interests you most, or would you like to explore the Platinum upgrade options in detail?`;
     }
 
-    generateTroubleshooting() {
-        return `Hi asarekings! I'm here to help resolve any technical issues you're experiencing. Here's our comprehensive troubleshooting guide:
-
-🔧 Complete Technical Support & Troubleshooting Guide
-
-🎯 Universal Quick Fixes (Try These First):
-
-Power Cycle Solution:
-1. Turn off your device completely
-2. Wait 30 seconds (important - lets capacitors discharge)
-3. Turn device back on
-4. Check if issue is resolved
-Success Rate: 60% of issues resolved with this simple step
-
-Force Restart (For Frozen Devices):
-• NexaPhone: Hold Power + Volume Down for 10 seconds
-• NexaBook: Hold Power button for 10 seconds, then restart
-• NexaPods: Place in case, hold setup button for 15 seconds
-
-📱 NexaPhone Troubleshooting:
-
-Common Issues & Solutions:
-
-App Crashes or Freezing:
-1. Force close the problematic app (double-tap home, swipe up)
-2. Clear app cache: Settings > General > iPhone Storage > [App] > Offload App
-3. Update the app from App Store
-4. Restart your device
-5. If persistent: Delete and reinstall the app
-
-Slow Performance:
-1. Check available storage (need at least 1GB free)
-2. Close background apps not in use
-3. Disable visual effects: Settings > Accessibility > Motion > Reduce Motion
-4. Reset network settings: Settings > General > Reset > Reset Network Settings
-5. Update to latest iOS version
-
-Battery Draining Fast:
-1. Check battery usage: Settings > Battery > Battery Usage by App
-2. Enable Low Power Mode temporarily
-3. Disable background app refresh for unnecessary apps
-4. Reduce screen brightness or enable auto-brightness
-5. Turn off location services for apps that don't need it
-6. Check for rogue apps consuming excessive power
-
-WiFi Connection Issues:
-1. Forget and reconnect to WiFi network
-2. Reset network settings: Settings > General > Reset > Reset Network Settings
-3. Check router distance and interference
-4. Try different WiFi network to isolate issue
-5. Update router firmware if possible
-
-Camera Not Working:
-1. Close camera app and reopen
-2. Restart device
-3. Check for dirt or debris on lens
-4. Try different camera mode (Photo, Video, Portrait)
-5. Free up storage space (camera needs storage for processing)
-
-💻 NexaBook Troubleshooting:
-
-Performance Issues:
-1. Check Activity Monitor for high CPU usage apps
-2. Free up disk space (need at least 10GB free)
-3. Close unnecessary browser tabs and applications
-4. Reset SMC: Shut down, press Shift+Control+Option+Power for 10 seconds
-5. Reset NVRAM: Restart holding Option+Command+P+R until second startup sound
-
-Connectivity Problems:
-1. Check WiFi signal strength and stability
-2. Run Network Diagnostics: System Preferences > Network > Assist Me
-3. Delete and re-add WiFi network
-4. Check for interference from other devices
-5. Update network drivers and macOS
-
-Application Issues:
-1. Force quit problematic app: Command+Option+Escape
-2. Check for app updates in App Store
-3. Clear app caches: ~/Library/Caches
-4. Run Disk Utility First Aid for disk repair
-5. Safe boot: Hold Shift during startup
-
-🎧 NexaPods Troubleshooting:
-
-Connection Issues:
-1. Check Bluetooth is enabled on device
-2. Place NexaPods in case for 15 seconds, then remove
-3. Forget device and re-pair: Settings > Bluetooth > [Device] > Forget
-4. Clean charging contacts with dry cotton swab
-5. Reset NexaPods: Hold setup button for 15 seconds
-
-Audio Quality Problems:
-1. Check for ear wax or debris blocking speakers
-2. Try different ear tip sizes for better seal
-3. Disable audio processing: Settings > Accessibility > Audio/Visual
-4. Test with different audio sources
-5. Update device software
-
-Charging Issues:
-1. Clean charging case and NexaPods contacts
-2. Try different lightning cable and power adapter
-3. Check charging case battery level
-4. Leave in case for 30 minutes before testing
-5. Reset charging case: Hold setup button while plugged in
-
-🌐 Network & Connectivity Solutions:
-
-Internet Speed Issues:
-1. Test speed with different devices to isolate problem
-2. Move closer to router (ideal distance: under 30 feet)
-3. Check for interference from microwaves, baby monitors
-4. Restart router and modem (unplug for 30 seconds)
-5. Contact ISP if multiple devices affected
-
-Bluetooth Problems:
-1. Turn Bluetooth off and on again
-2. Clear Bluetooth cache (Android) or reset network settings (iOS)
-3. Remove all paired devices and start fresh
-4. Check for interference from other 2.4GHz devices
-5. Update Bluetooth drivers on computers
-
-🛠️ Advanced Diagnostic Tools:
-
-Hardware Testing:
-• NexaPhone: Settings > Privacy & Security > Analytics & Improvements > Analytics Data
-• NexaBook: Hold D during startup for Apple Diagnostics
-• Built-in diagnostics available in support app
-
-Software Analysis:
-• Check system logs for error patterns
-• Monitor resource usage over time
-• Run built-in diagnostic utilities
-• Third-party diagnostic tools available
-
-🆘 When to Escalate:
-
-Contact Professional Support If:
-• Hardware damage suspected (cracks, water damage, physical impact)
-• Issues persist after following all troubleshooting steps
-• Device is within warranty period and needs replacement
-• Data recovery needed from damaged device
-• Business-critical devices requiring immediate resolution
-
-📞 Next Level Support Available:
-• Live video troubleshooting sessions
-• Remote diagnostic access (with permission)
-• Same-day in-store appointments
-• Express replacement program
-• Data recovery services
-
-🎯 Prevention Tips:
-• Keep devices updated with latest software
-• Regular backups of important data
-• Use quality accessories and chargers
-• Protect devices with cases and screen protectors
-• Monitor storage space and clean up regularly
-
-What specific issue are you experiencing? I can provide more targeted troubleshooting steps based on your exact problem and device model.`;
-    }
-
-    // === SMART RESPONSE MATCHING ENGINE ===
+    // === ENHANCED SMART RESPONSE MATCHING ===
     findBestResponse(userMessage) {
         const messageLower = userMessage.toLowerCase();
         let bestMatch = null;
         let highestScore = 0;
         let matchedCategory = null;
+        let matchedKey = null;
 
-        // Search through all response categories
+        // Advanced scoring algorithm
         Object.entries(this.responseBank).forEach(([category, responses]) => {
             Object.entries(responses).forEach(([key, responseData]) => {
                 let score = 0;
                 
-                // Check for keyword matches
+                // Exact phrase matching (highest priority)
                 responseData.keywords.forEach(keyword => {
-                    if (messageLower.includes(keyword.toLowerCase())) {
-                        score += keyword.split(' ').length; // Multi-word phrases get higher scores
+                    if (messageLower === keyword.toLowerCase()) {
+                        score += 100; // Very high score for exact matches
+                    } else if (messageLower.includes(keyword.toLowerCase())) {
+                        // Partial phrase matching
+                        const keywordWords = keyword.toLowerCase().split(' ');
+                        const messageWords = messageLower.split(' ');
+                        
+                        // Calculate word overlap percentage
+                        const overlap = keywordWords.filter(word => 
+                            messageWords.some(msgWord => msgWord.includes(word) || word.includes(msgWord))
+                        ).length;
+                        
+                        const overlapScore = (overlap / keywordWords.length) * (keywordWords.length * 10);
+                        score += overlapScore;
                     }
                 });
                 
-                // Boost score for exact phrase matches
-                responseData.keywords.forEach(keyword => {
-                    if (messageLower === keyword.toLowerCase()) {
-                        score += 10;
-                    }
-                });
+                // Context-aware boosting
+                if (category === 'services' && (messageLower.includes('tell me') || messageLower.includes('about'))) {
+                    score += 20;
+                }
+                
+                if (category === 'orders' && (messageLower.includes('my') || messageLower.includes('order'))) {
+                    score += 15;
+                }
                 
                 if (score > highestScore) {
                     highestScore = score;
                     bestMatch = responseData;
                     matchedCategory = category;
+                    matchedKey = key;
                 }
             });
         });
 
-        console.log('🔍 Response matching:', {
+        console.log('🔍 Enhanced response matching:', {
             userMessage,
             bestMatchScore: highestScore,
             matchedCategory,
-            threshold: 1
+            matchedKey,
+            threshold: 5
         });
 
-        // Return best match if score is above threshold
-        if (highestScore >= 1) {
+        // Return best match if score meets threshold
+        if (highestScore >= 5) {
             return bestMatch.response();
         }
 
-        // Return default response if no good match found
-        return this.getDefaultResponse(messageLower);
+        // Return contextual default response
+        return this.getContextualDefaultResponse(messageLower);
     }
 
-    getDefaultResponse(messageLower) {
-        // Determine type of default response based on message characteristics
+    getContextualDefaultResponse(messageLower) {
+        // Analyze message characteristics for better default response
         let responseType = 'no_match';
         
-        if (messageLower.length < 10 || messageLower.split(' ').length < 3) {
+        if (messageLower.length < 15 || messageLower.split(' ').length < 4) {
+            responseType = 'unclear_request';
+        }
+        
+        // Check for question words to provide more helpful default
+        const questionWords = ['what', 'how', 'when', 'where', 'why', 'can', 'could', 'would', 'should'];
+        if (questionWords.some(word => messageLower.includes(word))) {
             responseType = 'unclear_request';
         }
         
@@ -807,446 +1212,132 @@ What specific issue are you experiencing? I can provide more targeted troublesho
         return responses[randomIndex];
     }
 
-    // === AI RESPONSE GENERATION (MAIN ENTRY POINT) ===
+    // === AI RESPONSE GENERATION (ENHANCED) ===
     generateAIResponse(userMessage) {
-        console.log('🤖 Processing with Large Response Bank:', userMessage);
+        console.log('🤖 Processing with Enhanced Response Bank:', userMessage);
         
-        // Use response bank to find best match
+        // Use enhanced response bank matching
         const response = this.findBestResponse(userMessage);
         
-        // Determine agent based on message content
-        const agent = this.selectBestAgentFromMessage(userMessage);
+        // Enhanced agent selection
+        const agent = this.selectEnhancedAgent(userMessage);
         
-        // Calculate confidence based on match quality
-        const confidence = this.calculateResponseConfidence(userMessage, response);
+        // Enhanced confidence calculation
+        const confidence = this.calculateEnhancedConfidence(userMessage, response);
+        
+        // Store conversation context for learning
+        this.updateConversationContext(userMessage, response);
         
         return {
             response: response,
             agent: agent,
             analysis: {
-                intent: { intent: this.determineIntentFromMessage(userMessage) },
-                confidence: confidence
+                intent: { intent: this.determineEnhancedIntent(userMessage) },
+                confidence: confidence,
+                responseSource: this.identifyResponseSource(response)
             },
             confidence: confidence
         };
     }
 
-    selectBestAgentFromMessage(message) {
+    selectEnhancedAgent(message) {
         const messageLower = message.toLowerCase();
         
-        if (messageLower.includes('order') || messageLower.includes('track') || messageLower.includes('delivery')) {
-            return 'Sarah Chen';
-        } else if (messageLower.includes('technical') || messageLower.includes('not working') || messageLower.includes('setup')) {
-            return 'Mike Rodriguez';
-        } else if (messageLower.includes('product') || messageLower.includes('phone') || messageLower.includes('laptop')) {
-            return 'Emma Wilson';
-        } else if (messageLower.includes('billing') || messageLower.includes('payment') || messageLower.includes('refund')) {
-            return 'Alex Thompson';
-        } else if (messageLower.includes('return') || messageLower.includes('exchange') || messageLower.includes('damaged')) {
-            return 'Lisa Chang';
-        }
+        // Enhanced agent selection based on comprehensive keyword analysis
+        const agentKeywords = {
+            'Sarah Chen': ['order', 'track', 'delivery', 'shipping', 'status', 'package'],
+            'Mike Rodriguez': ['technical', 'not working', 'setup', 'troubleshoot', 'fix', 'install'],
+            'Emma Wilson': ['product', 'phone', 'laptop', 'compare', 'recommend', 'features'],
+            'Alex Thompson': ['billing', 'payment', 'refund', 'charge', 'finance', 'credit'],
+            'Lisa Chang': ['return', 'exchange', 'damaged', 'defective', 'warranty', 'replace'],
+            'David Park': ['business', 'enterprise', 'corporate', 'bulk', 'b2b', 'procurement'],
+            'Maria Garcia': ['services', 'membership', 'premium', 'benefits', 'support', 'help']
+        };
         
-        return 'Sarah Chen'; // Default agent
+        let bestAgent = 'Sarah Chen';
+        let maxMatches = 0;
+        
+        Object.entries(agentKeywords).forEach(([agent, keywords]) => {
+            const matches = keywords.filter(keyword => messageLower.includes(keyword)).length;
+            if (matches > maxMatches) {
+                maxMatches = matches;
+                bestAgent = agent;
+            }
+        });
+        
+        return bestAgent;
     }
 
-    determineIntentFromMessage(message) {
+    calculateEnhancedConfidence(message, response) {
+        // Enhanced confidence calculation
+        const responseLength = response.length;
+        const isDefaultResponse = this.defaultResponses.no_match.includes(response) || 
+                                 this.defaultResponses.unclear_request.includes(response);
+        
+        if (isDefaultResponse) return 0.15;
+        
+        if (responseLength > 3000) return 0.98; // Very comprehensive responses
+        if (responseLength > 2000) return 0.95; // Comprehensive responses
+        if (responseLength > 1000) return 0.90; // Detailed responses
+        if (responseLength > 500) return 0.85;  // Good responses
+        
+        return 0.75; // Standard responses
+    }
+
+    determineEnhancedIntent(message) {
         const messageLower = message.toLowerCase();
         
-        if (messageLower.includes('order') || messageLower.includes('track')) return 'order_inquiry';
-        if (messageLower.includes('product') || messageLower.includes('phone')) return 'product_inquiry';
-        if (messageLower.includes('billing') || messageLower.includes('payment')) return 'billing_inquiry';
-        if (messageLower.includes('return') || messageLower.includes('exchange')) return 'return_inquiry';
-        if (messageLower.includes('technical') || messageLower.includes('not working')) return 'technical_inquiry';
+        // Enhanced intent detection with priority order
+        const intentPatterns = {
+            'services_inquiry': ['services', 'what do you offer', 'tell me about', 'complete'],
+            'order_inquiry': ['order', 'track', 'delivery', 'package', 'shipping'],
+            'product_inquiry': ['product', 'phone', 'laptop', 'specs', 'features'],
+            'billing_inquiry': ['billing', 'payment', 'charge', 'refund', 'finance'],
+            'technical_inquiry': ['technical', 'not working', 'setup', 'fix', 'troubleshoot'],
+            'return_inquiry': ['return', 'exchange', 'replace', 'damaged', 'defective'],
+            'business_inquiry': ['business', 'enterprise', 'corporate', 'b2b', 'bulk'],
+            'membership_inquiry': ['membership', 'premium', 'benefits', 'upgrade'],
+            'general_conversation': ['hello', 'hi', 'thanks', 'help']
+        };
+        
+        for (const [intent, patterns] of Object.entries(intentPatterns)) {
+            if (patterns.some(pattern => messageLower.includes(pattern))) {
+                return intent;
+            }
+        }
         
         return 'general_conversation';
     }
 
-    calculateResponseConfidence(message, response) {
-        // Higher confidence for longer, more specific responses from response bank
-        if (response.length > 1000 && !this.defaultResponses.no_match.includes(response)) {
-            return 0.95; // High confidence for comprehensive responses
-        } else if (response.length > 500 && !this.defaultResponses.no_match.includes(response)) {
-            return 0.85; // Good confidence for detailed responses
-        } else if (!this.defaultResponses.no_match.includes(response) && !this.defaultResponses.unclear_request.includes(response)) {
-            return 0.75; // Moderate confidence for matched responses
-        }
+    identifyResponseSource(response) {
+        if (this.defaultResponses.no_match.includes(response)) return 'default_no_match';
+        if (this.defaultResponses.unclear_request.includes(response)) return 'default_unclear';
+        if (response.length > 2000) return 'comprehensive_response_bank';
+        return 'standard_response_bank';
+    }
+
+    updateConversationContext(userMessage, response) {
+        this.conversationContext.push({
+            userMessage: userMessage,
+            responseLength: response.length,
+            timestamp: Date.now(),
+            intent: this.determineEnhancedIntent(userMessage)
+        });
         
-        return 0.15; // Low confidence for default responses
+        // Keep only last 10 interactions for performance
+        if (this.conversationContext.length > 10) {
+            this.conversationContext.shift();
+        }
     }
 
-    // === ADDITIONAL LARGE RESPONSE GENERATORS ===
-    
-    generatePaymentMethods() {
-        return `Hi asarekings! Here's everything you need to know about our secure payment options:
-
-💳 Complete Payment Methods & Security Guide
-
-🔒 Secure Payment Options Available:
-
-Credit & Debit Cards:
-✅ Visa (all types including prepaid)
-✅ Mastercard (all types including prepaid)
-✅ American Express (personal and business)
-✅ Discover Card (with cashback rewards)
-✅ JCB (for international customers)
-✅ Diners Club (business and personal)
-
-Digital Wallets & Mobile Payments:
-✅ Apple Pay (Touch ID, Face ID, or passcode)
-✅ Google Pay (fingerprint or PIN verification)
-✅ Samsung Pay (MST and NFC technology)
-✅ PayPal (balance, bank, or card funding)
-✅ PayPal Credit (0% APR financing available)
-
-Buy Now, Pay Later Options:
-✅ Klarna (4 interest-free payments over 6 weeks)
-✅ Afterpay (4 fortnightly payments, no interest)
-✅ Affirm (3, 6, or 12-month payment plans)
-✅ Zip (Buy now, pay in 4 installments)
-
-Bank & Direct Options:
-✅ ACH Bank Transfer (direct from checking/savings)
-✅ Wire Transfer (for large orders over $5,000)
-✅ Certified Check or Money Order
-✅ Bank Draft (for business customers)
-
-Gift Cards & Store Credit:
-✅ NexaShop Gift Cards (digital and physical)
-✅ Store Credit from returns or exchanges
-✅ Corporate Gift Cards (bulk orders available)
-✅ Promotional Credits and Cashback
-
-Cryptocurrency (Beta):
-✅ Bitcoin (BTC)
-✅ Ethereum (ETH)
-✅ Litecoin (LTC)
-✅ Bitcoin Cash (BCH)
-
-🛡️ Security Features & Protection:
-
-Industry-Leading Security:
-• 256-bit SSL encryption for all transactions
-• PCI DSS Level 1 compliance (highest security standard)
-• 3D Secure authentication for additional protection
-• Real-time fraud monitoring and detection
-• Tokenization technology (your card details never stored)
-
-Zero Liability Protection:
-• 100% protection against unauthorized charges
-• Instant fraud alerts via SMS and email
-• Dedicated fraud resolution team
-• Emergency card blocking available 24/7
-• Full refund guarantee for verified fraud
-
-💰 Payment Processing & Fees:
-
-Transaction Fees:
-• Credit/Debit Cards: No additional fees
-• PayPal: No additional fees for buyers
-• Buy Now Pay Later: No fees if paid on time
-• Cryptocurrency: Network fees may apply
-• International Cards: No foreign transaction fees on our end
-
-Processing Times:
-• Credit/Debit Cards: Instant authorization, 2-3 business days settlement
-• Digital Wallets: Instant processing
-• Bank Transfers: 3-5 business days
-• Buy Now Pay Later: Instant approval for qualified customers
-• Cryptocurrency: 1-6 network confirmations required
-
-🎯 Premium Member Payment Benefits:
-
-Exclusive Payment Features:
-• Stored payment methods with enhanced security
-• One-click checkout for faster purchases
-• Automatic payment failure retry (prevents order cancellation)
-• Priority payment processing during high-traffic periods
-• Early access to new payment methods and features
-
-Special Financing Options:
-• 0% APR for 12 months on purchases over $999
-• 0% APR for 24 months on purchases over $1,999
-• Special promotional financing during sales events
-• Business credit accounts with NET-30 terms
-• Volume discounts for bulk corporate orders
-
-🌍 International Payment Support:
-
-Global Acceptance:
-• 190+ countries and territories supported
-• Multi-currency support (USD, EUR, GBP, CAD, AUD, JPY)
-• Automatic currency conversion at competitive rates
-• Local payment methods in major markets
-• Regional bank transfer options
-
-Currency Options:
-• Real-time exchange rates updated every 15 minutes
-• No hidden currency conversion fees
-• Lock-in exchange rates for 24 hours during checkout
-• Transparent pricing in your local currency
-• VAT and duty calculations included where applicable
-
-📱 Mobile Payment Innovation:
-
-Contactless Payment:
-• NFC payments in our retail stores
-• QR code payments for quick checkout
-• Biometric authentication (fingerprint, face recognition)
-• Voice-activated payments with smart assistants
-• Wearable device payments (smartwatch integration)
-
-Mobile App Features:
-• Saved payment methods with biometric security
-• Quick reorder with stored payment preferences
-• Mobile wallet integration for all major platforms
-• Receipt storage and expense tracking
-• Purchase history with easy reordering
-
-🔧 Payment Troubleshooting:
-
-Common Issues & Solutions:
-• Declined Card: Contact your bank to verify international/online transactions enabled
-• Payment Failure: Clear browser cache/cookies, try different payment method
-• Authorization Hold: Temporary hold released within 3-5 business days
-• Duplicate Charges: Contact support immediately for quick resolution
-• Refund Delays: Check with bank - refunds appear within 5-10 business days
-
-24/7 Payment Support:
-• Live chat support for payment issues
-• Dedicated phone line: 1-800-NEXAPAY
-• Email support: payments@nexashop.com
-• Video call support for complex payment problems
-• Multi-language support for international customers
-
-💡 Pro Tips for Secure Shopping:
-• Use strong, unique passwords for your account
-• Enable two-factor authentication for added security
-• Regularly monitor your payment methods for unauthorized activity
-• Use secure networks when making online purchases
-• Keep your payment apps and browsers updated
-
-Ready to make a secure purchase, or do you have questions about any specific payment method or security feature?`;
-    }
-
-    generateReturnPolicy() {
-        return `Hi asarekings! Here's our comprehensive return policy designed to make returns as easy and stress-free as possible:
-
-↩️ Complete NexaShop Return Policy & Guarantee
-
-🌟 Our Return Promise:
-We stand behind every product we sell. If you're not completely satisfied, we'll make it right with our industry-leading return policy.
-
-📅 Return Windows:
-
-Standard Customers:
-• Electronics: 30 days from delivery date
-• Accessories: 30 days from delivery date
-• Software: 14 days from delivery date (if opened)
-• Gift Cards: Non-returnable (but can be transferred)
-
-Premium Members (Like You!):
-• Electronics: 45 days from delivery date ⭐
-• Accessories: 45 days from delivery date ⭐
-• Software: 30 days from delivery date ⭐
-• Extended holiday returns: Items purchased Nov-Dec can be returned through January 31st
-
-Business Customers:
-• All products: 60 days from delivery date
-• Volume purchases: 90 days from delivery date
-• Custom configurations: 30 days from delivery date
-
-✅ What Can Be Returned:
-
-Eligible Items:
-✅ All NexaShop branded products (NexaPhone, NexaBook, NexaPods, etc.)
-✅ Third-party accessories purchased from NexaShop
-✅ Unopened software and digital products
-✅ Items with original packaging and accessories
-✅ Defective or damaged items (any time within warranty)
-✅ Wrong items sent due to our error
-✅ Items that don't match website description
-
-❌ Non-Returnable Items:
-❌ Personalized or custom-engraved products
-❌ Digital downloads after activation
-❌ Products damaged by misuse or normal wear
-❌ Items without proof of purchase
-❌ Products purchased with special promotional pricing (some restrictions)
-❌ Opened software (unless defective)
-
-🔄 Return Process Options:
-
-Option 1: Online Return Portal (Recommended)
-1. Log into your NexaShop account
-2. Go to "My Orders" and select the item to return
-3. Choose return reason and preferred resolution
-4. Print prepaid return label instantly
-5. Package item securely and ship
-
-Option 2: Mobile App Return
-1. Open NexaShop app and go to "Returns"
-2. Scan order confirmation QR code
-3. Select items and return reason
-4. Generate return QR code for shipping
-5. Drop off at any shipping location
-
-Option 3: In-Store Return
-• Visit any NexaShop retail location
-• Bring item and proof of purchase
-• Instant processing and immediate refund
-• Expert assistance with product issues
-• Exchange for different model on the spot
-
-Option 4: Phone Return Support
-• Call 1-800-NEXASHOP
-• Speak with return specialist
-• Arrange pickup service (free for Premium members)
-• Get help with complex return situations
-
-📦 Return Shipping:
-
-Free Return Shipping:
-✅ All returns include prepaid return label
-✅ No shipping costs deducted from refund
-✅ Multiple carrier options (FedEx, UPS, USPS)
-✅ Package pickup service available
-✅ International return shipping included
-
-Return Packaging:
-• Original packaging preferred but not required
-• Secure packaging guidelines provided
-• Free packaging materials at NexaShop stores
-• Special packaging for fragile electronics
-• Environmental packaging recycling program
-
-💰 Refund Process & Timeline:
-
-Refund Methods:
-• Original payment method (preferred)
-• Store credit with 10% bonus value
-• Gift card for gifting purposes
-• Account credit for future purchases
-
-Processing Timeline:
-📅 Inspection: 24-48 hours after we receive your return
-📅 Approval: Instant email notification of approval
-📅 Refund Processing: 1-2 business days to initiate
-📅 Refund Appearance: 3-5 business days in your account
-📅 Credit Cards: 5-10 business days (bank dependent)
-
-🔄 Exchange Options:
-
-Same Product Exchange:
-• Different color or storage capacity
-• Replacement for defective unit
-• Size changes for accessories
-• Instant exchange in retail stores
-
-Upgrade Exchange:
-• Pay difference for higher-end model
-• Trade-in credit applied automatically
-• Keep same accessories and warranties
-• Transfer data and settings included
-
-Cross-Category Exchange:
-• Exchange phone for laptop (pay/receive difference)
-• Exchange accessories for different products
-• Bundle deals available for exchanges
-• Expert recommendations for alternatives
-
-🛡️ Special Circumstances:
-
-Defective Product Returns:
-• No time limit during warranty period
-• Express replacement available
-• No return shipping required
-• Full diagnostic support included
-• Compensation for inconvenience considered
-
-Damaged in Shipping:
-• Report within 5 days of delivery
-• Keep all packaging materials
-• Photos of damage helpful
-• Replacement shipped immediately
-• Full investigation with carrier
-
-Wrong Item Sent:
-• We pay for return shipping
-• Correct item expedited at no charge
-• Compensation for inconvenience
-• Priority processing for correction
-
-Holiday & Gift Returns:
-• Extended return period through January 31st
-• Gift receipts hide prices
-• Easy gift exchanges without original purchaser
-• Store credit options for gift recipients
-
-🎯 Premium Member Return Benefits:
-
-Enhanced Return Experience:
-⭐ 45-day return window (vs 30-day standard)
-⭐ Free pickup service from your location
-⭐ Priority return processing (24-hour inspection)
-⭐ Dedicated premium support line
-⭐ Advanced replacement program
-⭐ White-glove return service for high-value items
-
-Return Concierge Service:
-• Personal return specialist assigned
-• Proactive return status updates
-• Flexible return solutions
-• Custom packaging and pickup
-• Same-day processing available
-
-📊 Return Quality Assurance:
-
-Product Inspection Process:
-✅ Multi-point quality inspection
-✅ Functionality testing on all electronics
-✅ Cosmetic condition assessment
-✅ Accessory and packaging verification
-✅ Data security verification and wiping
-
-Refund Protection:
-• 100% guarantee of approved returns
-• Escalation process for disputes
-• Manager review for complex cases
-• Customer advocacy team support
-• External mediation available if needed
-
-🌱 Environmental Responsibility:
-
-Sustainable Returns:
-♻️ Returned products refurbished when possible
-♻️ Recycling program for non-returnable items
-♻️ Carbon-neutral return shipping
-♻️ Eco-friendly packaging materials
-♻️ Donation program for functional returns
-
-💡 Return Tips for Best Experience:
-• Keep all original packaging for 30 days
-• Register products for warranty tracking
-• Use provided return labels for tracking
-• Include all accessories and documentation
-• Contact support before returning for troubleshooting
-
-📞 Return Support Contacts:
-• Return Portal: nexashop.com/returns
-• Phone Support: 1-800-NEXASHOP
-• Email Support: returns@nexashop.com
-• Live Chat: Available 24/7 on website
-• Video Support: Available for complex returns
-
-Ready to initiate a return, or do you have questions about returning a specific item?`;
-    }
-
-    // === BASIC INITIALIZATION METHODS ===
+    // === INITIALIZATION (ENHANCED) ===
     initializeBasicFeatures() {
         this.inventory = {
             "nexaphone-pro": { stock: 247, warehouse: "East Coast DC", trending: true },
             "nexabook-ultra": { stock: 89, warehouse: "West Coast DC", trending: false },
-            "nexapods-max": { stock: 156, warehouse: "Central DC", trending: true }
+            "nexapods-max": { stock: 156, warehouse: "Central DC", trending: true },
+            "nexawatch-series": { stock: 203, warehouse: "Central DC", trending: true },
+            "nexacharge-wireless": { stock: 445, warehouse: "All DCs", trending: false }
         };
         
         this.orderManager = {
@@ -1264,6 +1355,13 @@ Ready to initiate a return, or do you have questions about returning a specific 
                     items: ["NexaBook Ultra 16"],
                     total: 1599.99,
                     deliveryProgress: 75
+                },
+                {
+                    id: "NEX-2025-001249",
+                    status: "processing",
+                    items: ["NexaPods Max", "Wireless Charger"],
+                    total: 329.98,
+                    deliveryProgress: 25
                 }
             ]
         };
@@ -1291,13 +1389,14 @@ Ready to initiate a return, or do you have questions about returning a specific 
         
         this.analytics = {
             interactionCount: 0,
+            responseSourceTracking: {},
             trackInteraction: (action, category, data = {}) => {
                 this.analytics.interactionCount++;
-                console.log('📈 Interaction tracked:', { action, category, data });
+                console.log('📈 Enhanced interaction tracked:', { action, category, data });
             }
         };
         
-        console.log('✅ Basic features initialized');
+        console.log('✅ Enhanced basic features initialized');
     }
 
     init() {
@@ -1307,9 +1406,9 @@ Ready to initiate a return, or do you have questions about returning a specific 
         
         window.nexaShopSupport = this;
         
-        console.log('✅ NexaShop Large Response Bank AI initialized successfully');
-        console.log('🧠 Response Bank: Comprehensive answers for customer questions active');
-        this.showNotification('🤖 Large Response Bank AI ready! Comprehensive answers activated.');
+        console.log('✅ NexaShop Comprehensive Service AI initialized successfully');
+        console.log('🛍️ Enhanced Response Bank: Complete business ecosystem active');
+        this.showNotification('🤖 Comprehensive Service AI ready! Ask about any of our services.');
     }
 
     setupElements() {
@@ -1368,7 +1467,7 @@ Ready to initiate a return, or do you have questions about returning a specific 
         welcomeMsg.className = 'welcome-message';
         welcomeMsg.innerHTML = `
             <div class="welcome-header">
-                <h3>🛍️ Welcome to NexaShop Large Response Bank AI!</h3>
+                <h3>🛍️ Welcome to NexaShop Comprehensive Service AI!</h3>
                 <div style="margin: 16px 0; padding: 16px; background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span style="color: #6b7280; font-weight: 500;">Support Ticket:</span>
@@ -1376,7 +1475,7 @@ Ready to initiate a return, or do you have questions about returning a specific 
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span style="color: #6b7280; font-weight: 500;">Current Time:</span>
-                        <span style="font-weight: 600;">2025-06-08 12:54:44 UTC</span>
+                        <span style="font-weight: 600;">2025-06-08 13:08:31 UTC</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span style="color: #6b7280; font-weight: 500;">Customer:</span>
@@ -1384,60 +1483,40 @@ Ready to initiate a return, or do you have questions about returning a specific 
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <span style="color: #6b7280; font-weight: 500;">AI Engine:</span>
-                        <span style="font-weight: 600;">🧠 Large Response Bank Active</span>
+                        <span style="font-weight: 600;">🛍️ Comprehensive Service AI</span>
                     </div>
                 </div>
-                <p style="margin-bottom: 20px;">Hi asarekings! I'm equipped with a comprehensive response bank covering thousands of customer questions. Ask me anything - from simple queries to complex technical issues!</p>
+                <p style="margin-bottom: 20px;">Hi asarekings! I'm equipped with comprehensive knowledge about all our services - from simple product questions to complex enterprise solutions. Ask me anything!</p>
             </div>
             
             <div style="margin: 20px 0;">
-                <h4>🚀 Try Comprehensive Questions:</h4>
+                <h4>🚀 Try These Comprehensive Service Questions:</h4>
                 <div class="action-grid">
-                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('I need my complete order list with tracking')">
+                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('I need to make an order but I am not sure, tell me about your services?')">
+                        <span style="font-size: 20px;">🛍️</span>
+                        Complete Services Overview
+                    </button>
+                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('What business services do you offer?')">
+                        <span style="font-size: 20px;">🏢</span>
+                        Business Solutions
+                    </button>
+                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('Tell me about premium membership benefits')">
+                        <span style="font-size: 20px;">🌟</span>
+                        Premium Services
+                    </button>
+                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('I need my complete order list with tracking details')">
                         <span style="font-size: 20px;">📦</span>
-                        Complete Order List
+                        Order Management
                     </button>
                     <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('Tell me everything about the NexaPhone Pro Max')">
                         <span style="font-size: 20px;">📱</span>
-                        Complete Product Info
+                        Product Information
                     </button>
-                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('What are all my payment options?')">
-                        <span style="font-size: 20px;">💳</span>
-                        All Payment Methods
-                    </button>
-                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('Explain your complete return policy')">
-                        <span style="font-size: 20px;">↩️</span>
-                        Complete Return Policy
-                    </button>
-                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('My device is not working properly')">
+                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('I have a complex technical issue that needs detailed help')">
                         <span style="font-size: 20px;">🔧</span>
-                        Technical Troubleshooting
-                    </button>
-                    <button class="quick-action-btn" onclick="nexaShopSupport.quickMessage('I have a random question about something')">
-                        <span style="font-size: 20px;">❓</span>
-                        Test Default Response
+                        Technical Support
                     </button>
                 </div>
             </div>
 
-            <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.2);">
-                <p><strong>🧠 Large Response Bank Features:</strong></p>
-                <p style="font-size: 14px; margin: 8px 0;">✅ 1000+ comprehensive responses covering all topics</p>
-                <p style="font-size: 14px; margin: 8px 0;">✅ Detailed troubleshooting guides and step-by-step instructions</p>
-                <p style="font-size: 14px; margin: 8px 0;">✅ Complete product information and specifications</p>
-                <p style="font-size: 14px; margin: 8px 0;">✅ Smart fallback responses when no specific answer found</p>
-                <p style="font-size: 14px; margin: 8px 0;">✅ Context-aware matching for better relevance</p>
-            </div>
-        `;
-        this.messagesContainer.appendChild(welcomeMsg);
-        
-        this.analytics.trackInteraction('welcome_displayed', 'general');
-    }
-
-    quickMessage(message) {
-        this.analytics.trackInteraction('quick_action_click', 'ui', { message });
-        if (this.messageInput) {
-            this.messageInput.value = message;
-            this.sendMessage();
-        }
-    }
+            <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border-radius
