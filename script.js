@@ -4,7 +4,7 @@ class GitChat {
         this.users = new Map();
         this.messages = [];
         this.currentUser = null;
-        this.currentRoom = 'general';
+        this.currentRoom = 'support';
         this.typingUsers = new Set();
         this.typingTimeout = null;
         this.selectedFile = null;
@@ -19,26 +19,68 @@ class GitChat {
             typingIndicators: true
         };
         
-        // Bot conversation context
-        this.conversationContext = {
-            lastUserMessage: '',
-            userMood: 'neutral',
+        // Customer support context
+        this.supportContext = {
+            ticketNumber: null,
+            issueCategory: null,
+            priority: 'normal',
+            status: 'new',
+            customerInfo: null,
             conversationHistory: [],
-            botPersonalities: [
-                { name: "Alex", mood: "friendly", interests: ["tech", "coding", "games"] },
-                { name: "Jordan", mood: "helpful", interests: ["design", "art", "music"] },
-                { name: "Sam", mood: "enthusiastic", interests: ["sports", "fitness", "travel"] },
-                { name: "Riley", mood: "thoughtful", interests: ["books", "philosophy", "science"] },
-                { name: "Casey", mood: "funny", interests: ["memes", "comedy", "movies"] },
-                { name: "Morgan", mood: "supportive", interests: ["mental health", "cooking", "nature"] }
-            ]
+            supportAgents: [
+                { 
+                    name: "Sarah", 
+                    department: "technical", 
+                    specialties: ["billing", "account", "login", "password"],
+                    shift: "morning"
+                },
+                { 
+                    name: "Mike", 
+                    department: "technical", 
+                    specialties: ["bug", "error", "crash", "performance", "feature"],
+                    shift: "afternoon"
+                },
+                { 
+                    name: "Emma", 
+                    department: "sales", 
+                    specialties: ["pricing", "plan", "upgrade", "subscription"],
+                    shift: "evening"
+                },
+                { 
+                    name: "Alex", 
+                    department: "general", 
+                    specialties: ["question", "help", "how to", "guide"],
+                    shift: "24/7"
+                }
+            ],
+            knowledgeBase: {
+                billing: {
+                    "payment failed": "I can help you resolve payment issues. Please check if your card details are correct and has sufficient funds. You can update your payment method in Account Settings > Billing.",
+                    "refund": "Refund requests are processed within 5-7 business days. I can initiate a refund request for you. May I have your order number?",
+                    "invoice": "You can download your invoices from Account Settings > Billing History. Would you like me to email you a copy?"
+                },
+                technical: {
+                    "login": "If you're having trouble logging in, try: 1) Reset your password, 2) Clear browser cache, 3) Try incognito mode. Are you getting any specific error messages?",
+                    "password": "To reset your password: 1) Go to login page, 2) Click 'Forgot Password', 3) Check your email for reset link. The link expires in 24 hours.",
+                    "bug": "I'm sorry you're experiencing issues. To help me assist you better, could you please describe: 1) What you were trying to do, 2) What happened instead, 3) Your browser/device info?"
+                },
+                account: {
+                    "delete": "I can help you delete your account. Please note this action is permanent and will remove all your data. Are you sure you want to proceed?",
+                    "settings": "You can manage your account settings by going to Profile > Account Settings. What specific setting would you like to change?",
+                    "data": "We take data privacy seriously. You can export your data or request deletion under GDPR. Which option would you prefer?"
+                },
+                general: {
+                    "hours": "Our customer support is available 24/7 through this chat. For phone support, we're available Monday-Friday 9AM-6PM EST.",
+                    "contact": "You can reach us through: 1) This live chat (24/7), 2) Email: support@gitchat.com, 3) Phone: +1-800-GITCHAT (Mon-Fri 9AM-6PM EST)"
+                }
+            }
         };
         
         // Initialize the app
         this.initializeElements();
         this.setupEventListeners();
         this.loadFromStorage();
-        this.simulateOnlineUsers();
+        this.initializeSupportChat();
         this.initializeSettings();
         this.playSound('connect');
         
@@ -71,7 +113,7 @@ class GitChat {
     setupEventListeners() {
         // Username input
         this.usernameInput?.addEventListener('input', (e) => {
-            this.handleUsernameChange(e.target.value);
+            this.handleCustomerInfo(e.target.value);
         });
 
         // Message form
@@ -93,25 +135,6 @@ class GitChat {
             this.autoResize();
         });
 
-        // Emoji picker
-        this.emojiBtn?.addEventListener('click', () => {
-            this.emojiPicker?.classList.toggle('show');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (this.emojiBtn && this.emojiPicker && 
-                !this.emojiBtn.contains(e.target) && 
-                !this.emojiPicker.contains(e.target)) {
-                this.emojiPicker.classList.remove('show');
-            }
-        });
-
-        this.emojiPicker?.addEventListener('click', (e) => {
-            if (e.target.classList.contains('emoji-btn')) {
-                this.insertEmoji(e.target.textContent);
-            }
-        });
-
         // File upload
         this.fileBtn?.addEventListener('click', () => {
             this.fileInput?.click();
@@ -131,18 +154,6 @@ class GitChat {
         // Sound toggle
         this.soundToggle?.addEventListener('click', () => {
             this.toggleSound();
-        });
-
-        // Room selection
-        document.querySelectorAll('.room-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                this.switchRoom(btn.dataset.room);
-            });
-        });
-
-        // User search
-        this.userSearch?.addEventListener('input', (e) => {
-            this.filterUsers(e.target.value);
         });
 
         // Settings panel
@@ -199,6 +210,68 @@ class GitChat {
         }
     }
 
+    initializeSupportChat() {
+        // Generate ticket number
+        this.supportContext.ticketNumber = 'GC-' + Date.now().toString().slice(-6);
+        
+        // Show initial support message
+        this.showWelcomeMessage();
+        
+        // Initialize support agents as "online users"
+        this.supportContext.supportAgents.forEach(agent => {
+            const agentId = this.generateId();
+            this.users.set(agentId, {
+                id: agentId,
+                name: agent.name,
+                avatar: agent.name.charAt(0),
+                status: agent.shift === '24/7' ? 'Online' : this.getAgentStatus(agent.shift),
+                department: agent.department,
+                joinTime: Date.now() - Math.random() * 3600000
+            });
+        });
+        
+        this.updateUsersList();
+    }
+
+    getAgentStatus(shift) {
+        const hour = new Date().getUTCHours();
+        const shifts = {
+            'morning': { start: 6, end: 14 },
+            'afternoon': { start: 14, end: 22 },
+            'evening': { start: 22, end: 6 }
+        };
+        
+        const currentShift = shifts[shift];
+        if (!currentShift) return 'Online';
+        
+        const isOnline = (currentShift.start <= currentShift.end) 
+            ? (hour >= currentShift.start && hour < currentShift.end)
+            : (hour >= currentShift.start || hour < currentShift.end);
+            
+        return isOnline ? 'Online' : 'Away';
+    }
+
+    showWelcomeMessage() {
+        if (!this.messagesContainer) return;
+        
+        const welcomeMsg = document.createElement('div');
+        welcomeMsg.className = 'welcome-message';
+        welcomeMsg.innerHTML = `
+            <h3>👋 Welcome to GitChat Customer Support</h3>
+            <p><strong>Ticket #${this.supportContext.ticketNumber}</strong></p>
+            <p>How can we help you today? Our support team is here to assist you!</p>
+            <div style="margin-top: 15px; padding: 10px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; font-size: 14px;">
+                <strong>Quick Help Topics:</strong><br>
+                • Account & Login Issues<br>
+                • Billing & Payment Questions<br>
+                • Technical Problems<br>
+                • Feature Requests<br>
+                • General Questions
+            </div>
+        `;
+        this.messagesContainer.appendChild(welcomeMsg);
+    }
+
     autoResize() {
         if (this.messageInput) {
             this.messageInput.style.height = 'auto';
@@ -206,19 +279,18 @@ class GitChat {
         }
     }
 
-    handleUsernameChange(username) {
-        username = username.trim();
-        if (username && username !== this.currentUser?.name) {
+    handleCustomerInfo(info) {
+        info = info.trim();
+        if (info && info !== this.supportContext.customerInfo) {
+            this.supportContext.customerInfo = info;
             this.currentUser = {
                 id: this.generateId(),
-                name: username,
-                avatar: username.charAt(0).toUpperCase(),
+                name: info,
+                avatar: info.charAt(0).toUpperCase(),
                 joinTime: Date.now()
             };
-            this.users.set(this.currentUser.id, this.currentUser);
             this.saveToStorage();
-            this.updateUsersList();
-            this.showNotification(`Welcome, ${username}! 🎉`);
+            this.showNotification(`Hello ${info}! Support ticket ${this.supportContext.ticketNumber} created`);
         }
     }
 
@@ -248,6 +320,7 @@ class GitChat {
             timestamp: Date.now(),
             isOwn: true,
             room: this.currentRoom,
+            ticketNumber: this.supportContext.ticketNumber,
             file: this.selectedFile ? {
                 name: this.selectedFile.name,
                 size: this.selectedFile.size,
@@ -259,18 +332,13 @@ class GitChat {
         this.messages.push(message);
         this.renderMessage(message);
         
-        // Store conversation context
-        this.conversationContext.lastUserMessage = content;
-        this.conversationContext.conversationHistory.push({
+        // Store support context
+        this.supportContext.conversationHistory.push({
             author: this.currentUser.name,
             content: content,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            type: 'customer'
         });
-        
-        // Keep only last 10 messages in history
-        if (this.conversationContext.conversationHistory.length > 10) {
-            this.conversationContext.conversationHistory = this.conversationContext.conversationHistory.slice(-10);
-        }
         
         if (this.messageInput) {
             this.messageInput.value = '';
@@ -284,331 +352,198 @@ class GitChat {
         this.scrollToBottom();
         this.playSound('message');
 
-        // Simulate responses with intelligent context
-        setTimeout(() => this.simulateIntelligentResponse(content), 1000 + Math.random() * 2000);
+        // Simulate support response
+        setTimeout(() => this.generateSupportResponse(content), 1500 + Math.random() * 2000);
     }
 
-    simulateIntelligentResponse(userMessage) {
-        const response = this.generateContextualResponse(userMessage);
-        const selectedBot = this.selectAppropriateBot(userMessage);
+    generateSupportResponse(customerMessage) {
+        const message = customerMessage.toLowerCase().trim();
+        const response = this.getSupportResponse(message);
+        const selectedAgent = this.selectSupportAgent(message);
 
         // Show typing indicator
         if (this.settings.typingIndicators) {
-            this.showTypingIndicator(selectedBot.name);
+            this.showTypingIndicator(selectedAgent.name);
         }
 
         setTimeout(() => {
             this.hideTypingIndicator();
             
-            const message = {
+            const supportMessage = {
                 id: this.generateId(),
                 content: response,
-                author: selectedBot.name,
+                author: selectedAgent.name,
                 authorId: this.generateId(),
                 timestamp: Date.now(),
                 isOwn: false,
                 room: this.currentRoom,
-                avatar: selectedBot.avatar,
-                color: selectedBot.color,
+                avatar: selectedAgent.avatar,
+                color: selectedAgent.color,
+                department: selectedAgent.department,
+                ticketNumber: this.supportContext.ticketNumber,
                 reactions: {}
             };
 
-            this.messages.push(message);
+            this.messages.push(supportMessage);
             
             // Add to conversation context
-            this.conversationContext.conversationHistory.push({
-                author: selectedBot.name,
+            this.supportContext.conversationHistory.push({
+                author: selectedAgent.name,
                 content: response,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                type: 'agent',
+                department: selectedAgent.department
             });
 
-            this.renderMessage(message);
+            this.renderMessage(supportMessage);
             this.saveToStorage();
             this.scrollToBottom();
             this.playSound('notification');
             
             if (this.settings.desktopNotifications) {
-                this.showDesktopNotification(`${selectedBot.name} replied`, response);
+                this.showDesktopNotification(`${selectedAgent.name} (Support)`, response);
             }
-        }, 1500 + Math.random() * 1000);
+        }, 1000 + Math.random() * 1500);
     }
 
-    generateContextualResponse(userMessage) {
-        const message = userMessage.toLowerCase().trim();
-        const userName = this.currentUser?.name || 'there';
+    getSupportResponse(message) {
+        const customerName = this.supportContext.customerInfo || 'there';
+        const ticketNumber = this.supportContext.ticketNumber;
         
-        // Greeting patterns
-        if (this.matchesPattern(message, ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening'])) {
-            const greetings = [
-                `Hello ${userName}! 👋 How are you doing today?`,
-                `Hey there ${userName}! Great to see you here! 😊`,
-                `Hi ${userName}! Welcome to the chat! How's your day going?`,
-                `Greetings ${userName}! Hope you're having a wonderful day! ✨`,
-                `Hello ${userName}! Nice to meet you! What brings you here today?`
-            ];
-            return this.getRandomItem(greetings);
+        // Greeting responses
+        if (this.matchesPattern(message, ['hello', 'hi', 'hey', 'help'])) {
+            return `Hello ${customerName}! I'm here to help you with ticket ${ticketNumber}. What can I assist you with today?`;
         }
 
-        // How are you patterns
-        if (this.matchesPattern(message, ['how are you', 'how do you do', 'how are things', 'what\'s up', 'how\'s it going'])) {
-            const responses = [
-                "I'm doing great, thank you for asking! 😊 How about you? How has your day been?",
-                "I'm fantastic! Thanks for checking in! 🌟 What about you - how are you feeling today?",
-                "I'm doing well, thanks! 😄 It's always nice when someone asks. How are things with you?",
-                "Pretty good, thank you! 🙂 I'm enjoying our conversation. How about yourself?",
-                "I'm doing wonderful! Thanks for asking! 💫 What about you - how's your mood today?"
-            ];
-            return this.getRandomItem(responses);
+        // Billing issues
+        if (this.matchesPattern(message, ['payment', 'billing', 'charge', 'card', 'invoice', 'refund'])) {
+            this.supportContext.issueCategory = 'billing';
+            if (this.matchesPattern(message, ['failed', 'declined', 'error'])) {
+                return this.supportContext.knowledgeBase.billing["payment failed"];
+            } else if (this.matchesPattern(message, ['refund', 'money back'])) {
+                return this.supportContext.knowledgeBase.billing["refund"];
+            } else if (this.matchesPattern(message, ['invoice', 'receipt'])) {
+                return this.supportContext.knowledgeBase.billing["invoice"];
+            } else {
+                return `I can help you with billing issues. I see this involves payment/billing for ticket ${ticketNumber}. Could you please provide more details about the specific issue you're experiencing?`;
+            }
         }
 
-        // User expressing they're fine/good
-        if (this.matchesPattern(message, ['i\'m fine', 'i\'m good', 'i\'m great', 'i\'m okay', 'i\'m well', 'doing well', 'doing good', 'not bad'])) {
-            const responses = [
-                "That's wonderful to hear! 😊 I'm glad you're doing well. What's been the highlight of your day?",
-                "Great! I'm happy you're feeling good! ✨ Anything exciting happening in your life lately?",
-                "Awesome! It's always nice to hear when someone is doing well! 🌟 What's keeping you busy these days?",
-                "That's fantastic! 😄 Good vibes are contagious! What's been making you feel good?",
-                "Nice! I love hearing positive updates! 🎉 Care to share what's going well for you?"
-            ];
-            return this.getRandomItem(responses);
+        // Login/Password issues
+        if (this.matchesPattern(message, ['login', 'password', 'access', 'sign in', 'authenticate'])) {
+            this.supportContext.issueCategory = 'technical';
+            if (this.matchesPattern(message, ['forgot', 'reset', 'change'])) {
+                return this.supportContext.knowledgeBase.technical["password"];
+            } else {
+                return this.supportContext.knowledgeBase.technical["login"];
+            }
         }
 
-        // User expressing negative feelings
-        if (this.matchesPattern(message, ['i\'m not good', 'i\'m sad', 'i\'m tired', 'i\'m stressed', 'having a bad day', 'not great', 'could be better'])) {
-            const responses = [
-                "I'm sorry to hear you're going through a tough time. 🤗 Sometimes it helps to talk about it. Want to share what's on your mind?",
-                "That sounds challenging. 💙 Remember that it's okay to have difficult days. Is there anything that usually helps you feel better?",
-                "I hear you, and I'm here to listen. 🌸 Bad days can be really hard. Would you like to talk about what's bothering you?",
-                "I'm sorry you're feeling this way. 🤎 It's completely normal to have ups and downs. What do you usually do for self-care?",
-                "Sending you some virtual support! 💕 Tough times don't last, but resilient people like you do. Want to chat about it?"
-            ];
-            return this.getRandomItem(responses);
+        // Technical issues
+        if (this.matchesPattern(message, ['bug', 'error', 'crash', 'broken', 'not working', 'issue', 'problem'])) {
+            this.supportContext.issueCategory = 'technical';
+            this.supportContext.priority = 'high';
+            return this.supportContext.knowledgeBase.technical["bug"];
         }
 
-        // Gratitude expressions
-        if (this.matchesPattern(message, ['thank you', 'thanks', 'appreciate', 'grateful'])) {
-            const responses = [
-                "You're very welcome! 😊 It's my pleasure to help and chat with you!",
-                "No problem at all! 🌟 I'm happy I could be helpful. Anytime!",
-                "You're so welcome! 💫 I really enjoy our conversations!",
-                "My pleasure! 😄 Thanks for being so kind and thoughtful!",
-                "Aww, you're too sweet! 🥰 I'm just glad I could help!"
-            ];
-            return this.getRandomItem(responses);
+        // Account management
+        if (this.matchesPattern(message, ['account', 'profile', 'delete', 'settings', 'data', 'privacy'])) {
+            this.supportContext.issueCategory = 'account';
+            if (this.matchesPattern(message, ['delete', 'close', 'remove'])) {
+                return this.supportContext.knowledgeBase.account["delete"];
+            } else if (this.matchesPattern(message, ['settings', 'change', 'update'])) {
+                return this.supportContext.knowledgeBase.account["settings"];
+            } else if (this.matchesPattern(message, ['data', 'privacy', 'gdpr'])) {
+                return this.supportContext.knowledgeBase.account["data"];
+            }
         }
 
-        // Weather-related
-        if (this.matchesPattern(message, ['weather', 'sunny', 'rainy', 'cold', 'hot', 'temperature'])) {
-            const responses = [
-                "Weather can definitely affect our mood! ☀️ Are you enjoying the current weather where you are?",
-                "I love talking about weather! 🌤️ It's amazing how it can change our whole day, right?",
-                "Weather is such an interesting topic! ⛅ Do you prefer sunny days or do you like variety?",
-                "The weather can be so unpredictable! 🌦️ How do you usually spend your time when the weather is like this?",
-                "Weather definitely plays a big role in our daily lives! 🌈 What's your favorite type of weather?"
-            ];
-            return this.getRandomItem(responses);
+        // Pricing/Sales
+        if (this.matchesPattern(message, ['price', 'plan', 'upgrade', 'subscription', 'cost', 'pricing'])) {
+            this.supportContext.issueCategory = 'sales';
+            return `I'd be happy to help you with pricing and plans for ticket ${ticketNumber}. We offer several subscription tiers:\n\n• **Basic Plan** - $9/month\n• **Pro Plan** - $19/month\n• **Enterprise** - Custom pricing\n\nWhich plan are you interested in learning more about?`;
         }
 
-        // Technology/coding related
-        if (this.matchesPattern(message, ['code', 'programming', 'javascript', 'python', 'development', 'tech', 'computer', 'software'])) {
-            const responses = [
-                "Oh, a fellow tech enthusiast! 💻 What programming languages do you work with? I find technology fascinating!",
-                "Technology is amazing, isn't it? 🚀 Are you working on any interesting projects lately?",
-                "I love talking about tech! ⚡ The world of programming is constantly evolving. What's your favorite aspect of coding?",
-                "Tech talk! 🔧 Are you a developer or just interested in technology? Either way, it's such an exciting field!",
-                "Programming is like digital art! 🎨 What got you interested in technology?"
-            ];
-            return this.getRandomItem(responses);
+        // Contact information
+        if (this.matchesPattern(message, ['contact', 'phone', 'email', 'hours'])) {
+            if (this.matchesPattern(message, ['hours', 'time', 'available'])) {
+                return this.supportContext.knowledgeBase.general["hours"];
+            } else {
+                return this.supportContext.knowledgeBase.general["contact"];
+            }
         }
 
-        // Time-related queries
-        if (this.matchesPattern(message, ['what time', 'current time', 'time is it', 'date today', 'what day'])) {
-            const now = new Date();
-            const timeString = now.toLocaleString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                timeZoneName: 'short'
-            });
-            return `It's currently ${timeString}! ⏰ Time flies when you're having good conversations, doesn't it?`;
+        // Status check
+        if (this.matchesPattern(message, ['status', 'update', 'progress', 'ticket'])) {
+            return `Your ticket ${ticketNumber} is currently ${this.supportContext.status}. Priority: ${this.supportContext.priority}. I'm actively working on resolving your issue. Is there anything specific you'd like to know about the status?`;
         }
 
-        // Work/job related
-        if (this.matchesPattern(message, ['work', 'job', 'career', 'office', 'business', 'meeting'])) {
-            const responses = [
-                "Work life can be quite the journey! 💼 How are things going in your professional life?",
-                "Ah, work talk! 📊 Do you enjoy what you do? I find it's so important to find meaning in our work.",
-                "Career conversations are always interesting! 🎯 What field do you work in, if you don't mind me asking?",
-                "Work-life balance is so important! ⚖️ How do you manage to keep things balanced?",
-                "Professional life can be both challenging and rewarding! 🌟 What's been keeping you busy at work lately?"
-            ];
-            return this.getRandomItem(responses);
+        // Appreciation/Thanks
+        if (this.matchesPattern(message, ['thank', 'thanks', 'appreciate'])) {
+            return `You're very welcome, ${customerName}! I'm glad I could help with ticket ${ticketNumber}. Is there anything else I can assist you with today?`;
         }
 
-        // Questions about the bot/AI
-        if (this.matchesPattern(message, ['who are you', 'what are you', 'are you real', 'are you ai', 'are you human', 'bot'])) {
-            const responses = [
-                "I'm one of the friendly chatbots here in GitChat! 🤖 I love meeting new people and having conversations. Think of me as your digital friend!",
-                "Great question! I'm an AI assistant designed to make conversations more engaging here! 💫 I may be digital, but my enthusiasm for chatting is totally real!",
-                "I'm a conversational AI that lives in this chat! 🌟 While I'm not human, I do my best to be a good conversation partner. What would you like to chat about?",
-                "I'm one of the AI personalities in this chat room! 🎭 I'm here to make conversations more interesting and engaging. Nice to meet you!",
-                "Think of me as your AI chat buddy! 🤝 I'm designed to have natural conversations and learn from our interactions. What brings you to the chat today?"
-            ];
-            return this.getRandomItem(responses);
+        // Escalation requests
+        if (this.matchesPattern(message, ['manager', 'supervisor', 'escalate', 'speak to'])) {
+            return `I understand you'd like to speak with a supervisor regarding ticket ${ticketNumber}. I'm escalating this to my manager who will contact you within 30 minutes. In the meantime, is there anything else I can help clarify?`;
         }
 
-        // Hobby/interest related
-        if (this.matchesPattern(message, ['hobby', 'hobbies', 'interests', 'free time', 'fun', 'enjoy doing'])) {
-            const responses = [
-                "I love hearing about people's hobbies! 🎨 What do you enjoy doing in your free time? I find people's passions so fascinating!",
-                "Hobbies are the best! 🌟 They really show what makes someone tick. What activities bring you joy?",
-                "Free time activities are so important for well-being! 🌸 What helps you relax and recharge?",
-                "I'm curious about what you're passionate about! 💫 Hobbies can tell you so much about a person. What are yours?",
-                "Fun activities make life so much richer! 🎉 What do you love to do when you're not working?"
-            ];
-            return this.getRandomItem(responses);
-        }
-
-        // Food related
-        if (this.matchesPattern(message, ['food', 'eat', 'hungry', 'cooking', 'recipe', 'meal', 'lunch', 'dinner', 'breakfast'])) {
-            const responses = [
-                "Food talk! 🍽️ I love hearing about people's culinary adventures. Do you enjoy cooking or do you prefer trying new restaurants?",
-                "Mmm, food is such a universal language! 😋 What's your favorite type of cuisine? I find food brings people together!",
-                "Food conversations always make me think about comfort and culture! 🥘 What's a dish that always makes you feel good?",
-                "Nothing brings people together quite like food! 👨‍🍳 Are you someone who loves to cook or do you prefer being cooked for?",
-                "Food is such an important part of life! 🌮 Do you have any signature dishes you love to make?"
-            ];
-            return this.getRandomItem(responses);
-        }
-
-        // Default contextual responses based on conversation history
-        const recentMessages = this.conversationContext.conversationHistory.slice(-3);
-        if (recentMessages.length > 0) {
-            const contextualResponses = [
-                `That's really interesting! Building on what we were just discussing, ${this.generateFollowUp(userMessage)}`,
-                `I've been thinking about our conversation, and ${this.generateThoughtfulResponse(userMessage)}`,
-                `You know, that reminds me of something ${this.generateConnection(userMessage)}`,
-                `That's a great point! ${this.generateAgreement(userMessage)}`,
-                `I appreciate you sharing that with me! ${this.generateEncouragement(userMessage)}`
-            ];
-            return this.getRandomItem(contextualResponses);
-        }
-
-        // Generic but engaging fallback responses
-        const fallbackResponses = [
-            "That's really interesting! Tell me more about that - I'd love to hear your thoughts! 🤔",
-            "I find that fascinating! There's always so much to learn from different perspectives. What made you think of that?",
-            "You've got me curious now! Can you elaborate on that? I enjoy learning new things from our conversations! 🌟",
-            "That's a great point! I love how conversations can take unexpected turns. What's your take on it?",
-            "Interesting perspective! I appreciate you sharing that with me. What else is on your mind today? 💭",
-            "That sounds thoughtful! I enjoy when people share their ideas. What brought that to your attention?",
-            "I love the direction this conversation is taking! Your insights are really valuable. What do you think about...?",
-            "That's something worth discussing! I find these kinds of conversations really enriching. Care to dive deeper?"
+        // Default support response
+        const supportResponses = [
+            `I understand your concern regarding ticket ${ticketNumber}. Could you please provide more details so I can better assist you?`,
+            `Thank you for contacting support about ticket ${ticketNumber}. Let me help you resolve this issue. Can you tell me more about what you're experiencing?`,
+            `I'm here to help with ticket ${ticketNumber}. To provide the best assistance, could you please describe the issue in more detail?`,
+            `I want to make sure I fully understand your issue with ticket ${ticketNumber}. Could you provide any additional context or error messages you're seeing?`,
+            `Let me help you resolve this issue for ticket ${ticketNumber}. What specific steps led to this problem, and what outcome are you hoping to achieve?`
         ];
 
-        return this.getRandomItem(fallbackResponses);
+        return this.getRandomItem(supportResponses);
+    }
+
+    selectSupportAgent(message) {
+        // Select agent based on issue type and availability
+        let availableAgents = this.supportContext.supportAgents.filter(agent => {
+            const user = Array.from(this.users.values()).find(u => u.name === agent.name);
+            return user && user.status === 'Online';
+        });
+
+        if (availableAgents.length === 0) {
+            availableAgents = this.supportContext.supportAgents;
+        }
+
+        let selectedAgent = availableAgents[0]; // default
+
+        // Match agent expertise to issue
+        if (this.matchesPattern(message, ['payment', 'billing', 'refund', 'invoice'])) {
+            selectedAgent = availableAgents.find(agent => agent.specialties.some(s => ['billing', 'account'].includes(s))) || selectedAgent;
+        } else if (this.matchesPattern(message, ['bug', 'error', 'crash', 'technical'])) {
+            selectedAgent = availableAgents.find(agent => agent.specialties.some(s => ['bug', 'error', 'crash'].includes(s))) || selectedAgent;
+        } else if (this.matchesPattern(message, ['login', 'password', 'account'])) {
+            selectedAgent = availableAgents.find(agent => agent.specialties.some(s => ['login', 'password', 'account'].includes(s))) || selectedAgent;
+        } else if (this.matchesPattern(message, ['price', 'plan', 'upgrade'])) {
+            selectedAgent = availableAgents.find(agent => agent.department === 'sales') || selectedAgent;
+        }
+
+        return {
+            name: selectedAgent.name,
+            avatar: selectedAgent.name.charAt(0),
+            color: this.getAgentColor(selectedAgent.department),
+            department: selectedAgent.department
+        };
+    }
+
+    getAgentColor(department) {
+        const colors = {
+            "technical": "#ef4444",
+            "sales": "#10b981",
+            "general": "#6366f1",
+            "billing": "#f59e0b"
+        };
+        return colors[department] || "#6366f1";
     }
 
     matchesPattern(message, patterns) {
         return patterns.some(pattern => message.includes(pattern));
-    }
-
-    generateFollowUp(message) {
-        const followUps = [
-            "what aspects of that interest you most?",
-            "I'd love to understand your perspective better!",
-            "have you experienced something similar before?",
-            "what got you thinking about that?",
-            "that opens up so many interesting questions!"
-        ];
-        return this.getRandomItem(followUps);
-    }
-
-    generateThoughtfulResponse(message) {
-        const responses = [
-            "it really shows how complex and nuanced these topics can be.",
-            "I'm learning so much from your perspective on this!",
-            "there are so many layers to consider, aren't there?",
-            "it's amazing how different experiences shape our views.",
-            "you've given me a lot to think about!"
-        ];
-        return this.getRandomItem(responses);
-    }
-
-    generateConnection(message) {
-        const connections = [
-            "we talked about earlier - there might be a connection there!",
-            "I read recently that relates to this topic.",
-            "similar that happened to me in a conversation yesterday.",
-            "you might find interesting given what you just shared.",
-            "that connects to what you were saying before!"
-        ];
-        return this.getRandomItem(connections);
-    }
-
-    generateAgreement(message) {
-        const agreements = [
-            "I completely see where you're coming from on this!",
-            "You've articulated that really well - I hadn't thought of it that way!",
-            "That's such a thoughtful way to look at it!",
-            "I think you're onto something important there!",
-            "That resonates with me too - great insight!"
-        ];
-        return this.getRandomItem(agreements);
-    }
-
-    generateEncouragement(message) {
-        const encouragements = [
-            "Your thoughts on this are really valuable!",
-            "I appreciate how openly you're sharing your experiences!",
-            "It's refreshing to have such genuine conversations!",
-            "Thank you for being so thoughtful in your responses!",
-            "I'm enjoying getting to know your perspective!"
-        ];
-        return this.getRandomItem(encouragements);
-    }
-
-    selectAppropriateBot(userMessage) {
-        const message = userMessage.toLowerCase();
-        
-        // Select bot based on message content and their personalities
-        let selectedBot = this.conversationContext.botPersonalities[0]; // default
-        
-        if (this.matchesPattern(message, ['sad', 'stressed', 'tired', 'difficult', 'hard', 'support'])) {
-            selectedBot = this.conversationContext.botPersonalities.find(bot => bot.mood === 'supportive') || selectedBot;
-        } else if (this.matchesPattern(message, ['code', 'tech', 'programming', 'computer'])) {
-            selectedBot = this.conversationContext.botPersonalities.find(bot => bot.interests.includes('tech')) || selectedBot;
-        } else if (this.matchesPattern(message, ['design', 'art', 'creative'])) {
-            selectedBot = this.conversationContext.botPersonalities.find(bot => bot.interests.includes('art')) || selectedBot;
-        } else if (this.matchesPattern(message, ['funny', 'joke', 'laugh', 'haha'])) {
-            selectedBot = this.conversationContext.botPersonalities.find(bot => bot.mood === 'funny') || selectedBot;
-        } else if (this.matchesPattern(message, ['help', 'question', 'how to'])) {
-            selectedBot = this.conversationContext.botPersonalities.find(bot => bot.mood === 'helpful') || selectedBot;
-        } else {
-            // Random selection for variety
-            selectedBot = this.getRandomItem(this.conversationContext.botPersonalities);
-        }
-
-        return {
-            name: selectedBot.name,
-            avatar: selectedBot.name.charAt(0),
-            color: this.getBotColor(selectedBot.name)
-        };
-    }
-
-    getBotColor(name) {
-        const colors = {
-            "Alex": "#10b981",
-            "Jordan": "#8b5cf6", 
-            "Sam": "#f59e0b",
-            "Riley": "#ef4444",
-            "Casey": "#06b6d4",
-            "Morgan": "#f97316"
-        };
-        return colors[name] || "#6366f1";
     }
 
     getRandomItem(array) {
@@ -643,6 +578,11 @@ class GitChat {
             `;
         }
 
+        let departmentBadge = '';
+        if (message.department && !message.isOwn) {
+            departmentBadge = `<span class="department-badge" style="background: ${this.getAgentColor(message.department)}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 5px;">${message.department.toUpperCase()}</span>`;
+        }
+
         let reactionsContent = '';
         if (message.reactions && Object.keys(message.reactions).length > 0) {
             reactionsContent = '<div class="message-reactions">';
@@ -663,7 +603,7 @@ class GitChat {
                     <div class="message-avatar" style="background: ${message.color || '#6366f1'}">
                         ${message.isOwn ? (this.currentUser?.avatar || 'U') : (message.avatar || message.author.charAt(0).toUpperCase())}
                     </div>
-                    <span class="message-author">${message.author}</span>
+                    <span class="message-author">${message.author}${departmentBadge}</span>
                     <span class="message-time">${time}</span>
                 </div>
                 ${message.content ? `<div class="message-text">${this.escapeHtml(message.content)}</div>` : ''}
@@ -674,23 +614,11 @@ class GitChat {
 
         // Remove welcome message if it exists
         const welcomeMsg = this.messagesContainer.querySelector('.welcome-message');
-        if (welcomeMsg) {
+        if (welcomeMsg && this.messages.length > 0) {
             welcomeMsg.remove();
         }
 
         this.messagesContainer.appendChild(messageEl);
-    }
-
-    insertEmoji(emoji) {
-        if (!this.messageInput) return;
-        
-        const start = this.messageInput.selectionStart;
-        const end = this.messageInput.selectionEnd;
-        const text = this.messageInput.value;
-        this.messageInput.value = text.substring(0, start) + emoji + text.substring(end);
-        this.messageInput.focus();
-        this.messageInput.setSelectionRange(start + emoji.length, start + emoji.length);
-        this.emojiPicker?.classList.remove('show');
     }
 
     handleFileSelect(file) {
@@ -700,7 +628,7 @@ class GitChat {
         this.filePreview.style.display = 'block';
         this.filePreview.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span>📎 ${file.name} (${this.formatFileSize(file.size)})</span>
+                <span>📎 ${file.name} (${this.formatFileSize(file.size)}) - Attachment for ticket ${this.supportContext.ticketNumber}</span>
                 <button onclick="this.parentElement.parentElement.style.display='none'; gitChat.selectedFile=null;" style="background: none; border: none; cursor: pointer;">✕</button>
             </div>
         `;
@@ -720,32 +648,6 @@ class GitChat {
         if (fileType.includes('word') || fileType.includes('doc')) return '📝';
         if (fileType.includes('text')) return '📄';
         return '📎';
-    }
-
-    switchRoom(room) {
-        document.querySelectorAll('.room-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        const roomBtn = document.querySelector(`[data-room="${room}"]`);
-        if (roomBtn) {
-            roomBtn.classList.add('active');
-        }
-        
-        this.currentRoom = room;
-        if (this.messagesContainer) {
-            this.messagesContainer.innerHTML = '';
-            
-            const welcomeMsg = document.createElement('div');
-            welcomeMsg.className = 'welcome-message';
-            welcomeMsg.innerHTML = `
-                <h3>Welcome to ${room.charAt(0).toUpperCase() + room.slice(1)}! 🎉</h3>
-                <p>You've switched to the ${room} room.</p>
-            `;
-            this.messagesContainer.appendChild(welcomeMsg);
-        }
-        
-        this.playSound('notification');
-        this.showNotification(`Switched to ${room} room`);
     }
 
     filterUsers(searchTerm) {
@@ -847,7 +749,7 @@ class GitChat {
         indicator.className = 'typing-indicator';
         indicator.id = 'typingIndicator';
         indicator.innerHTML = `
-            <span>${username} is typing</span>
+            <span>${username} (Support) is typing</span>
             <div class="typing-dots">
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
@@ -891,8 +793,8 @@ class GitChat {
     showMessageMenu(event, messageId) {
         event.preventDefault();
         
-        // Simple reaction menu - in a full app this would be a context menu
-        const reactions = ['👍', '❤️', '😂', '😮', '😢', '😡'];
+        // Simple reaction menu
+        const reactions = ['👍', '❤️', '😊', '🙏', '✅'];
         const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
         this.toggleReaction(messageId, randomReaction);
     }
@@ -938,27 +840,6 @@ class GitChat {
         return div.innerHTML;
     }
 
-    simulateOnlineUsers() {
-        const simulatedUsers = [
-            { name: "Alex Chen", avatar: "A", status: "Online" },
-            { name: "Jordan Smith", avatar: "J", status: "Away" },
-            { name: "Sam Wilson", avatar: "S", status: "Online" },
-        ];
-
-        simulatedUsers.forEach(user => {
-            const userId = this.generateId();
-            this.users.set(userId, {
-                id: userId,
-                name: user.name,
-                avatar: user.avatar,
-                status: user.status,
-                joinTime: Date.now() - Math.random() * 3600000
-            });
-        });
-
-        this.updateUsersList();
-    }
-
     updateUsersList() {
         if (!this.usersList || !this.userCount) return;
         
@@ -968,15 +849,26 @@ class GitChat {
         this.users.forEach(user => {
             const userEl = document.createElement('div');
             userEl.className = 'user-item';
+            const departmentIcon = user.department ? this.getDepartmentIcon(user.department) : '👤';
             userEl.innerHTML = `
                 <div class="user-avatar">${user.avatar}</div>
                 <div class="user-info">
-                    <div class="user-name">${user.name}</div>
+                    <div class="user-name">${departmentIcon} ${user.name}</div>
                     <div class="user-status">${user.status || 'Online'}</div>
                 </div>
             `;
             this.usersList.appendChild(userEl);
         });
+    }
+
+    getDepartmentIcon(department) {
+        const icons = {
+            'technical': '🔧',
+            'sales': '💼',
+            'billing': '💳',
+            'general': '🎧'
+        };
+        return icons[department] || '👤';
     }
 
     scrollToBottom() {
@@ -989,13 +881,13 @@ class GitChat {
         try {
             const data = {
                 currentUser: this.currentUser,
-                messages: this.messages.slice(-100), // Keep last 100 messages
+                messages: this.messages.slice(-100),
                 users: Array.from(this.users.entries()),
                 settings: this.settings,
                 currentRoom: this.currentRoom,
-                conversationContext: this.conversationContext
+                supportContext: this.supportContext
             };
-            localStorage.setItem('gitchat-data', JSON.stringify(data));
+            localStorage.setItem('gitchat-support-data', JSON.stringify(data));
         } catch (error) {
             console.warn('Failed to save data to localStorage:', error);
         }
@@ -1003,7 +895,7 @@ class GitChat {
 
     loadFromStorage() {
         try {
-            const data = JSON.parse(localStorage.getItem('gitchat-data') || '{}');
+            const data = JSON.parse(localStorage.getItem('gitchat-support-data') || '{}');
             
             if (data.currentUser) {
                 this.currentUser = data.currentUser;
@@ -1028,13 +920,8 @@ class GitChat {
                 this.settings = { ...this.settings, ...data.settings };
             }
 
-            if (data.conversationContext) {
-                this.conversationContext = { ...this.conversationContext, ...data.conversationContext };
-            }
-
-            if (data.currentRoom) {
-                this.currentRoom = data.currentRoom;
-                this.switchRoom(this.currentRoom);
+            if (data.supportContext) {
+                this.supportContext = { ...this.supportContext, ...data.supportContext };
             }
         } catch (error) {
             console.warn('Failed to load saved data:', error);
